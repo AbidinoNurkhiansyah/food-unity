@@ -2,6 +2,17 @@ import React from 'react';
 import { useAuthStore } from '@/hooks/useAuthStore';
 import { logout } from '@/features/auth/services/authService';
 import { LogOut, Search, MapPin, Star, Clock } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const ExplorePage: React.FC = () => {
   const { user } = useAuthStore();
@@ -41,13 +52,28 @@ export const ExplorePage: React.FC = () => {
               <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-orange-500 to-red-500 flex items-center justify-center text-white font-bold shadow-md">
                 {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'C'}
               </div>
-              <button
-                onClick={handleLogout}
-                className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                title="Logout"
-              >
-                <LogOut size={20} />
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button
+                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    title="Logout"
+                  >
+                    <LogOut size={20} />
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Apakah Anda yakin ingin keluar dari aplikasi?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Batal</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleLogout}>Ya, Keluar</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>

@@ -3,7 +3,17 @@ import { useAuthStore } from '@/hooks/useAuthStore';
 import { logout } from '@/features/auth/services/authService';
 import { LayoutDashboard, Package, History, LogOut, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 export function DashboardLayout() {
   const { clearAuth } = useAuthStore();
   const navigate = useNavigate();
@@ -53,10 +63,26 @@ export function DashboardLayout() {
           })}
         </nav>
         <div className="p-4 border-t">
-          <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
-            <LogOut className="w-5 h-5 mr-3" />
-            Keluar
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10">
+                <LogOut className="w-5 h-5 mr-3" />
+                Keluar
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Apakah Anda yakin ingin keluar dari aplikasi?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleLogout}>Ya, Keluar</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </aside>
 
@@ -70,9 +96,25 @@ export function DashboardLayout() {
             </Button>
             <h1 className="font-bold">FoodUnity</h1>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout}>
-            Keluar
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm">
+                Keluar
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Apakah Anda yakin ingin keluar dari aplikasi?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleLogout}>Ya, Keluar</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </header>
 
         {/* Content Area */}
