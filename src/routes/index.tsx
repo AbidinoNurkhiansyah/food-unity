@@ -6,6 +6,7 @@ import { MerchantRegisterPage } from '@/pages/auth/MerchantRegisterPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { DashboardLayout } from '@/features/dashboard/components/DashboardLayout';
 import { MerchantDashboardPage } from '@/pages/dashboard/MerchantDashboardPage';
+import { ProductsPage } from '@/pages/dashboard/ProductsPage';
 import { ExplorePage } from '@/pages/consumer/ExplorePage';
 
 export const router = createBrowserRouter([
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <MerchantDashboardPage />
+      },
+      {
+        path: 'products',
+        element: <ProductsPage />
       }
     ]
   }
