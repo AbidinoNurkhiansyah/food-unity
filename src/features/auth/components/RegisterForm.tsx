@@ -3,68 +3,84 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
-import { loginWithEmail, loginWithGoogle } from '../services/authService';
-import { useAuthStore } from '@/hooks/useAuthStore';
+import { registerWithEmail, loginWithGoogle } from '../services/authService';
+import { useAuthStore, type UserRole } from '@/hooks/useAuthStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
-const loginSchema = z.object({
+const registerSchema = z.object({
+  name: z.string().min(2, { message: 'Nama minimal 2 karakter' }),
   email: z.string().email({ message: 'Email tidak valid' }),
   password: z.string().min(6, { message: 'Password minimal 6 karakter' }),
 });
 
-type LoginValues = z.infer<typeof loginSchema>;
+type RegisterValues = z.infer<typeof registerSchema>;
 
-export function LoginForm() {
+interface RegisterFormProps {
+  role: UserRole;
+}
+
+export function RegisterForm({ role }: RegisterFormProps) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginValues>({
-    resolver: zodResolver(loginSchema),
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterValues>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = async (data: LoginValues) => {
+  const onSubmit = async (data: RegisterValues) => {
     setIsLoading(true);
     setError('');
     try {
-      const { user, role } = await loginWithEmail(data.email, data.password);
-      setUser(user, role);
+      const result = await registerWithEmail(data.email, data.password, data.name, role);
+      setUser(result.user, result.role);
       navigate(role === 'merchant' ? '/dashboard' : '/explore');
     } catch (err: any) {
-      setError(err.message || 'Gagal login, periksa kembali email & password Anda.');
+      setError(err.message || 'Gagal mendaftar, silakan coba lagi.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleRegister = async () => {
     setIsLoading(true);
     setError('');
     try {
-      const { user, role } = await loginWithGoogle('consumer'); // Default to consumer on direct login, but gets actual role if exists
-      setUser(user, role);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore');
+      const result = await loginWithGoogle(role);
+      setUser(result.user, result.role);
+      navigate(result.role === 'merchant' ? '/dashboard' : '/explore');
     } catch (err: any) {
-      setError(err.message || 'Gagal login dengan Google.');
+      setError(err.message || 'Gagal mendaftar dengan Google.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  const isMerchant = role === 'merchant';
 
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-2xl">Masuk</CardTitle>
+        <CardTitle className="text-2xl">
+          Daftar sebagai {isMerchant ? 'Mitra Toko' : 'Konsumen'}
+        </CardTitle>
         <CardDescription>
-          Masukkan email Anda untuk login ke akun Penyelamat Makanan.
+          {isMerchant 
+            ? 'Bergabunglah untuk menyelamatkan makanan surplus dari tokomu.' 
+            : 'Buat akun untuk mulai mencari makanan lezat yang terjangkau.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">{isMerchant ? 'Nama Toko' : 'Nama Lengkap'}</Label>
+            <Input id="name" placeholder={isMerchant ? 'Budi Bakery' : 'John Doe'} {...register('name')} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" placeholder="m@example.com" {...register('email')} />
@@ -79,7 +95,7 @@ export function LoginForm() {
           {error && <p className="text-sm text-destructive font-medium">{error}</p>}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Memproses...' : 'Masuk'}
+            {isLoading ? 'Memproses...' : 'Daftar Sekarang'}
           </Button>
         </form>
 
@@ -91,21 +107,17 @@ export function LoginForm() {
           type="button" 
           variant="outline" 
           className="w-full mt-4" 
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleRegister}
           disabled={isLoading}
         >
-          Masuk dengan Google
+          Daftar dengan Google
         </Button>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
-        <div className="text-sm text-center text-muted-foreground mt-2">
-          Belum punya akun?{' '}
-          <Link to="/register/consumer" className="text-primary hover:underline font-medium">
-            Daftar Konsumen
-          </Link>{' '}
-          |{' '}
-          <Link to="/register/merchant" className="text-primary hover:underline font-medium">
-            Daftar Mitra
+      <CardFooter>
+        <div className="text-sm text-center text-muted-foreground w-full mt-2">
+          Sudah punya akun?{' '}
+          <Link to="/login" className="text-primary hover:underline font-medium">
+            Masuk di sini
           </Link>
         </div>
       </CardFooter>
