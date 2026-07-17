@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 import { registerWithEmail, loginWithGoogle } from '../services/authService';
 import { useAuthStore, type UserRole } from '@/hooks/useAuthStore';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ interface RegisterFormProps {
 export function RegisterForm({ role }: RegisterFormProps) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const setUser = useAuthStore((state) => state.setUser);
 
@@ -40,7 +42,11 @@ export function RegisterForm({ role }: RegisterFormProps) {
       setUser(result.user, result.role);
       navigate(role === 'merchant' ? '/dashboard' : '/explore');
     } catch (err: any) {
-      setError(err.message || 'Gagal mendaftar, silakan coba lagi.');
+      if (err.code === 'auth/email-already-in-use') {
+        setError('Email ini sudah terdaftar. Silakan masuk (login) atau gunakan email lain.');
+      } else {
+        setError(err.message || 'Gagal mendaftar, silakan coba lagi.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -54,6 +60,9 @@ export function RegisterForm({ role }: RegisterFormProps) {
       setUser(result.user, result.role);
       navigate(result.role === 'merchant' ? '/dashboard' : '/explore');
     } catch (err: any) {
+      if (err.code === 'auth/popup-closed-by-user') {
+        return;
+      }
       setError(err.message || 'Gagal mendaftar dengan Google.');
     } finally {
       setIsLoading(false);
@@ -88,7 +97,21 @@ export function RegisterForm({ role }: RegisterFormProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register('password')} />
+            <div className="relative">
+              <Input 
+                id="password" 
+                type={showPassword ? 'text' : 'password'} 
+                className="pr-10"
+                {...register('password')} 
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-muted-foreground hover:text-foreground"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
             {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
           </div>
           
