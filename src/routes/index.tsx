@@ -9,6 +9,7 @@ import { MerchantDashboardPage } from '@/pages/dashboard/MerchantDashboardPage';
 import { ProductsPage } from '@/pages/dashboard/ProductsPage';
 import { ExplorePage } from '@/pages/consumer/ExplorePage';
 import { MyOrdersPage } from '@/pages/consumer/MyOrdersPage';
+import { CartPage } from '@/pages/consumer/CartPage';
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['consumer']}>
         <MyOrdersPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/cart',
+    element: (
+      <ProtectedRoute allowedRoles={['consumer']}>
+        <CartPage />
       </ProtectedRoute>
     ),
   },

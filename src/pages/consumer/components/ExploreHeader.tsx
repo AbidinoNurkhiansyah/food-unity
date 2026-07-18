@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/hooks/useAuthStore";
 import { logout } from "@/features/auth/services/authService";
 import { useCartStore } from "@/hooks/useCartStore";
@@ -15,11 +16,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-interface ExploreHeaderProps {
-  onOpenCart: () => void;
-}
-
-export const ExploreHeader: React.FC<ExploreHeaderProps> = ({ onOpenCart }) => {
+export const ExploreHeader: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { getTotalItems } = useCartStore();
 
@@ -61,7 +59,7 @@ export const ExploreHeader: React.FC<ExploreHeaderProps> = ({ onOpenCart }) => {
             </button>
 
             <button
-              onClick={onOpenCart}
+              onClick={() => navigate('/cart')}
               className="relative p-2 text-gray-400 hover:text-orange-500 transition-colors"
             >
               <ShoppingCart size={22} />

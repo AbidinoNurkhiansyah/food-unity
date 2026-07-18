@@ -11,6 +11,7 @@ export interface CartItem {
 interface CartState {
   items: CartItem[];
   addItem: (product: Product, quantity: number) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   removeItem: (productId: string) => void;
   clearCart: () => void;
   getTotalItems: () => number;
@@ -46,6 +47,28 @@ export const useCartStore = create<CartState>()(
           }
           toast.success("Produk ditambahkan ke keranjang");
           return { items: [...state.items, { product, quantity }] };
+        }),
+      updateQuantity: (productId, quantity) =>
+        set((state) => {
+          if (quantity <= 0) {
+            return {
+              items: state.items.filter((item) => item.product.id !== productId),
+            };
+          }
+
+          const existingItem = state.items.find((item) => item.product.id === productId);
+          if (existingItem && quantity > existingItem.product.stock) {
+            toast.error("Maaf, jumlah pesanan melebihi sisa stok!");
+            return state;
+          }
+
+          return {
+            items: state.items.map((item) =>
+              item.product.id === productId
+                ? { ...item, quantity }
+                : item
+            ),
+          };
         }),
       removeItem: (productId) =>
         set((state) => ({
