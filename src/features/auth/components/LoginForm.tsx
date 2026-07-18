@@ -35,7 +35,7 @@ export function LoginForm() {
     try {
       const { user, role } = await loginWithEmail(data.email, data.password);
       setUser(user, role);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore');
+      navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
     } catch (err: any) {
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
         setError('Email atau password salah.');
@@ -53,7 +53,7 @@ export function LoginForm() {
     try {
       const { user, role } = await loginWithGoogle('consumer'); // Default to consumer on direct login, but gets actual role if exists
       setUser(user, role);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore');
+      navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {
         return;

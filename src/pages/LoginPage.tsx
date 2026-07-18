@@ -1,7 +1,22 @@
 import { LoginForm } from '@/features/auth';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAuthStore } from '@/hooks/useAuthStore';
 
 export function LoginPage() {
+  const { isAuthenticated, isLoading, role } = useAuthStore();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={role === 'merchant' ? '/dashboard' : '/explore'} replace />;
+  }
+
   return (
     <div className="min-h-screen bg-muted/50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md bg-card text-card-foreground shadow-sm rounded-xl p-6">
