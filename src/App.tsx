@@ -5,6 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '@/config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useAuthStore, type UserRole } from '@/hooks/useAuthStore';
+import { Toaster } from '@/components/ui/sonner';
 
 function App() {
   const { setUser } = useAuthStore();
@@ -28,7 +29,12 @@ function App() {
     return () => unsubscribe();
   }, [setUser]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Toaster />
+    </>
+  );
 }
 
 export default App;
