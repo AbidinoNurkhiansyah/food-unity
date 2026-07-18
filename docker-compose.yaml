@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  # Frontend React (Vite)
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules # Mencegah bentrok node_modules lokal dengan dalam container
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Membantu hot-reload di beberapa sistem operasi (opsional)
+
+  # Backend Express (Node.js) untuk Midtrans & Firebase Admin
+  backend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./backend/.env
+    environment:
+      - PORT=3001
+
+  # Service Ngrok yang otomatis terhubung ke Backend API (untuk Webhook)
+  ngrok:
+    image: ngrok/ngrok:latest
+    restart: unless-stopped
+    command:
+      - "http"
+      - "backend:3001" # Menembak ke backend untuk webhook Midtrans
+    env_file:
+      - ./backend/.env
+    ports:
+      - "4040:4040" # Dashboard Ngrok untuk melihat log
