@@ -8,6 +8,7 @@ import { DashboardLayout } from '@/features/dashboard/components/DashboardLayout
 import { MerchantDashboardPage } from '@/pages/dashboard/MerchantDashboardPage';
 import { ProductsPage } from '@/pages/dashboard/ProductsPage';
 import { ExplorePage } from '@/pages/consumer/ExplorePage';
+import { MyOrdersPage } from '@/pages/consumer/MyOrdersPage';
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute allowedRoles={['consumer']}>
         <ExplorePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/orders',
+    element: (
+      <ProtectedRoute allowedRoles={['consumer']}>
+        <MyOrdersPage />
       </ProtectedRoute>
     ),
   },
