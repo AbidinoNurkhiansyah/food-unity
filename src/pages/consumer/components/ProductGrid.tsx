@@ -73,11 +73,16 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    addItem(product, 1);
+                    if (product.stock > 0) addItem(product, 1);
                   }}
-                  className="text-sm font-semibold text-orange-500 hover:text-orange-600 px-4 py-2 bg-orange-50 rounded-lg transition-colors hover:bg-orange-100"
+                  disabled={product.stock <= 0}
+                  className={`text-sm font-semibold px-4 py-2 rounded-lg transition-colors ${
+                    product.stock <= 0
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "text-orange-500 hover:text-orange-600 bg-orange-50 hover:bg-orange-100"
+                  }`}
                 >
-                  + Keranjang
+                  {product.stock <= 0 ? "Habis" : "+ Keranjang"}
                 </button>
               </div>
             </div>

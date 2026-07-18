@@ -29,7 +29,10 @@ export class PaymentService {
 
     // 3. Create Order in Firestore WITH snapToken
     if (db) {
-      await db.collection('orders').doc(orderId).set({
+      const batch = db.batch();
+      const orderRef = db.collection('orders').doc(orderId);
+      
+      batch.set(orderRef, {
         orderId,
         items,
         total,
@@ -38,6 +41,18 @@ export class PaymentService {
         status: 'PENDING',
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
+
+      // Kurangi stok (Soft Reservation)
+      for (const item of items) {
+        if (item.id) {
+          const productRef = db.collection('products').doc(item.id);
+          batch.update(productRef, {
+            stock: admin.firestore.FieldValue.increment(-item.quantity)
+          });
+        }
+      }
+
+      await batch.commit();
     }
     
     return { token: snapToken, orderId };
@@ -84,11 +99,31 @@ export class PaymentService {
         console.warn("Midtrans cancel warning:", midtransError.message);
       }
 
-      // 2. Update status in Firestore
-      await db.collection('orders').doc(orderId).update({
+      // 2. Update status in Firestore dan kembalikan stok
+      const orderRef = db.collection('orders').doc(orderId);
+      const orderDoc = await orderRef.get();
+      
+      const batch = db.batch();
+      batch.update(orderRef, {
         status: 'FAILED',
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
+
+      if (orderDoc.exists) {
+        const orderData = orderDoc.data();
+        if (orderData.status !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
+          for (const item of orderData.items) {
+            if (item.id) {
+              const productRef = db.collection('products').doc(item.id);
+              batch.update(productRef, {
+                stock: admin.firestore.FieldValue.increment(item.quantity)
+              });
+            }
+          }
+        }
+      }
+
+      await batch.commit();
 
       return true;
     } catch (error) {
@@ -128,11 +163,34 @@ export class PaymentService {
 
     // Update status in Firestore
     if (db) {
-      await db.collection('orders').doc(orderId).update({
+      const orderRef = db.collection('orders').doc(orderId);
+      const batch = db.batch();
+      
+      batch.update(orderRef, {
         status: orderStatus,
         paymentDetails: statusResponse,
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
+
+      // Jika transaksi gagal/expire/batal, kembalikan stok
+      if (orderStatus === 'FAILED') {
+        const orderDoc = await orderRef.get();
+        if (orderDoc.exists) {
+          const orderData = orderDoc.data();
+          if (orderData.status !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
+            for (const item of orderData.items) {
+              if (item.id) {
+                const productRef = db.collection('products').doc(item.id);
+                batch.update(productRef, {
+                  stock: admin.firestore.FieldValue.increment(item.quantity)
+                });
+              }
+            }
+          }
+        }
+      }
+
+      await batch.commit();
     }
 
     return statusResponse;

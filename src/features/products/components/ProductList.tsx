@@ -109,10 +109,11 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
                 </TableCell>
                 <TableCell>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    product.stock <= 0 ? 'bg-slate-100 text-slate-700' :
                     product.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 
-                    product.status === 'sold' ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-700'
+                    product.status === 'sold_out' ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-700'
                   }`}>
-                    {product.status === 'active' ? 'Aktif' : product.status}
+                    {product.stock <= 0 ? 'Habis Terjual' : product.status === 'active' ? 'Aktif' : product.status}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
