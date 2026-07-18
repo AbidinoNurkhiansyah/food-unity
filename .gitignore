@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Backend Secrets
+backend/.env
+backend/serviceAccountKey.json
+.agents/
+.hallmark/
+commit.txt
+tambahan.md
