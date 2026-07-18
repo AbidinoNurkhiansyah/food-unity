@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,14 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useCartStore } from "@/hooks/useCartStore";
+import { useAuthStore } from "@/hooks/useAuthStore";
+
+// Extend Window interface for Midtrans Snap
+declare global {
+  interface Window {
+    snap: any;
+  }
+}
 
 interface CartModalProps {
   isOpen: boolean;
@@ -24,7 +32,77 @@ interface CartModalProps {
 }
 
 export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
-  const { items, removeItem, getTotalPrice } = useCartStore();
+  const { items, removeItem, getTotalPrice, clearCart } = useCartStore();
+  const { user } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleCheckout = async () => {
+    try {
+      setIsLoading(true);
+      
+      // Hit Backend API on port 3001
+      const response = await fetch("http://localhost:3001/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items: items.map(item => ({
+            id: item.product.id,
+            name: item.product.title,
+            price: item.product.isDonation ? 0 : item.product.discountPrice,
+            quantity: item.quantity
+          })),
+          total: getTotalPrice(),
+          customerDetails: {
+            first_name: user?.displayName || "Customer",
+            email: user?.email || "customer@foodunity.com",
+            phone: "08123456789" // TODO: Add phone to user profile if needed
+          }
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.token) {
+        // Tutup modal keranjang agar tidak menghalangi interaksi (focus trap) popup Midtrans
+        onClose(false);
+        setIsLoading(false);
+
+        // Run Midtrans Snap
+        window.snap.pay(data.token, {
+          onSuccess: function(result: any) {
+            console.log('Success:', result);
+            alert("Pembayaran Berhasil!");
+            clearCart();
+            onClose(false);
+          },
+          onPending: function(result: any) {
+            console.log('Pending:', result);
+            alert("Menunggu pembayaran...");
+            clearCart();
+            onClose(false);
+          },
+          onError: function(result: any) {
+            console.log('Error:', result);
+            alert("Pembayaran gagal!");
+            setIsLoading(false);
+          },
+          onClose: function() {
+            console.log('Customer closed the popup without finishing the payment');
+            setIsLoading(false);
+          }
+        });
+      } else {
+        alert("Gagal mendapatkan token transaksi.");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Checkout Error:", error);
+      alert("Terjadi kesalahan pada sistem.");
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -104,13 +182,11 @@ export const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               </span>
             </div>
             <button
-              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors"
-              onClick={() => {
-                alert("Fitur Checkout sedang dalam pengembangan!");
-                onClose(false);
-              }}
+              disabled={isLoading}
+              className="w-full bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-bold py-3 rounded-xl transition-colors flex items-center justify-center"
+              onClick={handleCheckout}
             >
-              Checkout Sekarang
+              {isLoading ? "Memproses..." : "Checkout Sekarang"}
             </button>
           </div>
         )}
