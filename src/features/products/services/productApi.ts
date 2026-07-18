@@ -71,6 +71,35 @@ export const productApi = {
     }
   },
 
+  getAllProducts: async (): Promise<Product[]> => {
+    try {
+      const q = query(
+        collection(db, PRODUCTS_COLLECTION),
+        where('status', '==', 'active')
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const products: Product[] = [];
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        products.push({
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+          updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString(),
+        } as Product);
+      });
+      
+      products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      return products;
+    } catch (error) {
+      console.error('Error fetching all products:', error);
+      throw error;
+    }
+  },
+
   updateProduct: async (
     productId: string,
     data: Partial<ProductFormValues>,

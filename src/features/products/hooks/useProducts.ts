@@ -26,6 +26,13 @@ export const useMerchantProducts = (merchantId: string | undefined) => {
   });
 };
 
+export const useAllProducts = () => {
+  return useQuery({
+    queryKey: ['products', 'all'],
+    queryFn: () => productApi.getAllProducts(),
+  });
+};
+
 export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
 
