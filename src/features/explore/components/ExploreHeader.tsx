@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "@/hooks/useAuthStore";
+import { useAuthStore } from "@/features/auth";
 import { logout } from "@/features/auth/services/authService";
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "@/features/cart";
 import { LogOut, ShoppingCart } from "lucide-react";
 import {
   AlertDialog,
