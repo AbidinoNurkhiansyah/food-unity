@@ -44,7 +44,7 @@ export class PaymentService {
 
       // Kurangi stok (Soft Reservation)
       for (const item of items) {
-        if (item.id) {
+        if (item.id && item.merchantId) { // Hindari item fee
           const productRef = db.collection('products').doc(item.id);
           batch.update(productRef, {
             stock: admin.firestore.FieldValue.increment(-item.quantity)
@@ -113,7 +113,7 @@ export class PaymentService {
         const orderData = orderDoc.data();
         if (orderData.status !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
           for (const item of orderData.items) {
-            if (item.id) {
+            if (item.id && item.merchantId) { // Hindari item fee
               const productRef = db.collection('products').doc(item.id);
               batch.update(productRef, {
                 stock: admin.firestore.FieldValue.increment(item.quantity)
@@ -164,6 +164,7 @@ export class PaymentService {
     // Update status in Firestore
     if (db) {
       const orderRef = db.collection('orders').doc(orderId);
+      const orderDoc = await orderRef.get();
       const batch = db.batch();
       
       batch.update(orderRef, {
@@ -172,20 +173,49 @@ export class PaymentService {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
-      // Jika transaksi gagal/expire/batal, kembalikan stok
-      if (orderStatus === 'FAILED') {
-        const orderDoc = await orderRef.get();
-        if (orderDoc.exists) {
-          const orderData = orderDoc.data();
-          if (orderData.status !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
-            for (const item of orderData.items) {
-              if (item.id) {
-                const productRef = db.collection('products').doc(item.id);
-                batch.update(productRef, {
-                  stock: admin.firestore.FieldValue.increment(item.quantity)
-                });
-              }
+      if (orderDoc.exists) {
+        const orderData = orderDoc.data();
+        const currentStatus = orderData.status;
+
+        // Jika transaksi gagal/expire/batal, kembalikan stok
+        if (orderStatus === 'FAILED' && currentStatus !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
+          for (const item of orderData.items) {
+            if (item.id && item.merchantId) { // Hindari item fee
+              const productRef = db.collection('products').doc(item.id);
+              batch.update(productRef, {
+                stock: admin.firestore.FieldValue.increment(item.quantity)
+              });
             }
+          }
+        }
+
+        // SPLIT PAYMENT LOGIC: Jika transaksi sukses/PAID, tambah saldo ke dompet merchant
+        if (orderStatus === 'PAID' && currentStatus !== 'PAID' && orderData.items && Array.isArray(orderData.items)) {
+          // Kelompokkan total pendapatan per merchant
+          const merchantEarnings = {};
+          for (const item of orderData.items) {
+            const mId = item.merchantId;
+            if (mId) {
+              if (!merchantEarnings[mId]) {
+                merchantEarnings[mId] = 0;
+              }
+              // Harga diskon (item.price) * quantity
+              merchantEarnings[mId] += (item.price * item.quantity);
+            }
+          }
+
+          // Tambahkan ke koleksi wallets
+          for (let [mId, earning] of Object.entries(merchantEarnings)) {
+            // Potongan platform fee sebesar Rp 500 per merchant per transaksi
+            let finalEarning = earning - 500;
+            if (finalEarning < 0) finalEarning = 0; // Hindari minus
+
+            const walletRef = db.collection('wallets').doc(mId);
+            batch.set(walletRef, {
+               merchantId: mId,
+               balance: admin.firestore.FieldValue.increment(finalEarning),
+               updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
           }
         }
       }
