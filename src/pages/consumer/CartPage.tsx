@@ -40,13 +40,23 @@ export const CartPage: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          items: items.map((item) => ({
-            id: item.product.id,
-            name: item.product.title,
-            price: item.product.isDonation ? 0 : item.product.discountPrice,
-            quantity: item.quantity,
-          })),
-          total: getTotalPrice(),
+          items: [
+            ...items.map((item) => ({
+              id: item.product.id,
+              name: item.product.title,
+              price: item.product.isDonation ? 0 : item.product.discountPrice,
+              quantity: item.quantity,
+              merchantId: item.product.merchantId,
+            })),
+            {
+              id: "FEE-01",
+              name: "Biaya Layanan",
+              price: 500,
+              quantity: 1,
+              merchantId: null
+            }
+          ],
+          total: getTotalPrice() + 500,
           customerDetails: {
             first_name: user?.displayName || "Customer",
             email: user?.email || "customer@foodunity.com",
@@ -85,7 +95,8 @@ export const CartPage: React.FC = () => {
           },
         });
       } else {
-        toast.error("Gagal mendapatkan token transaksi.");
+        console.error("Backend Error:", data);
+        toast.error(data.error || "Gagal mendapatkan token transaksi.");
         setIsLoading(false);
       }
     } catch (error) {
@@ -218,10 +229,14 @@ export const CartPage: React.FC = () => {
                   <span>Total Produk</span>
                   <span className="font-medium">{items.length} item</span>
                 </div>
-                <div className="flex justify-between text-gray-900 font-bold text-lg pt-4 border-t border-gray-100">
-                  <span>Total Harga</span>
+                <div className="flex justify-between text-gray-600 mt-2">
+                  <span>Biaya Layanan</span>
+                  <span className="font-medium">Rp 500</span>
+                </div>
+                <div className="flex justify-between text-gray-900 font-bold text-lg pt-4 border-t border-gray-100 mt-2">
+                  <span>Total Tagihan</span>
                   <span className="text-orange-500">
-                    Rp {getTotalPrice().toLocaleString("id-ID")}
+                    Rp {(getTotalPrice() + 500).toLocaleString("id-ID")}
                   </span>
                 </div>
               </div>
