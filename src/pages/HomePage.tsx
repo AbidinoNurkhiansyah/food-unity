@@ -1,5 +1,5 @@
 import { Link, Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/hooks/useAuthStore';
+import { useAuthStore } from '@/features/auth';
 
 export function HomePage() {
   const { isAuthenticated, isLoading, role } = useAuthStore();

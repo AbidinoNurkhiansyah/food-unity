@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { Product } from "@/features/products/types";
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "@/features/cart";
 
 interface ProductDetailModalProps {
   isOpen: boolean;

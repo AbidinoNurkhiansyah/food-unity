@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import { useAllProducts } from "@/features/products/hooks/useProducts";
 import type { Product } from "@/features/products/types";
-import { ExploreHeader } from "./components/ExploreHeader";
-import { ExploreSearch } from "./components/ExploreSearch";
-import { ProductGrid } from "./components/ProductGrid";
-import { ProductDetailModal } from "./components/ProductDetailModal";
+import { ExploreHeader, ExploreSearch, ProductGrid, ProductDetailModal } from "@/features/explore";
 
 export const ExplorePage: React.FC = () => {
   const { data: products, isLoading } = useAllProducts();

@@ -1,7 +1,7 @@
 import React from "react";
 import { MapPin } from "lucide-react";
 import type { Product } from "@/features/products/types";
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "@/features/cart";
 
 interface ProductGridProps {
   products: Product[] | undefined;

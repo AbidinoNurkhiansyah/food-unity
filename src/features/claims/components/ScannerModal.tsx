@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Scanner } from '@yudiel/react-qr-scanner';
+import { useScanner } from '../hooks/useScanner';
 import {
   Dialog,
   DialogContent,
@@ -15,36 +16,17 @@ interface ScannerModalProps {
   onScan: (orderId: string) => void;
 }
 
-type ScanMode = 'CAMERA' | 'MANUAL';
-
 export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onScan }) => {
-  const [mode, setMode] = useState<ScanMode>('CAMERA');
-  const [manualCode, setManualCode] = useState('');
-  const [error, setError] = useState<string | null>(null);
-
-  const handleScan = (data: string) => {
-    if (data) {
-      onScan(data);
-    }
-  };
-
-  const handleManualSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!manualCode.trim()) {
-      setError('Kode tidak boleh kosong');
-      return;
-    }
-    onScan(manualCode.trim());
-  };
-
-  // Reset state when opened/closed
-  React.useEffect(() => {
-    if (isOpen) {
-      setMode('CAMERA');
-      setManualCode('');
-      setError(null);
-    }
-  }, [isOpen]);
+  const {
+    mode,
+    setMode,
+    manualCode,
+    setManualCode,
+    error,
+    setError,
+    handleScan,
+    handleManualSubmit
+  } = useScanner(isOpen, onScan);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

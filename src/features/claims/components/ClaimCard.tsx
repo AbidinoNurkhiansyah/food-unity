@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { type Claim } from '../services/claimsApi';
+import { useClaimCard } from '../hooks/useClaimCard';
 import { formatCurrency } from '@/lib/utils';
 import { Clock, CheckCircle2, XCircle, CheckSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -21,36 +22,30 @@ interface ClaimCardProps {
   isCompleting?: boolean;
 }
 
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case "PENDING":
+      return <span className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md text-xs font-semibold border border-yellow-200"><Clock size={14} /> Menunggu Pembayaran</span>;
+    case "PAID":
+      return <span className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-1 rounded-md text-xs font-semibold border border-blue-200"><CheckCircle2 size={14} /> Siap Diambil</span>;
+    case "COMPLETED":
+      return <span className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-md text-xs font-semibold border border-green-200"><CheckSquare size={14} /> Selesai Diambil</span>;
+    case "FAILED":
+      return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Batal / Kedaluwarsa</span>;
+    default:
+      return <span className="flex items-center gap-1 text-gray-600 bg-gray-50 px-2 py-1 rounded-md text-xs font-semibold border border-gray-200">{status}</span>;
+  }
+};
+
 export const ClaimCard: React.FC<ClaimCardProps> = ({ claim, merchantId, onComplete, isCompleting = false }) => {
-  const [showConfirm, setShowConfirm] = useState(false);
-  
-  // Only show items that belong to this merchant
-  const merchantItems = claim.items.filter(item => item.merchantId === merchantId);
-  const merchantTotal = merchantItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return <span className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md text-xs font-semibold border border-yellow-200"><Clock size={14} /> Menunggu Pembayaran</span>;
-      case "PAID":
-        return <span className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-1 rounded-md text-xs font-semibold border border-blue-200"><CheckCircle2 size={14} /> Siap Diambil</span>;
-      case "COMPLETED":
-        return <span className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-md text-xs font-semibold border border-green-200"><CheckSquare size={14} /> Selesai Diambil</span>;
-      case "FAILED":
-        return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Batal / Kedaluwarsa</span>;
-      default:
-        return <span className="flex items-center gap-1 text-gray-600 bg-gray-50 px-2 py-1 rounded-md text-xs font-semibold border border-gray-200">{status}</span>;
-    }
-  };
-
-  const formattedDate = claim.createdAt?.toDate 
-    ? claim.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-    : 'Waktu tidak diketahui';
-
-  const handleConfirm = () => {
-    setShowConfirm(false);
-    onComplete(claim.orderId);
-  };
+  const {
+    showConfirm,
+    setShowConfirm,
+    merchantItems,
+    merchantTotal,
+    formattedDate,
+    handleConfirm
+  } = useClaimCard(claim, merchantId, onComplete);
 
   return (
     <>

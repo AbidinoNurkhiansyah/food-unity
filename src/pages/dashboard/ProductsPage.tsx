@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { Package, AlertCircle } from 'lucide-react';
-import { ProductList } from '@/features/products/components/ProductList';
-import { ProductModal } from '@/features/products';
-import { useDeleteProduct } from '@/features/products/hooks/useProducts';
-import type { Product } from '@/features/products/types';
+import { 
+  ProductList, 
+  ProductModal, 
+  useProductManagement 
+} from '@/features/products';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,27 +16,17 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export function ProductsPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
-  const deleteProduct = useDeleteProduct();
-
-  const handleCreate = () => {
-    setEditingProduct(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setIsModalOpen(true);
-  };
-
-  const handleDelete = async () => {
-    if (deletingProduct) {
-      await deleteProduct.mutateAsync(deletingProduct.id);
-      setDeletingProduct(null);
-    }
-  };
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    editingProduct,
+    deletingProduct,
+    setDeletingProduct,
+    isDeleting,
+    handleCreate,
+    handleEdit,
+    handleDelete
+  } = useProductManagement();
 
   return (
     <div className="max-w-6xl mx-auto font-sans-bento bg-slate-50 min-h-[calc(100vh-4rem)] p-4 md:p-8">
@@ -85,9 +75,9 @@ export function ProductsPage() {
                 handleDelete();
               }}
               className="bg-red-600 hover:bg-red-700"
-              disabled={deleteProduct.isPending}
+              disabled={isDeleting}
             >
-              {deleteProduct.isPending ? 'Menghapus...' : 'Ya, Hapus'}
+              {isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
