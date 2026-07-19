@@ -11,6 +11,7 @@ import { ExplorePage } from '@/pages/consumer/ExplorePage';
 import { MyOrdersPage } from '@/pages/consumer/MyOrdersPage';
 import { CartPage } from '@/pages/consumer/CartPage';
 import { WalletPage } from '@/pages/dashboard/WalletPage';
+import { ClaimsPage } from '@/pages/dashboard/ClaimsPage';
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ export const router = createBrowserRouter([
       {
         path: 'wallet',
         element: <WalletPage />
+      },
+      {
+        path: 'claims',
+        element: <ClaimsPage />
       }
     ]
   }
