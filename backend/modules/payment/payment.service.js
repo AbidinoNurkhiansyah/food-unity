@@ -32,12 +32,16 @@ export class PaymentService {
       const batch = db.batch();
       const orderRef = db.collection('orders').doc(orderId);
       
+      // Extract unique merchantIds from items
+      const merchantIds = [...new Set(items.map(item => item.merchantId).filter(Boolean))];
+
       batch.set(orderRef, {
         orderId,
         items,
         total,
         customerDetails,
         snapToken, // Simpan token agar bisa dibayar ulang
+        merchantIds, // Tambahkan merchantIds agar mudah diquery
         status: 'PENDING',
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
