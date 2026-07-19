@@ -1,1 +1,1 @@
-// Export dashboard feature components, hooks, services here
+export * from './components/MerchantBentoGrid';
