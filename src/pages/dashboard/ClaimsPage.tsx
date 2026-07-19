@@ -1,12 +1,10 @@
 import { 
   ClaimCard, 
-  ScannerModal, 
   ClaimsTabs, 
   ClaimsEmptyState, 
   useClaims 
 } from '@/features/claims';
-import { History, QrCode } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { History } from 'lucide-react';
 
 export function ClaimsPage() {
   const {
@@ -15,10 +13,7 @@ export function ClaimsPage() {
     activeTab,
     setActiveTab,
     completingId,
-    isScannerOpen,
-    setIsScannerOpen,
     handleCompleteClaim,
-    handleScanTicket,
     merchantId
   } = useClaims();
 
@@ -34,20 +29,7 @@ export function ClaimsPage() {
             Pantau daftar pesanan yang masuk dan validasi pengambilan makanan oleh konsumen.
           </p>
         </div>
-        <Button 
-          onClick={() => setIsScannerOpen(true)}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md flex items-center gap-2 h-12 px-6 rounded-xl"
-        >
-          <QrCode size={20} />
-          <span className="font-semibold text-base">Scan Tiket Pembeli</span>
-        </Button>
       </div>
-
-      <ScannerModal 
-        isOpen={isScannerOpen} 
-        onClose={() => setIsScannerOpen(false)} 
-        onScan={handleScanTicket} 
-      />
 
       {/* Tabs */}
       <ClaimsTabs activeTab={activeTab} setActiveTab={setActiveTab} />

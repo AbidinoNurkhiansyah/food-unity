@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Package, History, LogOut, Wallet } from 'lucide-react';
+import { LayoutDashboard, Package, History, LogOut, Wallet, QrCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -16,14 +16,23 @@ import {
 
 interface DashboardSidebarProps {
   onLogout: () => void;
+  onOpenScanner: () => void;
 }
 
-export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ onLogout }) => {
+type NavItem = {
+  name: string;
+  href?: string;
+  action?: 'scan';
+  icon: React.ElementType;
+};
+
+export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ onLogout, onOpenScanner }) => {
   const location = useLocation();
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { name: 'Ringkasan', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Kelola Stok', href: '/dashboard/products', icon: Package },
+    { name: 'Scan Tiket', action: 'scan', icon: QrCode },
     { name: 'Dompet', href: '/dashboard/wallet', icon: Wallet },
     { name: 'Riwayat Klaim', href: '/dashboard/claims', icon: History },
   ];
@@ -36,11 +45,24 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ onLogout }) 
       <nav className="flex-1 p-4 flex flex-col gap-2">
         {navItems.map((item) => {
           const Icon = item.icon;
+          if (item.action === 'scan') {
+            return (
+              <button 
+                key={item.name}
+                onClick={onOpenScanner}
+                className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-muted-foreground hover:bg-muted hover:text-foreground text-left"
+              >
+                <Icon className="w-5 h-5" />
+                {item.name}
+              </button>
+            );
+          }
+
           const isActive = location.pathname === item.href;
           return (
             <Link 
               key={item.name} 
-              to={item.href}
+              to={item.href!}
               className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
                 isActive 
                   ? 'bg-primary/10 text-primary font-medium' 
