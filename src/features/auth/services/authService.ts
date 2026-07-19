@@ -42,6 +42,8 @@ export const loginWithEmail = async (email: string, password: string) => {
 // Login/Register with Google
 export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
   const provider = new GoogleAuthProvider();
+  // Paksa Google untuk selalu memunculkan jendela "Pilih Akun" meskipun user sudah pernah login sebelumnya
+  provider.setCustomParameters({ prompt: 'select_account' });
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
 
