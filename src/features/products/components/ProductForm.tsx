@@ -1,11 +1,5 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ProductFormSchema } from '../types';
-import type { ProductFormValues, Product } from '../types';
-import { useCreateProduct, useUpdateProduct } from '../hooks/useProducts';
-import { uploadImageToCloudinary } from '../services/cloudinaryApi';
-import { useAuthStore } from '@/hooks/useAuthStore';
+import type { Product } from '../types';
+import { useProductForm } from '../hooks/useProductForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,77 +18,20 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
-  const { user } = useAuthStore();
-  const createProduct = useCreateProduct();
-  const updateProduct = useUpdateProduct();
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(initialData?.imageUrl || null);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-
   const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors, isSubmitting },
-  } = useForm<ProductFormValues>({
-    resolver: zodResolver(ProductFormSchema),
-    defaultValues: {
-      title: initialData?.title || '',
-      description: initialData?.description || '',
-      originalPrice: initialData?.originalPrice || 0,
-      discountPrice: initialData?.discountPrice || 0,
-      stock: initialData?.stock || 1,
-      pickupDeadline: initialData?.pickupDeadline || '',
-      isDonation: initialData?.isDonation || false,
-      status: initialData?.status || 'active',
-    },
-  });
+    form,
+    imagePreview,
+    uploadError,
+    isDonation,
+    isSubmitting,
+    onSubmit,
+    handleImageChange,
+  } = useProductForm(onSuccess, initialData);
 
-  const isDonation = watch('isDonation');
-
-  const onSubmit = async (data: ProductFormValues) => {
-    if (!user) return;
-    setUploadError(null);
-    
-    try {
-      let imageUrl = undefined;
-      
-      if (imageFile) {
-        imageUrl = await uploadImageToCloudinary(imageFile);
-      }
-
-      if (initialData) {
-        await updateProduct.mutateAsync({
-          productId: initialData.id,
-          data,
-          imageUrl,
-        });
-      } else {
-        await createProduct.mutateAsync({
-          data,
-          merchantId: user.uid,
-          merchantName: user.displayName || 'Mitra',
-          imageUrl,
-        });
-      }
-      onSuccess?.();
-    } catch (error) {
-      console.error('Failed to save product', error);
-      setUploadError(error instanceof Error ? error.message : 'Gagal mengunggah gambar atau menyimpan data');
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
+  const { register, setValue, formState: { errors } } = form;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Kolom Kiri */}
         <div className="space-y-4">
@@ -171,7 +108,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
                   defaultValue={initialData.status || 'active'}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Pilih status produk" />
+反                  <SelectValue placeholder="Pilih status produk" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="active">Aktif</SelectItem>
