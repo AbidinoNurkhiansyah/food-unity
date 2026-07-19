@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import { loginWithEmail, loginWithGoogle } from '../services/authService';
-import { useAuthStore } from '@/hooks/useAuthStore';
+import { useLogin } from '../hooks/useLogin';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,50 +18,12 @@ const loginSchema = z.object({
 type LoginValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
+  const { error, isLoading, handleEmailLogin, handleGoogleLogin } = useLogin();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
   });
-
-  const onSubmit = async (data: LoginValues) => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const { user, role } = await loginWithEmail(data.email, data.password);
-      setUser(user, role);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
-    } catch (err: any) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        setError('Email atau password salah.');
-      } else {
-        setError(err.message || 'Gagal login, periksa kembali email & password Anda.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const { user, role } = await loginWithGoogle('consumer'); // Default to consumer on direct login, but gets actual role if exists
-      setUser(user, role);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
-    } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user') {
-        return;
-      }
-      setError(err.message || 'Gagal login dengan Google.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <Card className="w-full">
@@ -73,7 +34,7 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleEmailLogin)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" placeholder="m@example.com" {...register('email')} />

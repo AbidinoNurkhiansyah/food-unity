@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
-import { registerWithEmail, loginWithGoogle } from '../services/authService';
-import { useAuthStore, type UserRole } from '@/hooks/useAuthStore';
+import { useRegister } from '../hooks/useRegister';
+import type { UserRole } from '@/features/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,50 +24,12 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ role }: RegisterFormProps) {
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
-  const setUser = useAuthStore((state) => state.setUser);
+  const { error, isLoading, handleEmailRegister, handleGoogleRegister } = useRegister(role);
 
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
   });
-
-  const onSubmit = async (data: RegisterValues) => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await registerWithEmail(data.email, data.password, data.name, role);
-      setUser(result.user, result.role);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore');
-    } catch (err: any) {
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Email ini sudah terdaftar. Silakan masuk (login) atau gunakan email lain.');
-      } else {
-        setError(err.message || 'Gagal mendaftar, silakan coba lagi.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGoogleRegister = async () => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await loginWithGoogle(role);
-      setUser(result.user, result.role);
-      navigate(result.role === 'merchant' ? '/dashboard' : '/explore');
-    } catch (err: any) {
-      if (err.code === 'auth/popup-closed-by-user') {
-        return;
-      }
-      setError(err.message || 'Gagal mendaftar dengan Google.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const isMerchant = role === 'merchant';
 
@@ -84,7 +46,7 @@ export function RegisterForm({ role }: RegisterFormProps) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleEmailRegister)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">{isMerchant ? 'Nama Toko' : 'Nama Lengkap'}</Label>
             <Input id="name" placeholder={isMerchant ? 'Budi Bakery' : 'John Doe'} {...register('name')} />

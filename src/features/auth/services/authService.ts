@@ -7,7 +7,7 @@ import {
   signInWithPopup 
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import type { UserRole } from '@/hooks/useAuthStore';
+import type { UserRole } from '@/features/auth';
 
 // Register with Email
 export const registerWithEmail = async (email: string, password: string, name: string, role: UserRole) => {

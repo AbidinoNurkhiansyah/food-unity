@@ -4,7 +4,7 @@ import { router } from '@/routes';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '@/config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { useAuthStore, type UserRole } from '@/hooks/useAuthStore';
+import { useAuthStore, type UserRole } from '@/features/auth';
 import { Toaster } from '@/components/ui/sonner';
 
 function App() {

@@ -1,6 +1,6 @@
 import { LoginForm } from '@/features/auth';
 import { Link, Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/hooks/useAuthStore';
+import { useAuthStore } from '@/features/auth';
 
 export function LoginPage() {
   const { isAuthenticated, isLoading, role } = useAuthStore();
