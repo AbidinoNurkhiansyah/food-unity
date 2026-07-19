@@ -4,6 +4,16 @@ import { walletApi } from "@/features/wallet/services/walletApi";
 import { Wallet, ArrowUpRight, History, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export function WalletPage() {
   const { user } = useAuthStore();
@@ -11,6 +21,7 @@ export function WalletPage() {
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
   useEffect(() => {
     if (user?.uid) {
@@ -31,9 +42,9 @@ export function WalletPage() {
     }
   };
 
-  const handleWithdraw = async (e: React.FormEvent) => {
+  const handleWithdrawClick = (e: React.FormEvent) => {
     e.preventDefault();
-    const amount = Number(amountToWithdraw.replace(/\D/g, "")); // Remove non-digits
+    const amount = Number(amountToWithdraw.replace(/\D/g, "")); 
 
     if (amount <= 0) {
       toast.error("Nominal penarikan tidak valid");
@@ -45,6 +56,13 @@ export function WalletPage() {
       return;
     }
 
+    setShowConfirm(true);
+  };
+
+  const processWithdrawal = async () => {
+    setShowConfirm(false);
+    const amount = Number(amountToWithdraw.replace(/\D/g, "")); 
+    
     try {
       setIsWithdrawing(true);
       if (!user?.uid) return;
@@ -126,7 +144,7 @@ export function WalletPage() {
             Proses pencairan dana memakan waktu 1x24 jam kerja.
           </p>
 
-          <form onSubmit={handleWithdraw} className="space-y-4">
+          <form onSubmit={handleWithdrawClick} className="space-y-4">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
                 <span className="text-slate-500 font-medium">Rp</span>
@@ -180,6 +198,24 @@ export function WalletPage() {
           <p className="text-slate-500">Belum ada riwayat penarikan dana.</p>
         </div>
       </div>
+
+      <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Penarikan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Anda akan menarik dana sebesar <b>Rp {Number(amountToWithdraw).toLocaleString("id-ID")}</b> ke rekening yang terdaftar.
+              Proses pencairan akan memakan waktu 1x24 jam kerja. Apakah Anda yakin ingin melanjutkan?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogAction onClick={processWithdrawal} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              Ya, Tarik Dana
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
