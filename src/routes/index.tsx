@@ -10,6 +10,7 @@ import { ProductsPage } from '@/pages/dashboard/ProductsPage';
 import { ExplorePage } from '@/pages/consumer/ExplorePage';
 import { MyOrdersPage } from '@/pages/consumer/MyOrdersPage';
 import { CartPage } from '@/pages/consumer/CartPage';
+import { WalletPage } from '@/pages/dashboard/WalletPage';
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
       {
         path: 'products',
         element: <ProductsPage />
+      },
+      {
+        path: 'wallet',
+        element: <WalletPage />
       }
     ]
   }

@@ -1,7 +1,7 @@
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/hooks/useAuthStore';
 import { logout } from '@/features/auth/services/authService';
-import { LayoutDashboard, Package, History, LogOut, Menu } from 'lucide-react';
+import { LayoutDashboard, Package, History, LogOut, Menu, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
 export function DashboardLayout() {
   const { clearAuth } = useAuthStore();
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ export function DashboardLayout() {
   const navItems = [
     { name: 'Ringkasan', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Kelola Stok', href: '/dashboard/products', icon: Package },
+    { name: 'Dompet', href: '/dashboard/wallet', icon: Wallet },
     { name: 'Riwayat Klaim', href: '/dashboard/claims', icon: History },
   ];
 

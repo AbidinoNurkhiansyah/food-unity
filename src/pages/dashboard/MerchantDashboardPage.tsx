@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ProductModal } from '@/features/products';
+import { Link } from 'react-router-dom';
+
 // Bento Grid Theme Styles (Modern Minimalist / Cobalt-inspired)
 const themeStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -117,18 +119,22 @@ export function MerchantDashboardPage() {
           </div>
 
           {/* Tile 3: Revenue (1x1) */}
-          <div 
-            className="md:col-span-1 md:row-span-1 bg-white rounded-3xl border border-slate-200/70 p-6 flex flex-col justify-between bento-enter shadow-sm hover:border-slate-300 transition-colors"
+          <Link 
+            to="/dashboard/wallet"
+            className="md:col-span-1 md:row-span-1 bg-white rounded-3xl border border-slate-200/70 p-6 flex flex-col justify-between bento-enter shadow-sm hover:border-slate-300 hover:shadow-md transition-all cursor-pointer group"
             style={{ animationDelay: '150ms' }}
           >
-            <div className="p-2 bg-slate-100 text-slate-600 rounded-lg w-fit">
-              <TrendingUp className="w-5 h-5" />
+            <div className="flex justify-between items-start">
+              <div className="p-2 bg-slate-100 text-slate-600 rounded-lg w-fit group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
             </div>
-            <div>
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Pendapatan</p>
-              <p className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">Rp 1.25M</p>
+            <div className="mt-4">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Dompet Aktif</p>
+              <p className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">Cek Saldo</p>
             </div>
-          </div>
+          </Link>
 
           {/* Tile 4: Sales Rate (1x1) */}
           <div 
