@@ -66,7 +66,7 @@ export function WalletPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={processWithdrawal} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <AlertDialogAction onClick={processWithdrawal} className="bg-palette-600 hover:bg-palette-700 text-white">
               Ya, Tarik Dana
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -75,3 +75,4 @@ export function WalletPage() {
     </div>
   );
 }
+
