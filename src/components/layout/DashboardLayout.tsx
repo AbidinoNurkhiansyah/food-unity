@@ -101,21 +101,21 @@ export function DashboardLayout() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {/* Topbar for mobile */}
-        <header className="h-14 bg-card border-b flex items-center justify-between px-4 md:hidden">
+        <header className="h-16 bg-background/80 backdrop-blur-md border-b border-primary/10 flex items-center justify-between px-4 md:hidden sticky top-0 z-40">
           <div className="flex items-center gap-2">
-            <h1 className="font-bold text-primary">Mitra FoodUnity</h1>
+            <h1 className="text-xl font-extrabold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">Mitra FoodUnity</h1>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
-                size="sm"
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                size="icon"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-full"
               >
                 <LogOut className="w-5 h-5" />
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent>
+            <AlertDialogContent className="w-[90vw] max-w-md rounded-2xl">
               <AlertDialogHeader>
                 <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -123,8 +123,8 @@ export function DashboardLayout() {
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleLogout}>
+                <AlertDialogCancel className="rounded-xl">Batal</AlertDialogCancel>
+                <AlertDialogAction onClick={handleLogout} className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground">
                   Ya, Keluar
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -138,18 +138,19 @@ export function DashboardLayout() {
         </div>
 
         {/* Bottom Navigation for Mobile */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t flex justify-around items-center h-16 pb-safe z-40 px-2 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-lg border-t border-primary/10 flex justify-around items-center h-16 pb-safe z-40 px-2 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
           {navItems.map((item) => {
             const Icon = item.icon;
             if (item.action === "scan") {
               return (
-                <div key={item.name} className="relative -top-5">
-                  <button
+                <div key={item.name} className="relative -top-6">
+                  <Button
+                    size="icon"
                     onClick={() => setIsScannerOpen(true)}
-                    className="flex items-center justify-center w-14 h-14 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg transition-transform active:scale-95"
+                    className="w-14 h-14 bg-gradient-to-tr from-palette-600 to-palette-400 hover:from-palette-700 hover:to-palette-500 text-white rounded-full shadow-lg shadow-palette-500/40 transition-all hover:scale-105 active:scale-95"
                   >
                     <Icon className="w-7 h-7" />
-                  </button>
+                  </Button>
                 </div>
               );
             }
@@ -159,16 +160,16 @@ export function DashboardLayout() {
               <Link
                 key={item.name}
                 to={item.href!}
-                className={`flex flex-col items-center justify-center w-16 gap-1 transition-colors ${
+                className={`flex flex-col items-center justify-center w-16 h-14 gap-1 rounded-2xl transition-all duration-300 ${
                   isActive
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-primary-700 bg-primary-50/80 shadow-sm shadow-primary/5"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 }`}
               >
                 <Icon
-                  className={`w-5 h-5 ${isActive ? "fill-primary/20" : ""}`}
+                  className={`w-5 h-5 ${isActive ? "fill-primary/20 stroke-primary-600" : ""}`}
                 />
-                <span className="text-[10px] font-medium">{item.name}</span>
+                <span className="text-[10px] font-semibold">{item.name}</span>
               </Link>
             );
           })}
@@ -177,3 +178,4 @@ export function DashboardLayout() {
     </div>
   );
 }
+
