@@ -83,12 +83,18 @@ export const productApi = {
       
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        products.push({
+        const product = {
           id: doc.id,
           ...data,
           createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
           updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString(),
-        } as Product);
+        } as Product;
+        
+        // Filter produk yang stoknya habis atau sudah lewat batas waktu (expired)
+        const now = new Date().toISOString();
+        if (product.stock > 0 && product.pickupDeadline > now) {
+          products.push(product);
+        }
       });
       
       products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

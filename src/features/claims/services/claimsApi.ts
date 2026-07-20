@@ -1,5 +1,5 @@
 import { db } from '@/config/firebase';
-import { collection, query, where, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface OrderItem {
   id: string;
@@ -47,6 +47,20 @@ export const claimsApi = {
       });
     } catch (error) {
       console.error("Error fetching merchant claims:", error);
+      throw error;
+    }
+  },
+
+  getClaimById: async (orderId: string): Promise<Claim | null> => {
+    try {
+      const docRef = doc(db, 'orders', orderId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return docSnap.data() as Claim;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching claim by id:", error);
       throw error;
     }
   },

@@ -21,7 +21,7 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
 }) => {
   return (
     <div className="bg-white rounded-3xl p-6 border border-slate-200/60 shadow-sm flex flex-col justify-center">
-      <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl w-fit mb-4">
+      <div className="p-3 bg-palette-50 text-palette-600 rounded-2xl w-fit mb-4">
         <CreditCard className="w-6 h-6" />
       </div>
       <h3 className="font-bold text-lg text-slate-900 mb-1">
@@ -45,7 +45,7 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
             }
             onChange={onAmountChange}
             placeholder="0"
-            className="w-full pl-12 pr-16 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-900 outline-none transition-all"
+            className="w-full pl-12 pr-16 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-palette-500 focus:border-palette-500 font-semibold text-slate-900 outline-none transition-all"
           />
           <button
             type="button"
@@ -61,7 +61,7 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
         <Button
           type="submit"
           disabled={isWithdrawing || !amountToWithdraw || isLoading}
-          className="w-full h-12 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+          className="w-full h-12 rounded-xl bg-palette-600 hover:bg-palette-700 text-white font-bold"
         >
           {isWithdrawing ? "Memproses..." : "Tarik Dana Sekarang"}
           {!isWithdrawing && <ArrowUpRight className="w-4 h-4 ml-2" />}
@@ -70,3 +70,4 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
     </div>
   );
 };
+

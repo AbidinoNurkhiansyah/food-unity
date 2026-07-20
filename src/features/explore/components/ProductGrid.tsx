@@ -20,7 +20,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {isLoading ? (
         <div className="col-span-full text-center py-12 text-gray-500">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto mb-4"></div>
           Memuat produk...
         </div>
       ) : products && products.length > 0 ? (
@@ -40,13 +40,13 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               {product.isDonation ? (
-                <div className="absolute top-3 right-3 bg-green-500/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm">
+                <div className="absolute top-3 right-3 bg-palette-500/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm">
                   <span className="text-xs font-bold text-white">
                     Gratis (Donasi)
                   </span>
                 </div>
               ) : (
-                <div className="absolute top-3 right-3 bg-orange-500/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm">
+                <div className="absolute top-3 right-3 bg-primary-500/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-sm">
                   <span className="text-xs font-bold text-white">
                     Rp {product.discountPrice.toLocaleString("id-ID")}
                   </span>
@@ -54,7 +54,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               )}
             </div>
             <div className="p-4 flex flex-col flex-grow">
-              <h3 className="font-bold text-lg text-gray-900 mb-1 line-clamp-1 group-hover:text-orange-500 transition-colors">
+              <h3 className="font-bold text-lg text-gray-900 mb-1 line-clamp-1 group-hover:text-primary-500 transition-colors">
                 {product.title}
               </h3>
               <p className="text-sm text-gray-500 mb-3 line-clamp-2 flex-grow">
@@ -79,7 +79,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                   className={`text-sm font-semibold px-4 py-2 rounded-lg transition-colors ${
                     product.stock <= 0
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "text-orange-500 hover:text-orange-600 bg-orange-50 hover:bg-orange-100"
+                      : "text-primary-500 hover:text-primary-600 bg-primary-50 hover:bg-primary-100"
                   }`}
                 >
                   {product.stock <= 0 ? "Habis" : "+ Keranjang"}
@@ -96,3 +96,4 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     </div>
   );
 };
+

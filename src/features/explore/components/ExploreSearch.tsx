@@ -19,12 +19,12 @@ export const ExploreSearch: React.FC = () => {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all shadow-sm"
+              className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all shadow-sm"
               placeholder="Cari makanan, restoran, atau kategori..."
             />
           </div>
           <button className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors shadow-sm font-medium">
-            <MapPin size={18} className="text-orange-500" />
+            <MapPin size={18} className="text-primary-500" />
             Lokasi Saat Ini
           </button>
         </div>
@@ -49,3 +49,4 @@ export const ExploreSearch: React.FC = () => {
     </>
   );
 };
+

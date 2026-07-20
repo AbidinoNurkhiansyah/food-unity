@@ -27,7 +27,7 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
     <>
       <header className="mb-10 text-center bento-enter" style={{ animationDelay: '0ms' }}>
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-white shadow-sm border border-slate-200/60 text-slate-600 rounded-full text-xs font-medium mb-4">
-          <Leaf className="w-3.5 h-3.5 text-emerald-600" />
+          <Leaf className="w-3.5 h-3.5 text-palette-600" />
           Pahlawan Zero Hunger
         </div>
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
@@ -44,14 +44,14 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold tracking-tight text-slate-900">Menunggu Diambil</h2>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 font-semibold text-sm">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-palette-100 text-palette-700 font-semibold text-sm">
               1
             </span>
           </div>
           
           <div className="flex-1 overflow-y-auto pr-2 space-y-3">
-            <div className="group flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-emerald-200 hover:bg-emerald-50/50 transition-colors cursor-pointer">
-              <div className="p-3 bg-white text-slate-400 rounded-xl shadow-sm group-hover:text-emerald-600">
+            <div className="group flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-palette-200 hover:bg-palette-50/50 transition-colors cursor-pointer">
+              <div className="p-3 bg-white text-slate-400 rounded-xl shadow-sm group-hover:text-palette-600">
                 <Package className="w-6 h-6" />
               </div>
               <div className="flex-1 pt-1">
@@ -73,21 +73,21 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
 
         {/* Tile 2: Big Impact Stat (2x1) */}
         <div 
-          className="md:col-span-2 md:row-span-1 bg-emerald-900 text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden bento-enter shadow-md"
+          className="md:col-span-2 md:row-span-1 bg-palette-900 text-white rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden bento-enter shadow-md"
           style={{ animationDelay: '100ms' }}
         >
-          <div className="absolute right-0 top-0 w-48 h-48 bg-emerald-800 rounded-full blur-3xl opacity-50 translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute right-0 top-0 w-48 h-48 bg-palette-800 rounded-full blur-3xl opacity-50 translate-x-1/2 -translate-y-1/2"></div>
           
-          <div className="flex items-center gap-2 text-emerald-200/80 mb-2 font-medium text-sm">
+          <div className="flex items-center gap-2 text-palette-200/80 mb-2 font-medium text-sm">
             <CheckCircle className="w-4 h-4" /> Makanan Diselamatkan
           </div>
           <div className="flex items-baseline gap-2 z-10">
             <span className="text-5xl md:text-6xl font-bold tracking-tighter tabular-nums">
               {mounted ? '45' : '0'}
             </span>
-            <span className="text-2xl text-emerald-400/80 font-medium">kg</span>
+            <span className="text-2xl text-palette-400/80 font-medium">kg</span>
           </div>
-          <p className="text-sm text-emerald-100/70 mt-2 z-10">Bulan ini. Mencegah emisi 112 kg CO₂.</p>
+          <p className="text-sm text-palette-100/70 mt-2 z-10">Bulan ini. Mencegah emisi 112 kg CO₂.</p>
         </div>
 
         {/* Tile 3: Revenue (1x1) */}
@@ -97,10 +97,10 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
           style={{ animationDelay: '150ms' }}
         >
           <div className="flex justify-between items-start">
-            <div className="p-2 bg-slate-100 text-slate-600 rounded-lg w-fit group-hover:bg-emerald-50 group-hover:text-emerald-600 transition-colors">
+            <div className="p-2 bg-slate-100 text-slate-600 rounded-lg w-fit group-hover:bg-palette-50 group-hover:text-palette-600 transition-colors">
               <TrendingUp className="w-5 h-5" />
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+            <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-palette-500 transition-colors" />
           </div>
           <div className="mt-4">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-1">Dompet Aktif</p>
@@ -164,10 +164,10 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
         {/* Tile 6: Quick Action 1 - Create Surplus (1x1) */}
         <div 
           onClick={() => setIsCreateModalOpen(true)}
-          className="md:col-span-1 md:row-span-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bento-enter shadow-sm active:scale-95 group"
+          className="md:col-span-1 md:row-span-1 bg-palette-600 hover:bg-palette-700 text-white rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bento-enter shadow-sm active:scale-95 group"
           style={{ animationDelay: '300ms' }}
         >
-          <div className="p-4 bg-emerald-500/50 rounded-2xl mb-3 group-hover:scale-110 transition-transform">
+          <div className="p-4 bg-palette-500/50 rounded-2xl mb-3 group-hover:scale-110 transition-transform">
             <Plus className="w-8 h-8" />
           </div>
           <p className="font-bold tracking-tight text-sm">Buat Paket<br/>Surplus Baru</p>
@@ -203,3 +203,4 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
     </>
   );
 };
+

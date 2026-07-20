@@ -18,7 +18,7 @@ export const CartPage: React.FC = () => {
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-orange-500" />
+            <ShoppingBag className="w-5 h-5 text-primary-500" />
             Keranjang Pesanan
           </h1>
         </div>
@@ -44,3 +44,4 @@ export const CartPage: React.FC = () => {
     </div>
   );
 };
+
