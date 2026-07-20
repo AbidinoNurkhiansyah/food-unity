@@ -46,7 +46,7 @@ export const MyOrdersPage: React.FC = () => {
             <ChevronRight className="rotate-180 text-gray-500" />
           </button>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Package className="text-orange-500" />
+            <Package className="text-primary-500" />
             Pesanan Saya
           </h1>
         </div>
@@ -92,3 +92,4 @@ export const MyOrdersPage: React.FC = () => {
     </div>
   );
 };
+

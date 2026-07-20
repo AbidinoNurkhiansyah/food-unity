@@ -33,7 +33,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
       case "PENDING":
         return <span className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md text-xs font-semibold border border-yellow-200"><Clock size={14} /> Belum Dibayar</span>;
       case "PAID":
-        return <span className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-md text-xs font-semibold border border-green-200"><CheckCircle2 size={14} /> Lunas</span>;
+        return <span className="flex items-center gap-1 text-palette-600 bg-palette-50 px-2 py-1 rounded-md text-xs font-semibold border border-palette-200"><CheckCircle2 size={14} /> Lunas</span>;
       case "FAILED":
         return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Gagal/Batal</span>;
       default:
@@ -77,7 +77,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
           <div className="pt-4 border-t border-gray-100 flex flex-wrap justify-between items-center gap-4">
             <div>
               <p className="text-xs text-gray-500">Total Pembayaran</p>
-              <p className="text-lg font-bold text-orange-600">{formatCurrency(order.total)}</p>
+              <p className="text-lg font-bold text-primary-600">{formatCurrency(order.total)}</p>
             </div>
 
             {order.status === "PENDING" && (
@@ -91,7 +91,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
                 <button
                   onClick={() => onPayNow(order.snapToken)}
                   disabled={!order.snapToken}
-                  className="px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50"
+                  className="px-6 py-2 bg-gradient-to-r from-primary-500 to-red-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50"
                 >
                   {order.snapToken ? "Bayar Sekarang" : "Token Kedaluwarsa"}
                 </button>
@@ -102,7 +102,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowQR(true)}
-                  className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all"
+                  className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-palette-500 to-teal-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all"
                 >
                   <QrCode size={18} />
                   Tiket Pengambilan
@@ -127,7 +127,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-1">Kode Unik / Order ID</p>
-              <p className="text-2xl font-mono font-bold tracking-widest text-emerald-600">{shortCode}</p>
+              <p className="text-2xl font-mono font-bold tracking-widest text-palette-600">{shortCode}</p>
             </div>
           </div>
         </DialogContent>
@@ -135,3 +135,4 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
     </>
   );
 };
+
