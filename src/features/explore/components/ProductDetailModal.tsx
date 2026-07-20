@@ -49,7 +49,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="bg-gray-50 p-3 rounded-lg">
                 <span className="text-gray-500 block mb-1">Harga</span>
-                <span className="font-bold text-lg text-orange-500">
+                <span className="font-bold text-lg text-primary-500">
                   {product.isDonation
                     ? "Gratis"
                     : `Rp ${product.discountPrice.toLocaleString("id-ID")}`}
@@ -84,7 +84,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   addItem(product, 1);
                   onClose(false);
                 }}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors"
+                className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-3 rounded-xl transition-colors"
               >
                 Masukkan Keranjang
               </button>
@@ -95,3 +95,4 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     </Dialog>
   );
 };
+
