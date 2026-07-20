@@ -1,14 +1,15 @@
 import express from 'express';
 import { PaymentController } from './payment.controller.js';
+import { verifyToken } from '../auth/auth.middleware.js';
 
 const router = express.Router();
 
 // Checkout API
-router.post('/api/checkout', PaymentController.checkout);
+router.post('/api/checkout', verifyToken, PaymentController.checkout);
 
 // Orders API
-router.get('/api/orders', PaymentController.getOrders);
-router.post('/api/orders/:orderId/cancel', PaymentController.cancelOrder);
+router.get('/api/orders', verifyToken, PaymentController.getOrders);
+router.post('/api/orders/:orderId/cancel', verifyToken, PaymentController.cancelOrder);
 
 // Webhook & Notification APIs
 router.post('/api/midtrans-callback', PaymentController.handleWebhook);
