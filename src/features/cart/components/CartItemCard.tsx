@@ -38,7 +38,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
             {item.product.title}
           </h4>
           <p className="text-sm text-gray-500 mt-1">{item.product.merchantName}</p>
-          <div className="font-bold text-orange-500 mt-2">
+          <div className="font-bold text-primary-500 mt-2">
             {item.product.isDonation
               ? "Gratis"
               : `Rp ${(item.product.discountPrice * item.quantity).toLocaleString("id-ID")}`}
@@ -95,3 +95,4 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
     </div>
   );
 };
+

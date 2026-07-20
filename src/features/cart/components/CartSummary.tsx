@@ -27,7 +27,7 @@ export const CartSummary: React.FC = () => {
           </div>
           <div className="flex justify-between text-gray-900 font-bold text-lg pt-4 border-t border-gray-100 mt-2">
             <span>Total Tagihan</span>
-            <span className="text-orange-500">
+            <span className="text-primary-500">
               Rp {(getTotalPrice() + 500).toLocaleString("id-ID")}
             </span>
           </div>
@@ -36,7 +36,7 @@ export const CartSummary: React.FC = () => {
         <Button
           disabled={isLoading}
           onClick={handleCheckout}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold h-12 rounded-xl"
+          className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold h-12 rounded-xl"
         >
           {isLoading ? (
             <div className="flex items-center justify-center gap-2">
@@ -51,3 +51,4 @@ export const CartSummary: React.FC = () => {
     </div>
   );
 };
+
