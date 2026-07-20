@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Loader2 } from "lucide-react";
 import appLogo from "@/assets/logo.svg";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent } from "@/components/ui/card";
-import { useLoginForm } from "../hooks/useLoginForm";
+import { useRegisterForm } from "../hooks/useRegisterForm";
+import type { UserRole } from "@/features/auth";
 
-export function LoginPanel() {
+export function RegisterPanel({ role }: { role: UserRole }) {
   const {
     form: {
       register,
@@ -19,38 +20,63 @@ export function LoginPanel() {
     setShowPassword,
     error,
     isLoading,
-    handleEmailLogin,
-    handleGoogleLogin,
-  } = useLoginForm();
+    handleEmailRegister,
+    handleGoogleRegister,
+  } = useRegisterForm(role);
+
+  const isMerchant = role === 'merchant';
 
   return (
-    <div className="p-8 md:p-12 flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden bg-white relative">
-      {/* Soft background blur for the form side */}
+    <div className="p-6 md:p-8 flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden bg-white relative">
       <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary-100 rounded-full opacity-50 pointer-events-none"></div>
 
       <motion.div 
-        initial={{ opacity: 0, x: 30 }}
+        initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="w-full max-w-sm z-10 mx-auto"
       >
-        {/* Header & Mobile Logo */}
-        <div className="text-center md:text-left mb-8">
+        <div className="text-center md:text-left mb-6">
           <img
             src={appLogo}
             alt="FoodUnity Logo"
-            className="md:hidden h-16 object-contain mx-auto mb-6"
+            className="md:hidden h-16 object-contain mx-auto mb-4"
           />
           <h3 className="font-bold text-3xl mb-2 text-gray-900 tracking-tight">
-            Welcome Back
+            Register as {isMerchant ? 'Merchant' : 'Consumer'}
           </h3>
           <p className="text-sm text-gray-500 font-medium">
-            Enter your account to login
+            {isMerchant 
+              ? 'Join us to save surplus food from your store.' 
+              : 'Join now to discover delicious, affordable food.'}
           </p>
         </div>
 
         <CardContent className="p-0">
-          <form onSubmit={handleSubmit(handleEmailLogin)} className="space-y-5">
+          <form onSubmit={handleSubmit(handleEmailRegister)} className="space-y-4">
+            <div className="space-y-1">
+              <Label htmlFor="name" className="text-xs font-bold text-gray-700">
+                {isMerchant ? 'Store Name' : 'Full Name'}
+              </Label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                  <User className="h-4 w-4 text-gray-400" />
+                </div>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder={isMerchant ? "enter your store name" : "enter your full name"}
+                  className="pl-10 h-10 rounded-xl border-gray-200 bg-gray-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all text-gray-900 placeholder:text-gray-400"
+                  {...register("name")}
+                />
+              </div>
+              {errors.name && (
+                <p className="text-xs text-red-500 font-medium pl-1 mt-0.5">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
             <div className="space-y-1">
               <Label htmlFor="email" className="text-xs font-bold text-gray-700">
                 Email
@@ -74,18 +100,10 @@ export function LoginPanel() {
               )}
             </div>
 
-            <div className="space-y-1 relative">
-              <div className="flex items-center justify-between mb-1">
-                <Label htmlFor="password" className="text-xs font-bold text-gray-700">
-                  Password
-                </Label>
-                <Link
-                  to="/forgot-password"
-                  className="text-[11px] font-semibold text-primary-500 hover:text-primary-700 transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
+            <div className="space-y-1">
+              <Label htmlFor="password" className="text-xs font-bold text-gray-700 mb-1 block">
+                Password
+              </Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Lock className="h-4 w-4 text-gray-400" />
@@ -132,7 +150,7 @@ export function LoginPanel() {
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  <>Login</>
+                  <>Register</>
                 )}
               </Button>
             </div>
@@ -150,7 +168,7 @@ export function LoginPanel() {
             type="button"
             variant="outline"
             className="w-full h-10 cursor-pointer rounded-xl border border-gray-200 hover:bg-gray-50 hover:text-gray-900 font-bold text-gray-700 text-sm transition-all flex items-center justify-center gap-2.5 shadow-sm"
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleRegister}
             disabled={isLoading}
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -174,17 +192,17 @@ export function LoginPanel() {
             Google
           </Button>
 
-          <div className="text-center mt-8 text-sm text-gray-600 font-medium">
-            Don't have an account?{" "}
+          <div className="text-center mt-6 text-sm text-gray-600 font-medium">
+            Already have an account?{" "}
             <Link
-              to="/register/consumer"
+              to="/login"
               className="text-primary-500 hover:text-primary-600 font-bold transition-colors"
             >
-              Register
+              Login
             </Link>
           </div>
 
-          <div className="text-center mt-8 text-[11px] text-gray-400 font-medium">
+          <div className="text-center mt-6 text-[11px] text-gray-400 font-medium">
             &copy; {new Date().getFullYear()} FoodUnity. All rights reserved.
           </div>
         </CardContent>
