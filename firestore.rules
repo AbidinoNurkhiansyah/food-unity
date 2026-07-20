@@ -1,18 +1,41 @@
-rules_version='2'
+rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Function to check if user is logged in
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Function to check if the user is a merchant
+    function isMerchant() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'merchant';
+    }
+
+    // 1. Users collection: Only the owner can read/write their own profile
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // 2. Products collection: Public read (for landing page), but only merchants can write
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if isMerchant();
+    }
+    
+    // 3. Orders collection: 
+    // - Customers can create their own orders and read their own orders.
+    // - Merchants can read and update all orders.
+    match /orders/{orderId} {
+      allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || isMerchant());
+      allow read, update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isMerchant());
+    }
+
+    // Fallback: Default deny for anything else
     match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2026, 8, 16);
+      allow read, write: if false;
     }
   }
 }
