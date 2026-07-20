@@ -87,12 +87,12 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
                   setError(null);
                 }}
                 placeholder="Contoh: ORDER-1234567..."
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-palette-500 focus:border-palette-500 outline-none transition-all"
                 autoFocus
               />
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
             </div>
-            <Button type="submit" className="w-full h-12 bg-emerald-600 hover:bg-emerald-700">
+            <Button type="submit" className="w-full h-12 bg-palette-600 hover:bg-palette-700">
               Validasi Kode
             </Button>
           </form>
@@ -101,3 +101,4 @@ export const ScannerModal: React.FC<ScannerModalProps> = ({ isOpen, onClose, onS
     </Dialog>
   );
 };
+

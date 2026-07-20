@@ -29,7 +29,7 @@ const getStatusBadge = (status: string) => {
     case "PAID":
       return <span className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-1 rounded-md text-xs font-semibold border border-blue-200"><CheckCircle2 size={14} /> Siap Diambil</span>;
     case "COMPLETED":
-      return <span className="flex items-center gap-1 text-green-600 bg-green-50 px-2 py-1 rounded-md text-xs font-semibold border border-green-200"><CheckSquare size={14} /> Selesai Diambil</span>;
+      return <span className="flex items-center gap-1 text-palette-600 bg-palette-50 px-2 py-1 rounded-md text-xs font-semibold border border-palette-200"><CheckSquare size={14} /> Selesai Diambil</span>;
     case "FAILED":
       return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Batal / Kedaluwarsa</span>;
     default:
@@ -71,7 +71,7 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim, merchantId, onCompl
             {merchantItems.map((item, idx) => (
               <div key={idx} className="flex justify-between items-center text-sm">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 bg-orange-100 text-orange-600 rounded-md flex items-center justify-center font-bold text-xs">
+                  <div className="h-8 w-8 bg-primary-100 text-primary-600 rounded-md flex items-center justify-center font-bold text-xs">
                     {item.quantity}x
                   </div>
                   <span className="font-medium text-gray-700">{item.name}</span>
@@ -84,14 +84,14 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim, merchantId, onCompl
           <div className="pt-4 mt-4 border-t border-gray-100 flex flex-wrap justify-between items-center gap-4">
             <div>
               <p className="text-xs text-gray-500 mb-1">Total Pendapatan (dari pesanan ini)</p>
-              <p className="text-lg font-bold text-emerald-600">{formatCurrency(merchantTotal)}</p>
+              <p className="text-lg font-bold text-palette-600">{formatCurrency(merchantTotal)}</p>
             </div>
 
             {claim.status === "PAID" && (
               <Button 
                 onClick={() => setShowConfirm(true)}
                 disabled={isCompleting}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm"
+                className="bg-palette-600 hover:bg-palette-700 text-white font-semibold shadow-sm"
               >
                 {isCompleting ? "Memproses..." : "Validasi Manual"}
               </Button>
@@ -111,7 +111,7 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim, merchantId, onCompl
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirm} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <AlertDialogAction onClick={handleConfirm} className="bg-palette-600 hover:bg-palette-700 text-white">
               Ya, Selesaikan Pesanan
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -120,3 +120,4 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({ claim, merchantId, onCompl
     </>
   );
 };
+

@@ -22,7 +22,7 @@ export function ClaimsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-            <History className="text-orange-500 w-8 h-8" />
+            <History className="text-primary-500 w-8 h-8" />
             Riwayat Klaim
           </h1>
           <p className="text-slate-500 mt-2">
@@ -38,7 +38,7 @@ export function ClaimsPage() {
       <div className="space-y-4">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-orange-500"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500"></div>
           </div>
         ) : claims.length === 0 ? (
           <ClaimsEmptyState activeTab={activeTab} />
@@ -57,3 +57,4 @@ export function ClaimsPage() {
     </div>
   );
 }
+
