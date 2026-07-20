@@ -44,7 +44,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
         </div>
       </TableCell>
       <TableCell>
-        <span className={`px-2 py-1 text-xs font-bold rounded-md ${product.isDonation ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
+        <span className={`px-2 py-1 text-xs font-bold rounded-md ${product.isDonation ? 'bg-palette-100 text-palette-700' : 'bg-amber-100 text-amber-700'}`}>
           {product.isDonation ? 'DONASI' : 'DISKON'}
         </span>
       </TableCell>
@@ -57,7 +57,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
       <TableCell>
         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
           product.stock <= 0 ? 'bg-slate-100 text-slate-700' :
-          product.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 
+          product.status === 'active' ? 'bg-palette-100 text-palette-700' : 
           product.status === 'sold_out' ? 'bg-slate-100 text-slate-700' : 'bg-red-100 text-red-700'
         }`}>
           {product.stock <= 0 ? 'Habis Terjual' : product.status === 'active' ? 'Aktif' : product.status}
@@ -69,7 +69,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
             Rp {product.originalPrice.toLocaleString('id-ID')}
           </div>
         )}
-        <div className="font-bold text-emerald-600">
+        <div className="font-bold text-palette-600">
           {product.isDonation ? 'Gratis' : `Rp ${product.discountPrice.toLocaleString('id-ID')}`}
         </div>
       </TableCell>
@@ -86,3 +86,4 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
     </TableRow>
   );
 };
+

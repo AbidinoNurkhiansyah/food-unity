@@ -33,7 +33,7 @@ export function ProductsPage() {
       
       <header className="mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-white shadow-sm border border-slate-200/60 text-slate-600 rounded-full text-xs font-medium mb-4">
-          <Package className="w-3.5 h-3.5 text-emerald-600" />
+          <Package className="w-3.5 h-3.5 text-palette-600" />
           Manajemen Stok
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
@@ -85,3 +85,4 @@ export function ProductsPage() {
     </div>
   );
 }
+
