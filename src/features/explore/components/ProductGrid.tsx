@@ -2,19 +2,23 @@ import React from "react";
 import { MapPin } from "lucide-react";
 import type { Product } from "@/features/products/types";
 import { useCartStore } from "@/features/cart";
+import { useAuthStore } from "@/features/auth";
 
 interface ProductGridProps {
   products: Product[] | undefined;
   isLoading: boolean;
   onSelectProduct: (product: Product) => void;
+  onRequireAuth: () => void;
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({
   products,
   isLoading,
   onSelectProduct,
+  onRequireAuth,
 }) => {
   const { addItem } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -73,6 +77,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    if (!isAuthenticated) {
+                      onRequireAuth();
+                      return;
+                    }
                     if (product.stock > 0) addItem(product, 1);
                   }}
                   disabled={product.stock <= 0}
