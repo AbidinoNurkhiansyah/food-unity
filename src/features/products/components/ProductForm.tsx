@@ -161,7 +161,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
               <Label htmlFor="pickupDeadline">Batas Waktu Ambil</Label>
               <Input 
                 id="pickupDeadline" 
-                type="time" 
+                type="datetime-local" 
                 {...register('pickupDeadline')} 
               />
               {errors.pickupDeadline && <p className="text-sm text-red-500">{errors.pickupDeadline.message}</p>}

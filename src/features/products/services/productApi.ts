@@ -91,8 +91,16 @@ export const productApi = {
         } as Product;
         
         // Filter produk yang stoknya habis atau sudah lewat batas waktu (expired)
-        const now = new Date().toISOString();
-        if (product.stock > 0 && product.pickupDeadline > now) {
+        const nowTime = new Date().getTime();
+        let isExpired = false;
+        if (product.pickupDeadline) {
+          const deadlineTime = new Date(product.pickupDeadline).getTime();
+          if (deadlineTime <= nowTime) {
+            isExpired = true;
+          }
+        }
+        
+        if (product.stock > 0 && !isExpired) {
           products.push(product);
         }
       });
