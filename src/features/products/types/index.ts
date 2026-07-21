@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const ProductFormSchema = z.object({
   title: z.string().min(3, 'Nama paket minimal 3 karakter').max(100),
+  category: z.string().min(1, 'Kategori wajib dipilih'),
   description: z.string().min(10, 'Deskripsi minimal 10 karakter'),
   originalPrice: z.number().min(0, 'Harga tidak boleh negatif'),
   discountPrice: z.number().min(0, 'Harga diskon tidak boleh negatif'),
@@ -18,6 +19,7 @@ export interface Product {
   merchantId: string;
   merchantName: string;
   title: string;
+  category: string;
   description: string;
   imageUrl?: string;
   originalPrice: number;
