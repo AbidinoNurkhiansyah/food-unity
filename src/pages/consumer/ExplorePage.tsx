@@ -35,7 +35,7 @@ export const ExplorePage: React.FC = () => {
       <TopBar />
       <ExploreHeader />
 
-      <main className="px-4 sm:px-6 lg:px-[130px] py-8">
+      <main className="px-4 sm:px-6 lg:px-[130px] py-6">
         <ExploreSearch />
 
         <ProductGrid

@@ -31,7 +31,7 @@ export const ExploreHeader: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white">
       <div className="px-4 sm:px-6 lg:px-[130px]">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export const ExploreHeader: React.FC = () => {
 
                 <button
                   onClick={() => (window.location.href = "/orders")}
-                  className="p-2 text-gray-400 hover:text-primary-500 transition-colors"
+                  className="p-2 text-gray-400 hover:text-primary-500 transition-colors cursor-pointer"
                   title="Pesanan Saya"
                 >
                   <svg
@@ -88,7 +88,7 @@ export const ExploreHeader: React.FC = () => {
 
                 <button
                   onClick={() => navigate("/cart")}
-                  className="relative p-2 text-gray-400 hover:text-primary-500 transition-colors"
+                  className="relative p-2 text-gray-400 hover:text-primary-500 transition-colors cursor-pointer"
                 >
                   <ShoppingCart size={22} />
                   {getTotalItems() > 0 && (
@@ -101,7 +101,7 @@ export const ExploreHeader: React.FC = () => {
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <button
-                      className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                      className="p-2 text-gray-400 hover:text-red-500 transition-colors cursor-pointer"
                       title="Logout"
                     >
                       <LogOut size={20} />
