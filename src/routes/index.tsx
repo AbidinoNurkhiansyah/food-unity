@@ -20,11 +20,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/explore',
-    element: (
-      <ProtectedRoute allowedRoles={['consumer']}>
-        <ExplorePage />
-      </ProtectedRoute>
-    ),
+    element: <ExplorePage />,
   },
   {
     path: '/orders',

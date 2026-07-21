@@ -34,8 +34,8 @@ export function MainNavbar() {
       </div>
 
       <Link to="/login">
-        <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-5 h-10 font-semibold shadow-md">
-          Mulai Sekarang
+        <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-5 h-10 font-semibold shadow-md cursor-pointer">
+          Join As Merchant
         </Button>
       </Link>
     </nav>

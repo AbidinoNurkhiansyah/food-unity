@@ -16,7 +16,7 @@ export function HeroSection() {
             <div className="w-2.5 h-2.5 bg-primary-900 rounded-r-full -ml-1"></div>
           </div>
           <span className="font-bold text-gray-600 tracking-wide text-xs lg:text-sm uppercase">
-            Elevate Your Brand With Us
+            Join the Zero Waste Movement
           </span>
         </div>
 
@@ -34,8 +34,8 @@ export function HeroSection() {
         </p>
 
         <div className="flex flex-wrap items-center gap-4 lg:gap-6 pt-4">
-          <Link to="/login">
-            <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-6 lg:px-8 h-12 flex items-center gap-2 text-sm lg:text-base font-bold transition-all group shadow-lg shadow-primary-500/20">
+          <Link to="/explore">
+            <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-6 lg:px-8 h-12 flex items-center gap-2 text-sm lg:text-base font-bold transition-all group shadow-lg shadow-primary-500/20 cursor-pointer">
               Explore More{" "}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
@@ -126,12 +126,26 @@ export function HeroSection() {
 
         {/* Star/Sparkle decorative */}
         <div className="absolute bottom-10 right-[-10px] lg:bottom-16 lg:right-[-20px] z-40 text-primary-500 animate-pulse drop-shadow-md">
-          <svg width="50" height="50" className="lg:w-[70px] lg:h-[70px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="50"
+            height="50"
+            className="lg:w-[70px] lg:h-[70px]"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
           </svg>
         </div>
         <div className="absolute bottom-16 right-5 lg:bottom-24 lg:right-10 z-40 text-primary-500 animate-pulse opacity-60">
-          <svg width="30" height="30" className="lg:w-[40px] lg:h-[40px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            width="30"
+            height="30"
+            className="lg:w-[40px] lg:h-[40px]"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
           </svg>
         </div>
