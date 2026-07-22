@@ -1,13 +1,15 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { useCartStore } from "../hooks/useCartStore";
+import { useCartStore, isProductExpired } from "../hooks/useCartStore";
 import { useCartCheckout } from "../hooks/useCartCheckout";
 
 export const CartSummary: React.FC = () => {
   const { items, getTotalPrice } = useCartStore();
   const { handleCheckout, isLoading } = useCartCheckout();
 
-  if (items.length === 0) return null;
+  const activeItems = items.filter((item) => !isProductExpired(item.product));
+
+  if (activeItems.length === 0) return null;
 
   return (
     <div className="w-full md:w-80 shrink-0">
@@ -19,7 +21,7 @@ export const CartSummary: React.FC = () => {
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-gray-600">
             <span>Total Produk</span>
-            <span className="font-medium">{items.length} item</span>
+            <span className="font-medium">{activeItems.length} item</span>
           </div>
           <div className="flex justify-between text-gray-600 mt-2">
             <span>Biaya Layanan</span>
