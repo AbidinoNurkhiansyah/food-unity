@@ -1,16 +1,16 @@
-import type { Product } from '../types';
-import { useProductForm } from '../hooks/useProductForm';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { 
+import type { Product } from "../types";
+import { useProductForm } from "../hooks/useProductForm";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 interface ProductFormProps {
   onSuccess?: () => void;
@@ -28,7 +28,11 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
     handleImageChange,
   } = useProductForm(onSuccess, initialData);
 
-  const { register, setValue, formState: { errors } } = form;
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = form;
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -37,23 +41,54 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="title">Nama Produk / Paket</Label>
-            <Input 
-              id="title" 
-              placeholder="Contoh: Paket Roti Manis Sore" 
-              {...register('title')} 
+            <Input
+              id="title"
+              placeholder="Contoh: Paket Roti Manis Sore"
+              {...register("title")}
             />
-            {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
+            {errors.title && (
+              <p className="text-sm text-red-500">{errors.title.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Kategori Produk</Label>
+            <Select
+              onValueChange={(val) => setValue("category", val)}
+              defaultValue={initialData?.category || ""}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Pilih kategori" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Dry Food">Dry Food</SelectItem>
+                <SelectItem value="Wet Food">Wet Food</SelectItem>
+                <SelectItem value="Vegetables">Vegetables</SelectItem>
+                <SelectItem value="Fruits">Fruits</SelectItem>
+                <SelectItem value="Beverages">Beverages</SelectItem>
+                <SelectItem value="Meat & Seafood">Meat & Seafood</SelectItem>
+                <SelectItem value="Bakery">Bakery</SelectItem>
+                <SelectItem value="Fast Food">Fast Food</SelectItem>
+              </SelectContent>
+            </Select>
+            {errors.category && (
+              <p className="text-sm text-red-500">{errors.category.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="description">Deskripsi</Label>
-            <Textarea 
-              id="description" 
-              placeholder="Deskripsikan kondisi produk, alasan surplus, dll." 
+            <Textarea
+              id="description"
+              placeholder="Deskripsikan kondisi produk, alasan surplus, dll."
               rows={4}
-              {...register('description')} 
+              {...register("description")}
             />
-            {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+            {errors.description && (
+              <p className="text-sm text-red-500">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -61,12 +96,16 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             <div className="flex items-center gap-4">
               {imagePreview && (
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm shrink-0">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               )}
-              <Input 
-                id="image" 
-                type="file" 
+              <Input
+                id="image"
+                type="file"
                 accept="image/*"
                 onChange={handleImageChange}
                 className="flex-1"
@@ -80,14 +119,14 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Tipe Penjualan</Label>
-              <Select 
+              <Select
                 onValueChange={(val) => {
-                  const valBool = val === 'true';
-                  setValue('isDonation', valBool);
+                  const valBool = val === "true";
+                  setValue("isDonation", valBool);
                   if (valBool) {
-                    setValue('discountPrice', 0);
+                    setValue("discountPrice", 0);
                   }
-                }} 
+                }}
                 defaultValue={initialData?.isDonation ? "true" : "false"}
               >
                 <SelectTrigger>
@@ -103,12 +142,12 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             {initialData && (
               <div className="space-y-2">
                 <Label>Status Produk</Label>
-                <Select 
-                  onValueChange={(val) => setValue('status', val as any)} 
-                  defaultValue={initialData.status || 'active'}
+                <Select
+                  onValueChange={(val) => setValue("status", val as any)}
+                  defaultValue={initialData.status || "active"}
                 >
                   <SelectTrigger>
-反                  <SelectValue placeholder="Pilih status produk" />
+                    反 <SelectValue placeholder="Pilih status produk" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="active">Aktif</SelectItem>
@@ -123,57 +162,112 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="originalPrice">Harga Asli (Rp)</Label>
-              <Input 
-                id="originalPrice" 
-                type="number" 
+              <Input
+                id="originalPrice"
+                type="number"
                 min="0"
-                {...register('originalPrice', { valueAsNumber: true })} 
+                {...register("originalPrice", { valueAsNumber: true })}
               />
-              {errors.originalPrice && <p className="text-sm text-red-500">{errors.originalPrice.message}</p>}
+              {errors.originalPrice && (
+                <p className="text-sm text-red-500">
+                  {errors.originalPrice.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="discountPrice">Harga Diskon (Rp)</Label>
-              <Input 
-                id="discountPrice" 
+              <Input
+                id="discountPrice"
                 type="number"
                 min="0"
                 disabled={isDonation}
-                {...register('discountPrice', { valueAsNumber: true })} 
+                {...register("discountPrice", { valueAsNumber: true })}
               />
-              {errors.discountPrice && <p className="text-sm text-red-500">{errors.discountPrice.message}</p>}
+              {errors.discountPrice && (
+                <p className="text-sm text-red-500">
+                  {errors.discountPrice.message}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="stock">Sisa Stok (Porsi)</Label>
-              <Input 
-                id="stock" 
-                type="number" 
+              <Label htmlFor="stock">Sisa Stok</Label>
+              <Input
+                id="stock"
+                type="number"
                 min="1"
-                {...register('stock', { valueAsNumber: true })} 
+                {...register("stock", { valueAsNumber: true })}
               />
-              {errors.stock && <p className="text-sm text-red-500">{errors.stock.message}</p>}
+              {errors.stock && (
+                <p className="text-sm text-red-500">{errors.stock.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="unit">Satuan</Label>
+              <Select
+                onValueChange={(val) => setValue("unit", val as any)}
+                defaultValue={initialData?.unit || "porsi"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih satuan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="porsi">Porsi</SelectItem>
+                  <SelectItem value="pcs">Pcs</SelectItem>
+                  <SelectItem value="box">Box</SelectItem>
+                  <SelectItem value="kg">Kg</SelectItem>
+                  <SelectItem value="gram">Gram</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.unit && (
+                <p className="text-sm text-red-500">{errors.unit.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="weightInGrams">Berat per Satuan (Gram)</Label>
+              <Input
+                id="weightInGrams"
+                type="number"
+                min="1"
+                {...register("weightInGrams", { valueAsNumber: true })}
+              />
+              {errors.weightInGrams && (
+                <p className="text-sm text-red-500">
+                  {errors.weightInGrams.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="pickupDeadline">Batas Waktu Ambil</Label>
-              <Input 
-                id="pickupDeadline" 
-                type="time" 
-                {...register('pickupDeadline')} 
+              <Input
+                id="pickupDeadline"
+                type="datetime-local"
+                {...register("pickupDeadline")}
               />
-              {errors.pickupDeadline && <p className="text-sm text-red-500">{errors.pickupDeadline.message}</p>}
+              {errors.pickupDeadline && (
+                <p className="text-sm text-red-500">
+                  {errors.pickupDeadline.message}
+                </p>
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      {uploadError && <p className="text-sm text-red-500 font-medium">{uploadError}</p>}
+      {uploadError && (
+        <p className="text-sm text-red-500 font-medium">{uploadError}</p>
+      )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? 'Menyimpan...' : (initialData ? 'Simpan Perubahan' : 'Unggah Produk Surplus')}
+        {isSubmitting ? "Menyimpan..." : initialData ? "Update" : "Add Product"}
       </Button>
     </form>
   );

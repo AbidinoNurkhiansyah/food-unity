@@ -22,6 +22,22 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 }) => {
   const { addItem } = useCartStore();
 
+  const formatDeadline = (deadline: string) => {
+    try {
+      const date = new Date(deadline);
+      if (isNaN(date.getTime())) return deadline; // if parsing fails
+      return new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(date);
+    } catch {
+      return deadline;
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -73,7 +89,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     Batas Ambil
                   </span>
                   <span className="font-semibold flex items-center gap-1">
-                    <Clock size={14} /> {product.pickupDeadline || "-"}
+                    <Clock size={14} /> {product.pickupDeadline ? formatDeadline(product.pickupDeadline) : "-"}
                   </span>
                 </div>
               </div>

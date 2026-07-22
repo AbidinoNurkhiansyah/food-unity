@@ -4,7 +4,7 @@ import { Search, MapPin } from "lucide-react";
 export const ExploreSearch: React.FC = () => {
   return (
     <>
-      <div className="mb-10">
+      <div className="mb-4">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Mau makan apa hari ini? 🍔
         </h1>
@@ -30,14 +30,14 @@ export const ExploreSearch: React.FC = () => {
         </div>
       </div>
 
-      <div className="mb-10 flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+      <div className="mb-2 flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
         {["Semua", "Promo", "Terdekat", "Nasi", "Mie", "Ayam", "Minuman"].map(
           (category, idx) => (
             <button
               key={idx}
               className={`whitespace-nowrap px-6 py-2.5 rounded-full font-medium transition-all ${
                 idx === 0
-                  ? "bg-gray-900 text-white shadow-md"
+                  ? "bg-palette-800 text-white shadow-md"
                   : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
               }`}
             >
@@ -49,4 +49,3 @@ export const ExploreSearch: React.FC = () => {
     </>
   );
 };
-

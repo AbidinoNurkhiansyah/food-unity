@@ -19,10 +19,13 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
     resolver: zodResolver(ProductFormSchema),
     defaultValues: {
       title: initialData?.title || '',
+      category: initialData?.category || '',
       description: initialData?.description || '',
       originalPrice: initialData?.originalPrice || 0,
       discountPrice: initialData?.discountPrice || 0,
       stock: initialData?.stock || 1,
+      unit: initialData?.unit || 'porsi',
+      weightInGrams: initialData?.weightInGrams || 250,
       pickupDeadline: initialData?.pickupDeadline || '',
       isDonation: initialData?.isDonation || false,
       status: initialData?.status || 'active',
