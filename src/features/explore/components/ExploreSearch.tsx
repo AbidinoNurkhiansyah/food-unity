@@ -37,7 +37,7 @@ export const ExploreSearch: React.FC = () => {
               key={idx}
               className={`whitespace-nowrap px-6 py-2.5 rounded-full font-medium transition-all ${
                 idx === 0
-                  ? "bg-gray-900 text-white shadow-md"
+                  ? "bg-palette-800 text-white shadow-md"
                   : "bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50"
               }`}
             >

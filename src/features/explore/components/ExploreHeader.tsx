@@ -54,7 +54,7 @@ export const ExploreHeader: React.FC = () => {
                   </span>
                   <span className="text-xs text-gray-500">{user?.email}</span>
                 </div>
-                <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-primary-500 to-palette-500 flex items-center justify-center text-white font-bold shadow-md">
+                <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold shadow-md">
                   {user?.displayName
                     ? user.displayName.charAt(0).toUpperCase()
                     : "C"}
@@ -92,7 +92,7 @@ export const ExploreHeader: React.FC = () => {
                 >
                   <ShoppingCart size={22} />
                   {getTotalItems() > 0 && (
-                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-palette-500 rounded-full">
+                    <span className="absolute top-1 right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-palette-800 rounded-full">
                       {getTotalItems()}
                     </span>
                   )}
