@@ -110,7 +110,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                     {product.category || product.merchantName}
                   </span>
                   <span className="text-xs font-medium text-slate-500 whitespace-nowrap bg-slate-100 px-1.5 py-0.5 rounded">
-                    {product.stock} Pcs
+                    {product.stock} {product.unit === 'pcs' ? 'Pcs' : product.unit === 'porsi' ? 'Porsi' : product.unit === 'box' ? 'Box' : product.unit === 'kg' ? 'Kg' : product.unit === 'gram' ? 'Gram' : product.unit}
                   </span>
                 </div>
 
