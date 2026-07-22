@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useCartStore } from "./useCartStore";
+import { useCartStore, isProductExpired } from "./useCartStore";
 import { useAuthStore } from "@/features/auth";
 
 declare global {
@@ -20,14 +20,30 @@ export const useCartCheckout = () => {
     try {
       setIsLoading(true);
 
+      if (!user) {
+        toast.error("Silakan login terlebih dahulu untuk melakukan checkout.");
+        setIsLoading(false);
+        return;
+      }
+
+      const activeItems = items.filter((item) => !isProductExpired(item.product));
+      if (activeItems.length === 0) {
+        toast.error("Tidak ada produk aktif di keranjang untuk di-checkout.");
+        setIsLoading(false);
+        return;
+      }
+
+      const token = await user.getIdToken();
+
       const response = await fetch("http://localhost:3001/api/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
           items: [
-            ...items.map((item) => ({
+            ...activeItems.map((item) => ({
               id: item.product.id,
               name: item.product.title,
               price: item.product.isDonation ? 0 : item.product.discountPrice,

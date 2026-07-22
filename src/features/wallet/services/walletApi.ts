@@ -4,9 +4,15 @@ export const walletApi = {
   /**
    * Fetch merchant's wallet balance
    */
-  getBalance: async (merchantId: string) => {
+  getBalance: async (merchantId: string, token?: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/wallet/balance?merchantId=${merchantId}`);
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const response = await fetch(`${API_URL}/api/wallet/balance?merchantId=${merchantId}`, {
+        headers
+      });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to fetch balance');
@@ -21,13 +27,17 @@ export const walletApi = {
   /**
    * Request withdrawal
    */
-  withdrawBalance: async (merchantId: string, amount: number) => {
+  withdrawBalance: async (merchantId: string, amount: number, token?: string) => {
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
       const response = await fetch(`${API_URL}/api/wallet/withdraw`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ merchantId, amount }),
       });
       
