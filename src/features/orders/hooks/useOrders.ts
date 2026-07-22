@@ -52,8 +52,16 @@ export const useOrders = () => {
   const handleCancelOrder = async () => {
     if (!orderToCancel) return;
     try {
+      if (!user) {
+        alert("Silakan login terlebih dahulu.");
+        return;
+      }
+      const token = await user.getIdToken();
       const res = await fetch(`http://localhost:3001/api/orders/${orderToCancel}/cancel`, {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
       });
       if (!res.ok) {
         alert("Gagal membatalkan pesanan");

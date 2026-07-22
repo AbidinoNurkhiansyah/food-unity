@@ -21,7 +21,8 @@ export function useWallet() {
     try {
       setIsLoading(true);
       if (!user?.uid) return;
-      const data = await walletApi.getBalance(user.uid);
+      const token = await user.getIdToken();
+      const data = await walletApi.getBalance(user.uid, token);
       setBalance(data.balance || 0);
     } catch (error) {
       toast.error("Gagal memuat informasi saldo");
@@ -55,7 +56,8 @@ export function useWallet() {
       setIsWithdrawing(true);
       if (!user?.uid) return;
 
-      const response = await walletApi.withdrawBalance(user.uid, amount);
+      const token = await user.getIdToken();
+      const response = await walletApi.withdrawBalance(user.uid, amount, token);
       toast.success(
         `Berhasil menarik dana sebesar Rp ${amount.toLocaleString("id-ID")}`
       );

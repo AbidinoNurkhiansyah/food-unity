@@ -3,6 +3,16 @@ import { persist } from 'zustand/middleware';
 import { toast } from 'sonner';
 import type { Product } from '@/features/products/types';
 
+export const isProductExpired = (product: Product): boolean => {
+  if (product.status === "expired") return true;
+  if (product.pickupDeadline) {
+    const deadlineTime = new Date(product.pickupDeadline).getTime();
+    const nowTime = new Date().getTime();
+    return deadlineTime <= nowTime;
+  }
+  return false;
+};
+
 export interface CartItem {
   product: Product;
   quantity: number;
@@ -14,6 +24,7 @@ interface CartState {
   updateQuantity: (productId: string, quantity: number) => void;
   removeItem: (productId: string) => void;
   clearCart: () => void;
+  clearExpiredItems: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
 }
@@ -75,14 +86,22 @@ export const useCartStore = create<CartState>()(
           items: state.items.filter((item) => item.product.id !== productId),
         })),
       clearCart: () => set({ items: [] }),
+      clearExpiredItems: () =>
+        set((state) => ({
+          items: state.items.filter((item) => !isProductExpired(item.product)),
+        })),
       getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.quantity, 0);
+        return get().items
+          .filter((item) => !isProductExpired(item.product))
+          .reduce((total, item) => total + item.quantity, 0);
       },
       getTotalPrice: () => {
-        return get().items.reduce((total, item) => {
-          const price = item.product.isDonation ? 0 : (item.product.discountPrice || item.product.originalPrice);
-          return total + (price * item.quantity);
-        }, 0);
+        return get().items
+          .filter((item) => !isProductExpired(item.product))
+          .reduce((total, item) => {
+            const price = item.product.isDonation ? 0 : (item.product.discountPrice || item.product.originalPrice);
+            return total + (price * item.quantity);
+          }, 0);
       }
     }),
     {
