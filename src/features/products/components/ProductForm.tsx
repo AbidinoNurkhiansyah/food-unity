@@ -194,7 +194,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="stock">Sisa Stok (Porsi)</Label>
+              <Label htmlFor="stock">Sisa Stok</Label>
               <Input
                 id="stock"
                 type="number"
@@ -203,6 +203,45 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
               />
               {errors.stock && (
                 <p className="text-sm text-red-500">{errors.stock.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="unit">Satuan</Label>
+              <Select
+                onValueChange={(val) => setValue("unit", val as any)}
+                defaultValue={initialData?.unit || "porsi"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih satuan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="porsi">Porsi</SelectItem>
+                  <SelectItem value="pcs">Pcs</SelectItem>
+                  <SelectItem value="box">Box</SelectItem>
+                  <SelectItem value="kg">Kg</SelectItem>
+                  <SelectItem value="gram">Gram</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.unit && (
+                <p className="text-sm text-red-500">{errors.unit.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="weightInGrams">Berat per Satuan (Gram)</Label>
+              <Input
+                id="weightInGrams"
+                type="number"
+                min="1"
+                {...register("weightInGrams", { valueAsNumber: true })}
+              />
+              {errors.weightInGrams && (
+                <p className="text-sm text-red-500">
+                  {errors.weightInGrams.message}
+                </p>
               )}
             </div>
 
@@ -228,11 +267,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
       )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting
-          ? "Menyimpan..."
-          : initialData
-            ? "Simpan Perubahan"
-            : "Unggah Produk Surplus"}
+        {isSubmitting ? "Menyimpan..." : initialData ? "Update" : "Add Product"}
       </Button>
     </form>
   );

@@ -7,6 +7,8 @@ export const ProductFormSchema = z.object({
   originalPrice: z.number().min(0, 'Harga tidak boleh negatif'),
   discountPrice: z.number().min(0, 'Harga diskon tidak boleh negatif'),
   stock: z.number().min(1, 'Stok minimal 1'),
+  unit: z.enum(['pcs', 'box', 'kg', 'gram', 'porsi']),
+  weightInGrams: z.number().min(1, 'Estimasi berat (gram) wajib diisi'),
   pickupDeadline: z.string().min(1, 'Batas waktu pengambilan wajib diisi'),
   isDonation: z.boolean(),
   status: z.enum(['active', 'sold_out', 'expired']).optional(),
@@ -26,6 +28,8 @@ export interface Product {
   discountPrice: number;
   isDonation: boolean;
   stock: number;
+  unit: 'pcs' | 'box' | 'kg' | 'gram' | 'porsi';
+  weightInGrams: number;
   pickupDeadline: string; // ISO String
   status: 'active' | 'sold_out' | 'expired';
   createdAt: string; // ISO String
