@@ -17,7 +17,7 @@ interface ProductModalProps {
 export function ProductModal({ isOpen, onClose, initialData }: ProductModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{initialData ? 'Edit Paket Surplus' : 'Buat Paket Surplus Baru'}</DialogTitle>
           <DialogDescription>

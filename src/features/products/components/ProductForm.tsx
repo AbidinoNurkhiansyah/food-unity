@@ -31,8 +31,13 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
   const {
     register,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  const currentCategory = watch("category");
+  const currentUnit = watch("unit");
+  const currentStatus = watch("status");
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -54,8 +59,10 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           <div className="space-y-2">
             <Label htmlFor="category">Kategori Produk</Label>
             <Select
-              onValueChange={(val) => setValue("category", val)}
-              defaultValue={initialData?.category || ""}
+              value={currentCategory || ""}
+              onValueChange={(val) =>
+                setValue("category", val, { shouldValidate: true })
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Pilih kategori" />
@@ -120,14 +127,14 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             <div className="space-y-2">
               <Label>Tipe Penjualan</Label>
               <Select
+                value={isDonation ? "true" : "false"}
                 onValueChange={(val) => {
                   const valBool = val === "true";
-                  setValue("isDonation", valBool);
+                  setValue("isDonation", valBool, { shouldValidate: true });
                   if (valBool) {
-                    setValue("discountPrice", 0);
+                    setValue("discountPrice", 0, { shouldValidate: true });
                   }
                 }}
-                defaultValue={initialData?.isDonation ? "true" : "false"}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih tipe penjualan" />
@@ -139,24 +146,27 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
               </Select>
             </div>
 
-            {initialData && (
-              <div className="space-y-2">
-                <Label>Status Produk</Label>
-                <Select
-                  onValueChange={(val) => setValue("status", val as any)}
-                  defaultValue={initialData.status || "active"}
-                >
-                  <SelectTrigger>
-                    反 <SelectValue placeholder="Pilih status produk" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="active">Aktif</SelectItem>
-                    <SelectItem value="sold_out">Habis Terjual</SelectItem>
-                    <SelectItem value="expired">Kadaluarsa</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label>Status Produk</Label>
+              <Select
+                value={currentStatus || "active"}
+                onValueChange={(val) =>
+                  setValue("status", val as any, { shouldValidate: true })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih status produk" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="sold_out">Sold Out</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                </SelectContent>
+              </Select>
+              {errors.status && (
+                <p className="text-sm text-red-500">{errors.status.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -198,7 +208,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
               <Input
                 id="stock"
                 type="number"
-                min="1"
+                min="0"
                 {...register("stock", { valueAsNumber: true })}
               />
               {errors.stock && (
@@ -209,8 +219,10 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             <div className="space-y-2">
               <Label htmlFor="unit">Satuan</Label>
               <Select
-                onValueChange={(val) => setValue("unit", val as any)}
-                defaultValue={initialData?.unit || "porsi"}
+                value={currentUnit || "porsi"}
+                onValueChange={(val) =>
+                  setValue("unit", val as any, { shouldValidate: true })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih satuan" />
@@ -250,7 +262,19 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
               <Input
                 id="pickupDeadline"
                 type="datetime-local"
-                {...register("pickupDeadline")}
+                {...register("pickupDeadline", {
+                  onChange: (e) => {
+                    const val = e.target.value;
+                    if (val) {
+                      const deadlineTime = new Date(val).getTime();
+                      if (!isNaN(deadlineTime) && deadlineTime <= Date.now()) {
+                        setValue("status", "expired", { shouldValidate: true });
+                      } else if (currentStatus === "expired") {
+                        setValue("status", "active", { shouldValidate: true });
+                      }
+                    }
+                  },
+                })}
               />
               {errors.pickupDeadline && (
                 <p className="text-sm text-red-500">
