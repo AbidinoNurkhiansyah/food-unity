@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth";
-import { TopBar, MainNavbar, HeroSection } from "@/features/landing";
+import { TopBar } from "@/components/layout/TopBar";
+import { MainNavbar, HeroSection } from "@/features/landing";
 
 export function HomePage() {
   const { isAuthenticated, isLoading, role } = useAuthStore();
