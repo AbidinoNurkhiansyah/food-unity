@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProductFormSchema } from '../types';
@@ -6,6 +6,35 @@ import type { ProductFormValues, Product } from '../types';
 import { useCreateProduct, useUpdateProduct } from './useProducts';
 import { uploadImageToCloudinary } from '../services/cloudinaryApi';
 import { useAuthStore } from '@/features/auth';
+
+export const getEffectiveStatus = (product?: Product | null): 'active' | 'sold_out' | 'expired' => {
+  if (!product) return 'active';
+  if (product.status === 'expired') return 'expired';
+  if (product.pickupDeadline) {
+    const deadline = new Date(product.pickupDeadline).getTime();
+    if (!isNaN(deadline) && deadline <= Date.now()) {
+      return 'expired';
+    }
+  }
+  if (product.status === 'sold_out' || product.stock <= 0) return 'sold_out';
+  return product.status || 'active';
+};
+
+const getFormValuesFromProduct = (prod?: Product | null): ProductFormValues => {
+  return {
+    title: prod?.title || '',
+    category: prod?.category || '',
+    description: prod?.description || '',
+    originalPrice: prod?.originalPrice || 0,
+    discountPrice: prod?.discountPrice || 0,
+    stock: prod?.stock !== undefined ? prod.stock : 1,
+    unit: prod?.unit || 'porsi',
+    weightInGrams: prod?.weightInGrams || 250,
+    pickupDeadline: prod?.pickupDeadline || '',
+    isDonation: prod?.isDonation || false,
+    status: getEffectiveStatus(prod),
+  };
+};
 
 export function useProductForm(onSuccess?: () => void, initialData?: Product) {
   const { user } = useAuthStore();
@@ -17,20 +46,20 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(ProductFormSchema),
-    defaultValues: {
-      title: initialData?.title || '',
-      category: initialData?.category || '',
-      description: initialData?.description || '',
-      originalPrice: initialData?.originalPrice || 0,
-      discountPrice: initialData?.discountPrice || 0,
-      stock: initialData?.stock || 1,
-      unit: initialData?.unit || 'porsi',
-      weightInGrams: initialData?.weightInGrams || 250,
-      pickupDeadline: initialData?.pickupDeadline || '',
-      isDonation: initialData?.isDonation || false,
-      status: initialData?.status || 'active',
-    },
+    defaultValues: getFormValuesFromProduct(initialData),
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset(getFormValuesFromProduct(initialData));
+      setImagePreview(initialData.imageUrl || null);
+      setImageFile(null);
+    } else {
+      form.reset(getFormValuesFromProduct(null));
+      setImagePreview(null);
+      setImageFile(null);
+    }
+  }, [initialData, form]);
 
   const onSubmit = async (data: ProductFormValues) => {
     if (!user) return;
@@ -84,3 +113,4 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
     handleImageChange,
   };
 }
+

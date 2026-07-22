@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth";
 import { useAllProducts } from "@/features/products/hooks/useProducts";
 import type { Product } from "@/features/products/types";
-import { TopBar } from "@/features/landing";
+import { TopBar } from "@/components/layout/TopBar";
 import {
   ExploreHeader,
   ExploreSearch,

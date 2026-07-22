@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useCartStore, isProductExpired } from "./useCartStore";
+import { useCartStore } from "./useCartStore";
 import { useAuthStore } from "@/features/auth";
 
 declare global {
@@ -11,7 +11,7 @@ declare global {
 }
 
 export const useCartCheckout = () => {
-  const { items, getTotalPrice, clearCart } = useCartStore();
+  const { getSelectedItems, getTotalPrice, removeSelectedItems } = useCartStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,9 +26,9 @@ export const useCartCheckout = () => {
         return;
       }
 
-      const activeItems = items.filter((item) => !isProductExpired(item.product));
-      if (activeItems.length === 0) {
-        toast.error("Tidak ada produk aktif di keranjang untuk di-checkout.");
+      const selectedItems = getSelectedItems();
+      if (selectedItems.length === 0) {
+        toast.error("Pilih setidaknya 1 produk aktif untuk di-checkout.");
         setIsLoading(false);
         return;
       }
@@ -43,7 +43,7 @@ export const useCartCheckout = () => {
         },
         body: JSON.stringify({
           items: [
-            ...activeItems.map((item) => ({
+            ...selectedItems.map((item) => ({
               id: item.product.id,
               name: item.product.title,
               price: item.product.isDonation ? 0 : item.product.discountPrice,
@@ -77,13 +77,13 @@ export const useCartCheckout = () => {
           onSuccess: function (result: any) {
             console.log("Success:", result);
             toast.success("Pembayaran Berhasil!");
-            clearCart();
+            removeSelectedItems();
             navigate("/orders");
           },
           onPending: function (result: any) {
             console.log("Pending:", result);
             toast.success("Menunggu pembayaran...");
-            clearCart();
+            removeSelectedItems();
             navigate("/orders");
           },
           onError: function (result: any) {
@@ -110,3 +110,4 @@ export const useCartCheckout = () => {
 
   return { handleCheckout, isLoading };
 };
+
