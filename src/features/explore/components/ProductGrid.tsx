@@ -96,7 +96,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                 <div className="absolute top-3 right-3 z-10">
                   <button
                     onClick={(e) => e.stopPropagation()}
-                    className="p-1.5 bg-white rounded-full shadow-sm border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 transition-colors"
+                    className="p-1.5 bg-white/90 backdrop-blur-xs rounded-full shadow-sm border border-slate-100 text-slate-400 hover:text-red-500 hover:bg-white transition-colors cursor-pointer"
                   >
                     <Heart size={16} />
                   </button>
