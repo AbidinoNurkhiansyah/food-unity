@@ -30,8 +30,12 @@ service cloud.firestore {
     // - Customers can create their own orders and read their own orders.
     // - Merchants can read and update all orders.
     match /orders/{orderId} {
-      allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || isMerchant());
-      allow read, update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isMerchant());
+      allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || request.resource.data.customerDetails.email == request.auth.token.email || isMerchant());
+      allow read, update, delete: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid || 
+        resource.data.customerDetails.email == request.auth.token.email || 
+        isMerchant()
+      );
     }
 
     // 4. Claims collection: Authenticated users/merchants can read and write claims
