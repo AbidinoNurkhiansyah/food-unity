@@ -7,6 +7,7 @@ import {
   LogOut,
   Wallet,
   QrCode,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,24 +25,29 @@ import {
 interface DashboardSidebarProps {
   onLogout: () => void;
   onOpenScanner: () => void;
+  onOpenChat: () => void;
+  unreadCount?: number;
 }
 
 type NavItem = {
   name: string;
   href?: string;
-  action?: "scan";
+  action?: "scan" | "chat";
   icon: React.ElementType;
 };
 
 export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   onLogout,
   onOpenScanner,
+  onOpenChat,
+  unreadCount = 0,
 }) => {
   const location = useLocation();
 
   const navItems: NavItem[] = [
     { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
     { name: "Kelola Stok", href: "/dashboard/products", icon: Package },
+    { name: "Chat Pelanggan", action: "chat", icon: MessageSquare },
     { name: "Scan Tiket", action: "scan", icon: QrCode },
     { name: "Dompet", href: "/dashboard/wallet", icon: Wallet },
     { name: "Riwayat Klaim", href: "/dashboard/claims", icon: History },
@@ -67,6 +73,27 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
               >
                 <Icon className="w-5 h-5" />
                 <span className="font-medium">{item.name}</span>
+              </Button>
+            );
+          }
+
+          if (item.action === "chat") {
+            return (
+              <Button
+                key={item.name}
+                variant="ghost"
+                onClick={onOpenChat}
+                className="w-full justify-between gap-3 rounded-xl transition-all duration-300 text-muted-foreground hover:bg-muted/50 hover:text-foreground relative"
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{item.name}</span>
+                </div>
+                {unreadCount > 0 && (
+                  <span className="bg-red-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
               </Button>
             );
           }
