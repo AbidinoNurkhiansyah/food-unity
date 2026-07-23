@@ -11,8 +11,8 @@ export class PaymentController {
    */
   static async checkout(req, res) {
     try {
-      const { items, total, customerDetails } = req.body;
-      const result = await PaymentService.createCheckoutSession(items, total, customerDetails);
+      const { items, total, customerDetails, userId } = req.body;
+      const result = await PaymentService.createCheckoutSession(items, total, customerDetails, userId);
       res.json(result);
     } catch (error) {
       console.error("Checkout Error:", error);
@@ -64,6 +64,24 @@ export class PaymentController {
       res.json({ status: 'ok', message: 'Order cancelled successfully' });
     } catch (error) {
       console.error("Cancel Order Error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  /**
+   * Client-side Payment Confirmation
+   */
+  static async confirmPayment(req, res) {
+    try {
+      const { orderId } = req.params;
+      const paymentDetails = req.body;
+      if (!orderId) {
+        return res.status(400).json({ error: "Order ID is required" });
+      }
+      await PaymentService.confirmPayment(orderId, paymentDetails);
+      res.json({ status: 'ok', message: 'Payment confirmed successfully' });
+    } catch (error) {
+      console.error("Confirm Payment Error:", error);
       res.status(500).json({ error: error.message });
     }
   }

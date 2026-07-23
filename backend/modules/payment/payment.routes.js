@@ -10,6 +10,7 @@ router.post('/api/checkout', verifyToken, PaymentController.checkout);
 // Orders API
 router.get('/api/orders', verifyToken, PaymentController.getOrders);
 router.post('/api/orders/:orderId/cancel', verifyToken, PaymentController.cancelOrder);
+router.post('/api/orders/:orderId/confirm-payment', verifyToken, PaymentController.confirmPayment);
 
 // Webhook & Notification APIs
 router.post('/api/midtrans-callback', PaymentController.handleWebhook);
