@@ -5,8 +5,10 @@ export class PaymentService {
   /**
    * Creates a pending order in Firestore and generates a Snap Token
    */
-  static async createCheckoutSession(items, total, customerDetails) {
+  static async createCheckoutSession(items, total, customerDetails, userId) {
     const orderId = `ORDER-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
     // 1. Prepare Midtrans Transaction Data
     const parameter = {
@@ -20,14 +22,17 @@ export class PaymentService {
         quantity: item.quantity,
         name: item.name
       })),
-      customer_details: customerDetails
+      customer_details: customerDetails,
+      callbacks: {
+        finish: `${FRONTEND_URL}/orders`
+      }
     };
 
     // 2. Create Transaction Token first
     const transaction = await snap.createTransaction(parameter);
     const snapToken = transaction.token;
 
-    // 3. Create Order in Firestore WITH snapToken
+    // 3. Create Order in Firestore WITH snapToken and userId (stok BELUM dikurangi saat PENDING)
     if (db) {
       const batch = db.batch();
       const orderRef = db.collection('orders').doc(orderId);
@@ -37,6 +42,7 @@ export class PaymentService {
 
       batch.set(orderRef, {
         orderId,
+        userId: userId || null,
         items,
         total,
         customerDetails,
@@ -58,8 +64,6 @@ export class PaymentService {
   static async getOrdersByEmail(email) {
     if (!db) return [];
     
-    // Karena kita tidak memiliki index untuk (customerDetails.email + createdAt DESC),
-    // kita fetch data secara sederhana dan urutkan di dalam memori (Node.js).
     const snapshot = await db.collection('orders')
       .where('customerDetails.email', '==', email)
       .get();
@@ -74,7 +78,6 @@ export class PaymentService {
       });
     });
 
-    // Urutkan dari yang paling baru
     return orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
@@ -89,11 +92,10 @@ export class PaymentService {
       try {
         await coreApi.transaction.cancel(orderId);
       } catch (midtransError) {
-        // Abaikan jika error 404 (transaksi tidak ditemukan/sudah kedaluwarsa di midtrans)
         console.warn("Midtrans cancel warning:", midtransError.message);
       }
 
-      // 2. Update status in Firestore dan kembalikan stok
+      // 2. Update status in Firestore
       const orderRef = db.collection('orders').doc(orderId);
       const orderDoc = await orderRef.get();
       
@@ -103,9 +105,10 @@ export class PaymentService {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
+      // Kembalikan stok hanya jika sebelumnya pesanan sudah PAID
       if (orderDoc.exists) {
         const orderData = orderDoc.data();
-        if (orderData.status !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
+        if (orderData.status === 'PAID' && orderData.items && Array.isArray(orderData.items)) {
           for (const item of orderData.items) {
             if (item.id && item.merchantId) { // Hindari item fee
               const productRef = db.collection('products').doc(item.id);
@@ -130,7 +133,6 @@ export class PaymentService {
    * Handles the Midtrans Notification (Webhook)
    */
   static async processWebhookNotification(notificationBody) {
-    // Verify & parse the notification via Midtrans SDK
     const statusResponse = await snap.transaction.notification(notificationBody);
     
     const orderId = statusResponse.order_id;
@@ -153,12 +155,23 @@ export class PaymentService {
         orderStatus = 'PENDING';
     }
 
-    console.log(`Order ${orderId} status updated to ${orderStatus}`);
-
-    // Update status in Firestore
     if (db) {
       const orderRef = db.collection('orders').doc(orderId);
       const orderDoc = await orderRef.get();
+      
+      if (!orderDoc.exists) return statusResponse;
+      
+      const orderData = orderDoc.data();
+      const currentStatus = orderData.status;
+
+      // Hindari downgrade: Jangan biarkan pesanan yang sudah PAID diubah kembali ke PENDING oleh webhook yang terlambat/out-of-order
+      if (currentStatus === 'PAID' && orderStatus === 'PENDING') {
+        console.log(`Order ${orderId} is already PAID. Ignoring stale PENDING webhook notification.`);
+        return statusResponse;
+      }
+
+      console.log(`Order ${orderId} status updated to ${orderStatus}`);
+
       const batch = db.batch();
       
       batch.update(orderRef, {
@@ -167,60 +180,52 @@ export class PaymentService {
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
-      if (orderDoc.exists) {
-        const orderData = orderDoc.data();
-        const currentStatus = orderData.status;
+      // Jika transaksi gagal/expire/batal dari status PAID, kembalikan stok
+      if (orderStatus === 'FAILED' && currentStatus === 'PAID' && orderData.items && Array.isArray(orderData.items)) {
+        for (const item of orderData.items) {
+          if (item.id && item.merchantId) {
+            const productRef = db.collection('products').doc(item.id);
+            batch.update(productRef, {
+              stock: admin.firestore.FieldValue.increment(item.quantity)
+            });
+          }
+        }
+      }
 
-        // Jika transaksi gagal/expire/batal, kembalikan stok
-        if (orderStatus === 'FAILED' && currentStatus !== 'FAILED' && orderData.items && Array.isArray(orderData.items)) {
-          for (const item of orderData.items) {
-            if (item.id && item.merchantId) { // Hindari item fee
-              const productRef = db.collection('products').doc(item.id);
-              batch.update(productRef, {
-                stock: admin.firestore.FieldValue.increment(item.quantity)
-              });
-            }
+      // SPLIT PAYMENT LOGIC & STOCK DEDUCTION: Baru kurangi stok saat transaksi menjadi PAID
+      if (orderStatus === 'PAID' && currentStatus !== 'PAID' && orderData.items && Array.isArray(orderData.items)) {
+        // 1. Kurangi stok produk secara resmi setelah pembayaran berhasil
+        for (const item of orderData.items) {
+          if (item.id && item.merchantId) {
+            const productRef = db.collection('products').doc(item.id);
+            batch.update(productRef, {
+              stock: admin.firestore.FieldValue.increment(-item.quantity)
+            });
           }
         }
 
-        // SPLIT PAYMENT LOGIC & STOCK DEDUCTION: Jika transaksi sukses/PAID, kurangi stok & tambah saldo ke dompet merchant
-        if (orderStatus === 'PAID' && currentStatus !== 'PAID' && orderData.items && Array.isArray(orderData.items)) {
-          // 1. Kurangi stok produk secara resmi setelah pembayaran berhasil
-          for (const item of orderData.items) {
-            if (item.id && item.merchantId) { // Hindari item fee
-              const productRef = db.collection('products').doc(item.id);
-              batch.update(productRef, {
-                stock: admin.firestore.FieldValue.increment(-item.quantity)
-              });
+        // 2. Tambahkan saldo ke dompet merchant
+        const merchantEarnings = {};
+        for (const item of orderData.items) {
+          const mId = item.merchantId;
+          if (mId) {
+            if (!merchantEarnings[mId]) {
+              merchantEarnings[mId] = 0;
             }
+            merchantEarnings[mId] += (item.price * item.quantity);
           }
+        }
 
-          // 2. Kelompokkan total pendapatan per merchant
-          const merchantEarnings = {};
-          for (const item of orderData.items) {
-            const mId = item.merchantId;
-            if (mId) {
-              if (!merchantEarnings[mId]) {
-                merchantEarnings[mId] = 0;
-              }
-              // Harga diskon (item.price) * quantity
-              merchantEarnings[mId] += (item.price * item.quantity);
-            }
-          }
+        for (let [mId, earning] of Object.entries(merchantEarnings)) {
+          let finalEarning = earning - 500;
+          if (finalEarning < 0) finalEarning = 0;
 
-          // Tambahkan ke koleksi wallets
-          for (let [mId, earning] of Object.entries(merchantEarnings)) {
-            // Potongan platform fee sebesar Rp 500 per merchant per transaksi
-            let finalEarning = earning - 500;
-            if (finalEarning < 0) finalEarning = 0; // Hindari minus
-
-            const walletRef = db.collection('wallets').doc(mId);
-            batch.set(walletRef, {
-               merchantId: mId,
-               balance: admin.firestore.FieldValue.increment(finalEarning),
-               updatedAt: admin.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-          }
+          const walletRef = db.collection('wallets').doc(mId);
+          batch.set(walletRef, {
+             merchantId: mId,
+             balance: admin.firestore.FieldValue.increment(finalEarning),
+             updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
         }
       }
 
@@ -228,5 +233,68 @@ export class PaymentService {
     }
 
     return statusResponse;
+  }
+
+  /**
+   * Confirm Payment from client (fallback for local dev when webhook cannot reach localhost)
+   */
+  static async confirmPayment(orderId, paymentDetails = {}) {
+    if (!db) return false;
+    
+    const orderRef = db.collection('orders').doc(orderId);
+    const orderDoc = await orderRef.get();
+    
+    if (!orderDoc.exists) return false;
+    
+    const orderData = orderDoc.data();
+    
+    if (orderData.status !== 'PAID') {
+      const batch = db.batch();
+      
+      batch.update(orderRef, {
+        status: 'PAID',
+        paymentDetails,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      if (orderData.items && Array.isArray(orderData.items)) {
+        for (const item of orderData.items) {
+          if (item.id && item.merchantId) {
+            const productRef = db.collection('products').doc(item.id);
+            batch.update(productRef, {
+              stock: admin.firestore.FieldValue.increment(-item.quantity)
+            });
+          }
+        }
+
+        const merchantEarnings = {};
+        for (const item of orderData.items) {
+          const mId = item.merchantId;
+          if (mId) {
+            if (!merchantEarnings[mId]) {
+              merchantEarnings[mId] = 0;
+            }
+            merchantEarnings[mId] += (item.price * item.quantity);
+          }
+        }
+
+        for (let [mId, earning] of Object.entries(merchantEarnings)) {
+          let finalEarning = earning - 500;
+          if (finalEarning < 0) finalEarning = 0;
+
+          const walletRef = db.collection('wallets').doc(mId);
+          batch.set(walletRef, {
+             merchantId: mId,
+             balance: admin.firestore.FieldValue.increment(finalEarning),
+             updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+      }
+
+      await batch.commit();
+      console.log(`Order ${orderId} status successfully updated to PAID via client confirmation.`);
+    }
+
+    return true;
   }
 }
