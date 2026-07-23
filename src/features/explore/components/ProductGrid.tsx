@@ -1,5 +1,5 @@
 import React from "react";
-import { Heart, ShoppingBag, MapPin } from "lucide-react";
+import { ShoppingBag, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Product } from "@/features/products/types";
 import { useCartStore } from "@/features/cart";
@@ -54,7 +54,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               ? Math.round(
                   ((product.originalPrice - product.discountPrice) /
                     product.originalPrice) *
-                    100,
+                    100
                 )
               : 0;
 
@@ -91,16 +91,6 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                     </div>
                   ) : null}
                 </div>
-
-                {/* Heart Icon */}
-                <div className="absolute top-3 right-3 z-10">
-                  <button
-                    onClick={(e) => e.stopPropagation()}
-                    className="p-1.5 bg-white/90 backdrop-blur-xs rounded-full shadow-sm border border-slate-100 text-slate-400 hover:text-red-500 hover:bg-white transition-colors cursor-pointer"
-                  >
-                    <Heart size={16} />
-                  </button>
-                </div>
               </div>
 
               {/* Content Area */}
@@ -110,7 +100,18 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                     {product.category || product.merchantName}
                   </span>
                   <span className="text-xs font-medium text-slate-500 whitespace-nowrap bg-slate-100 px-1.5 py-0.5 rounded">
-                    {product.stock} {product.unit === 'pcs' ? 'Pcs' : product.unit === 'porsi' ? 'Porsi' : product.unit === 'box' ? 'Box' : product.unit === 'kg' ? 'Kg' : product.unit === 'gram' ? 'Gram' : product.unit}
+                    {product.stock}{" "}
+                    {product.unit === "pcs"
+                      ? "Pcs"
+                      : product.unit === "porsi"
+                      ? "Porsi"
+                      : product.unit === "box"
+                      ? "Box"
+                      : product.unit === "kg"
+                      ? "Kg"
+                      : product.unit === "gram"
+                      ? "Gram"
+                      : product.unit}
                   </span>
                 </div>
 
