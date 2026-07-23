@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import type { UserRole } from '@/features/auth';
+import { presenceService } from '@/features/chat/services/presenceService';
 
 // Register with Email
 export const registerWithEmail = async (email: string, password: string, name: string, role: UserRole) => {
@@ -73,5 +74,9 @@ export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
 
 // Logout
 export const logout = async () => {
+  const currentUser = auth.currentUser;
+  if (currentUser?.uid) {
+    await presenceService.setOffline(currentUser.uid);
+  }
   await signOut(auth);
 };

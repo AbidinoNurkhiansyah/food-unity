@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import type { Product } from "@/features/products/types";
 import { useCartStore } from "@/features/cart";
+import { useAuthStore } from "@/features/auth";
+import { useChatStore } from "@/features/chat";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -23,6 +25,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product,
 }) => {
   const { addItem } = useCartStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const { openChatWithProduct } = useChatStore();
   const navigate = useNavigate();
 
   const formatDeadline = (deadline: string) => {
@@ -170,11 +174,17 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               <div className="pt-4 border-t border-gray-100 flex gap-2">
                 <button
                   onClick={() => {
-                    toast.info(
-                      `Fitur Chat dengan ${product.merchantName} akan segera hadir!`
-                    );
+                    if (!isAuthenticated) {
+                      toast.error("Silakan login terlebih dahulu untuk chat penjual");
+                      navigate("/login");
+                      return;
+                    }
+                    if (product) {
+                      openChatWithProduct(product, user?.uid);
+                      onClose(false);
+                    }
                   }}
-                  className="flex items-center cursor-pointer justify-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 transition-colors"
+                  className="flex items-center cursor-pointer justify-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 hover:text-primary-600 transition-colors"
                   title="Chat Penjual"
                 >
                   <MessageSquare size={20} />

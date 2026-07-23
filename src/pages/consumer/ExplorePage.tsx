@@ -10,6 +10,7 @@ import {
   ProductGrid,
   ProductDetailModal,
 } from "@/features/explore";
+import { ConsumerFloatingChat } from "@/features/chat";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +59,8 @@ export const ExplorePage: React.FC = () => {
         onClose={setIsProductModalOpen}
         product={selectedProduct}
       />
+
+      <ConsumerFloatingChat />
 
       <AlertDialog open={isLoginPromptOpen} onOpenChange={setIsLoginPromptOpen}>
         <AlertDialogContent className="bg-white border-none ring-0 sm:rounded-2xl">

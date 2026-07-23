@@ -14,9 +14,10 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'merchant';
     }
 
-    // 1. Users collection: Only the owner can read/write their own profile
+    // 1. Users collection: Authenticated users can read profiles, but only the owner can write
     match /users/{userId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
     }
     
     // 2. Products collection: Public read (for landing page), but only merchants can write
@@ -31,6 +32,36 @@ service cloud.firestore {
     match /orders/{orderId} {
       allow create: if isAuthenticated() && (request.resource.data.userId == request.auth.uid || isMerchant());
       allow read, update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isMerchant());
+    }
+
+    // 4. Claims collection: Authenticated users/merchants can read and write claims
+    match /claims/{claimId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // 5. Chats collection: Only participants (consumer or merchant) can read and write chats and messages
+    match /chats/{chatId} {
+      allow read: if isAuthenticated() && (
+        resource.data.consumerId == request.auth.uid || 
+        resource.data.merchantId == request.auth.uid
+      );
+      allow create, update: if isAuthenticated() && (
+        request.resource.data.consumerId == request.auth.uid || 
+        request.resource.data.merchantId == request.auth.uid
+      );
+
+      // Subcollection for messages inside a chat room
+      match /messages/{messageId} {
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/chats/$(chatId)).data.consumerId == request.auth.uid ||
+          get(/databases/$(database)/documents/chats/$(chatId)).data.merchantId == request.auth.uid
+        );
+        allow create: if isAuthenticated() && 
+          request.resource.data.senderId == request.auth.uid && (
+            get(/databases/$(database)/documents/chats/$(chatId)).data.consumerId == request.auth.uid ||
+            get(/databases/$(database)/documents/chats/$(chatId)).data.merchantId == request.auth.uid
+          );
+      }
     }
 
     // Fallback: Default deny for anything else
