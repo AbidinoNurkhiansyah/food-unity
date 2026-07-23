@@ -209,7 +209,17 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
                 id="stock"
                 type="number"
                 min="0"
-                {...register("stock", { valueAsNumber: true })}
+                {...register("stock", {
+                  valueAsNumber: true,
+                  onChange: (e) => {
+                    const newStock = Number(e.target.value);
+                    if (newStock <= 0) {
+                      setValue("status", "sold_out", { shouldValidate: true });
+                    } else if (currentStatus === "sold_out") {
+                      setValue("status", "active", { shouldValidate: true });
+                    }
+                  },
+                })}
               />
               {errors.stock && (
                 <p className="text-sm text-red-500">{errors.stock.message}</p>

@@ -46,16 +46,6 @@ export class PaymentService {
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
 
-      // Kurangi stok (Soft Reservation)
-      for (const item of items) {
-        if (item.id && item.merchantId) { // Hindari item fee
-          const productRef = db.collection('products').doc(item.id);
-          batch.update(productRef, {
-            stock: admin.firestore.FieldValue.increment(-item.quantity)
-          });
-        }
-      }
-
       await batch.commit();
     }
     
@@ -193,9 +183,19 @@ export class PaymentService {
           }
         }
 
-        // SPLIT PAYMENT LOGIC: Jika transaksi sukses/PAID, tambah saldo ke dompet merchant
+        // SPLIT PAYMENT LOGIC & STOCK DEDUCTION: Jika transaksi sukses/PAID, kurangi stok & tambah saldo ke dompet merchant
         if (orderStatus === 'PAID' && currentStatus !== 'PAID' && orderData.items && Array.isArray(orderData.items)) {
-          // Kelompokkan total pendapatan per merchant
+          // 1. Kurangi stok produk secara resmi setelah pembayaran berhasil
+          for (const item of orderData.items) {
+            if (item.id && item.merchantId) { // Hindari item fee
+              const productRef = db.collection('products').doc(item.id);
+              batch.update(productRef, {
+                stock: admin.firestore.FieldValue.increment(-item.quantity)
+              });
+            }
+          }
+
+          // 2. Kelompokkan total pendapatan per merchant
           const merchantEarnings = {};
           for (const item of orderData.items) {
             const mId = item.merchantId;

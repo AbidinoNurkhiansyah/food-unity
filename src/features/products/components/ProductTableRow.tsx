@@ -71,24 +71,18 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
       <TableCell>
         <span
           className={`px-2 py-1 text-xs font-medium rounded-full ${
-            product.stock <= 0
+            product.stock <= 0 || product.status === "sold_out"
               ? "bg-slate-100 text-slate-700"
-              : isExpired
+              : isExpired || product.status === "expired"
               ? "bg-red-100 text-red-700"
-              : product.status === "active"
-              ? "bg-palette-100 text-palette-700"
-              : product.status === "sold_out"
-              ? "bg-slate-100 text-slate-700"
-              : "bg-red-100 text-red-700"
+              : "bg-palette-100 text-palette-700"
           }`}
         >
-          {product.stock <= 0
-            ? "Habis Terjual"
-            : isExpired
+          {product.stock <= 0 || product.status === "sold_out"
+            ? "Sold Out"
+            : isExpired || product.status === "expired"
             ? "Expired"
-            : product.status === "active"
-            ? "Active"
-            : product.status}
+            : "Active"}
         </span>
       </TableCell>
       <TableCell className="text-right">
