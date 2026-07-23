@@ -121,8 +121,6 @@ export function DashboardLayout() {
       <DashboardSidebar
         onLogout={handleLogout}
         onOpenScanner={() => setIsScannerOpen(true)}
-        onOpenChat={() => setIsChatOpen(true)}
-        unreadCount={unreadCount}
       />
 
       {/* Main Content */}

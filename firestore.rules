@@ -14,9 +14,10 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'merchant';
     }
 
-    // 1. Users collection: Only the owner can read/write their own profile
+    // 1. Users collection: Authenticated users can read profiles, but only the owner can write
     match /users/{userId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
     }
     
     // 2. Products collection: Public read (for landing page), but only merchants can write

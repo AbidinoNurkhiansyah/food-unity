@@ -13,6 +13,105 @@ import {
 import type { ChatRoom, ChatMessage } from '../types';
 import type { Product } from '@/features/products/types';
 
+// In-memory cache for user & merchant account names to avoid redundant Firestore lookups
+const userNamesCache: Record<string, string> = {};
+const merchantNamesCache: Record<string, string> = {};
+
+/**
+ * Helper to resolve actual consumer account name from Firestore users collection
+ */
+const resolveConsumerName = async (
+  userId: string,
+  fallbackName?: string,
+  email?: string
+): Promise<string> => {
+  if (
+    fallbackName &&
+    fallbackName !== 'Konsumen' &&
+    fallbackName !== 'Customer Account' &&
+    fallbackName !== 'User' &&
+    !fallbackName.startsWith('User (')
+  ) {
+    return fallbackName;
+  }
+
+  if (userId) {
+    if (userNamesCache[userId]) {
+      return userNamesCache[userId];
+    }
+
+    try {
+      const userDoc = await getDoc(doc(db, 'users', userId));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const resolved =
+          data.name ||
+          data.displayName ||
+          data.email?.split('@')[0] ||
+          `User (${userId.slice(0, 6)})`;
+
+        userNamesCache[userId] = resolved;
+        return resolved;
+      }
+    } catch (err) {
+      console.warn('Error fetching user profile for chat:', err);
+    }
+  }
+
+  if (email) {
+    const resolved = email.split('@')[0];
+    if (userId) userNamesCache[userId] = resolved;
+    return resolved;
+  }
+
+  return userId ? `User (${userId.slice(0, 6)})` : 'Customer Account';
+};
+
+/**
+ * Helper to resolve actual merchant store/account name from Firestore users collection
+ */
+const resolveMerchantName = async (
+  merchantId: string,
+  fallbackName?: string
+): Promise<string> => {
+  if (
+    fallbackName &&
+    fallbackName !== 'Merchant Partner' &&
+    fallbackName !== 'Mitra Merchant' &&
+    fallbackName !== 'Mitra FoodUnity' &&
+    fallbackName !== 'Mitra' &&
+    fallbackName !== 'Merchant'
+  ) {
+    return fallbackName;
+  }
+
+  if (merchantId) {
+    if (merchantNamesCache[merchantId]) {
+      return merchantNamesCache[merchantId];
+    }
+
+    try {
+      const userDoc = await getDoc(doc(db, 'users', merchantId));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        const resolved =
+          data.profile?.storeName ||
+          data.name ||
+          data.displayName ||
+          data.email?.split('@')[0] ||
+          'Merchant Partner';
+
+        merchantNamesCache[merchantId] = resolved;
+        return resolved;
+      }
+    } catch (err) {
+      console.warn('Error fetching merchant profile for chat:', err);
+    }
+  }
+
+  return fallbackName || 'Merchant Partner';
+};
+
 export const chatService = {
   /**
    * Get or create a chat room between consumer and merchant
@@ -30,6 +129,16 @@ export const chatService = {
     const chatId = `${safeConsumerId}_${safeMerchantId}`;
     const chatRef = doc(db, 'chats', chatId);
 
+    const resolvedConsumerName = await resolveConsumerName(
+      safeConsumerId,
+      consumerName,
+      consumerEmail
+    );
+    const resolvedMerchantName = await resolveMerchantName(
+      safeMerchantId,
+      merchantName
+    );
+
     const productPayload = (product && product.id)
       ? {
           id: product.id,
@@ -45,10 +154,10 @@ export const chatService = {
       const newRoom: Record<string, any> = {
         id: chatId,
         consumerId: safeConsumerId,
-        consumerName: consumerName || 'Konsumen',
+        consumerName: resolvedConsumerName,
         consumerEmail: consumerEmail || '',
         merchantId: safeMerchantId,
-        merchantName: merchantName || 'Mitra FoodUnity',
+        merchantName: resolvedMerchantName,
         lastMessage: product ? `Tanya tentang: ${product.title || 'Produk'}` : 'Halo!',
         lastMessageSenderId: safeConsumerId,
         updatedAt: serverTimestamp(),
@@ -61,15 +170,16 @@ export const chatService = {
       }
 
       await setDoc(chatRef, newRoom);
-    } else if (productPayload) {
-      await setDoc(
-        chatRef,
-        {
-          activeProduct: productPayload,
-          updatedAt: serverTimestamp(),
-        },
-        { merge: true }
-      );
+    } else {
+      const updatePayload: Record<string, any> = {
+        consumerName: resolvedConsumerName,
+        merchantName: resolvedMerchantName,
+        updatedAt: serverTimestamp(),
+      };
+      if (consumerEmail) updatePayload.consumerEmail = consumerEmail;
+      if (productPayload) updatePayload.activeProduct = productPayload;
+
+      await setDoc(chatRef, updatePayload, { merge: true });
     }
 
     return chatId;
@@ -96,16 +206,40 @@ export const chatService = {
 
     return onSnapshot(
       q,
-      (snapshot) => {
-        const chats: ChatRoom[] = snapshot.docs.map((docSnap) => {
+      async (snapshot) => {
+        const chatsPromises = snapshot.docs.map(async (docSnap) => {
           const data = docSnap.data();
+          const rawConsumerName = data.consumerName;
+          const rawMerchantName = data.merchantName;
+          const consumerId = data.consumerId || '';
+          const merchantId = data.merchantId || '';
+
+          const resolvedConsumer = await resolveConsumerName(
+            consumerId,
+            rawConsumerName,
+            data.consumerEmail
+          );
+          const resolvedMerchant = await resolveMerchantName(
+            merchantId,
+            rawMerchantName
+          );
+
+          // Update Firestore room document if any name was previously generic
+          const updatePayload: Record<string, any> = {};
+          if (resolvedConsumer !== rawConsumerName) updatePayload.consumerName = resolvedConsumer;
+          if (resolvedMerchant !== rawMerchantName) updatePayload.merchantName = resolvedMerchant;
+
+          if (Object.keys(updatePayload).length > 0) {
+            setDoc(docSnap.ref, updatePayload, { merge: true }).catch(() => {});
+          }
+
           return {
             id: docSnap.id,
-            consumerId: data.consumerId || '',
-            consumerName: data.consumerName || 'Konsumen',
+            consumerId,
+            consumerName: resolvedConsumer,
             consumerEmail: data.consumerEmail || '',
-            merchantId: data.merchantId || '',
-            merchantName: data.merchantName || 'Mitra FoodUnity',
+            merchantId,
+            merchantName: resolvedMerchant,
             lastMessage: data.lastMessage || '',
             lastMessageSenderId: data.lastMessageSenderId || '',
             updatedAt: data.updatedAt,
@@ -114,6 +248,8 @@ export const chatService = {
             activeProduct: data.activeProduct || undefined,
           };
         });
+
+        const chats = await Promise.all(chatsPromises);
 
         // Sort descending by updatedAt client-side
         chats.sort((a, b) => {
@@ -210,11 +346,18 @@ export const chatService = {
 
     const [consumerId, merchantId] = chatId.split('_');
 
+    let resolvedSenderName = senderName;
+    if (senderRole === 'consumer') {
+      resolvedSenderName = await resolveConsumerName(senderId, senderName);
+    } else if (senderRole === 'merchant') {
+      resolvedSenderName = await resolveMerchantName(senderId, senderName);
+    }
+
     // 1. Update/create parent chat room summary
     const chatRef = doc(db, 'chats', chatId);
     const roomSummary: Record<string, any> = {
       id: chatId,
-      consumerId: consumerId || senderId,
+      consumerId: consumerId || '',
       merchantId: merchantId || '',
       lastMessage: text || '',
       lastMessageSenderId: senderId,
@@ -223,6 +366,11 @@ export const chatService = {
       unreadMerchant: senderRole === 'consumer',
     };
 
+    if (senderRole === 'consumer' || resolvedSenderName) {
+      if (senderRole === 'consumer') roomSummary.consumerName = resolvedSenderName;
+      if (senderRole === 'merchant') roomSummary.merchantName = resolvedSenderName;
+    }
+
     await setDoc(chatRef, roomSummary, { merge: true });
 
     // 2. Add message document to subcollection
@@ -230,7 +378,7 @@ export const chatService = {
     const messageData: Record<string, any> = {
       chatId,
       senderId: senderId || '',
-      senderName: senderName || 'User',
+      senderName: resolvedSenderName || 'User',
       senderRole: senderRole || 'consumer',
       text: text || '',
       createdAt: serverTimestamp(),

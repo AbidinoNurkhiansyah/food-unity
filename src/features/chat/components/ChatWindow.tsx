@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Send, ArrowLeft, Store, User as UserIcon, ShoppingBag, X } from "lucide-react";
 import { toast } from "sonner";
 import { chatService } from "../services/chatService";
+import { presenceService } from "../services/presenceService";
 import type { ChatMessage, ChatRoom, ChatProductInfo } from "../types";
 import type { Product } from "@/features/products/types";
 
@@ -26,14 +27,37 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   onBack,
   onClose,
 }) => {
+  const [consumerId, merchantId] = (chatId || "").split("_");
+  const recipientId =
+    currentUserRole === "consumer"
+      ? chatRoom?.merchantId || merchantId
+      : chatRoom?.consumerId || consumerId;
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [isRecipientOnline, setIsRecipientOnline] = useState(() =>
+    presenceService.getCachedPresence(recipientId)
+  );
   const [attachedProduct, setAttachedProduct] = useState<Product | ChatProductInfo | null>(
     activeProduct || null
   );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Subscribe to real-time recipient online/offline presence
+  useEffect(() => {
+    if (!recipientId) return;
+
+    const unsubscribe = presenceService.subscribeUserPresence(
+      recipientId,
+      (isOnline) => {
+        setIsRecipientOnline(isOnline);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [recipientId]);
 
   useEffect(() => {
     if (activeProduct) {
@@ -44,9 +68,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     }
   }, [activeProduct]);
 
+  const prevChatIdRef = useRef<string | null>(null);
+
   // Subscribe to real-time messages
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId) {
+      setMessages([]);
+      prevChatIdRef.current = null;
+      return;
+    }
+
+    // Only reset messages array if switching to a DIFFERENT chat room
+    if (prevChatIdRef.current !== chatId) {
+      setMessages([]);
+      prevChatIdRef.current = chatId;
+    }
 
     const unsubscribe = chatService.subscribeMessages(chatId, (newMessages) => {
       setMessages(newMessages);
@@ -55,7 +91,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
     // Mark as read
     chatService.markAsRead(chatId, currentUserRole);
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, [chatId, currentUserRole]);
 
   // Auto-scroll on new message
@@ -122,8 +160,8 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
 
   const recipientName =
     currentUserRole === "consumer"
-      ? chatRoom?.merchantName || "Mitra Merchant"
-      : chatRoom?.consumerName || "Konsumen";
+      ? chatRoom?.merchantName || "Merchant Partner"
+      : chatRoom?.consumerName || "Customer Account";
 
   return (
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden font-sans">
@@ -147,13 +185,23 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
                 <UserIcon size={18} />
               )}
             </div>
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+            <span
+              className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-white rounded-full ${
+                isRecipientOnline ? "bg-emerald-500" : "bg-slate-300"
+              }`}
+            ></span>
           </div>
           <div>
             <h3 className="font-bold text-slate-800 text-sm leading-tight truncate max-w-[180px]">
               {recipientName}
             </h3>
-            <p className="text-[11px] text-emerald-600 font-medium">Online</p>
+            <p
+              className={`text-[11px] font-medium ${
+                isRecipientOnline ? "text-emerald-600" : "text-slate-400"
+              }`}
+            >
+              {isRecipientOnline ? "Online" : "Offline"}
+            </p>
           </div>
         </div>
 

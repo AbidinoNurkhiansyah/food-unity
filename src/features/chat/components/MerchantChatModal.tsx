@@ -25,6 +25,13 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Reset active room to list view whenever modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveChatId(null);
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (!user?.uid) return;
 
@@ -43,17 +50,18 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
 
   const activeRoom = chatRooms.find((r) => r.id === activeChatId);
 
-  const filteredRooms = chatRooms.filter(
-    (room) =>
+  const filteredRooms = chatRooms.filter((room) => {
+    return (
       room.consumerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       room.consumerEmail?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    );
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] sm:max-w-2xl h-[550px] p-0 overflow-hidden bg-white border-none rounded-2xl flex flex-col">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl h-[550px] p-0 overflow-hidden bg-white border-none border-0 shadow-2xl ring-0 rounded-2xl flex flex-col">
         <DialogHeader className="sr-only">
-          <DialogTitle>Pesan Pelanggan</DialogTitle>
+          <DialogTitle>Customer Messages</DialogTitle>
         </DialogHeader>
 
         {activeChatId ? (
@@ -62,7 +70,7 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
               chatId={activeChatId}
               currentUserId={user.uid}
               currentUserName={
-                user.displayName || user.email?.split("@")[0] || "Mitra Merchant"
+                user.displayName || user.email?.split("@")[0] || "Merchant Partner"
               }
               currentUserRole="merchant"
               chatRoom={activeRoom}
@@ -80,17 +88,17 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
                 </div>
                 <div>
                   <h3 className="font-extrabold text-base leading-tight">
-                    Pesan Masuk Pelanggan
+                    Customer Messages
                   </h3>
                   <p className="text-xs text-primary-100 font-medium">
-                    Diskusi & Pertanyaan Seputar Produk
+                    Product Inquiries & Direct Discussions
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Search */}
-            <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="p-4 bg-slate-50/50">
               <div className="relative">
                 <Search
                   size={16}
@@ -100,27 +108,29 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Cari nama konsumen..."
-                  className="w-full pl-10 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-800"
+                  placeholder="Search customer account..."
+                  className="w-full pl-10 pr-4 py-2 text-xs bg-white border-none rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500/20 text-slate-800 shadow-2xs"
                 />
               </div>
             </div>
 
             {/* Room List */}
-            <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
+            <div className="flex-1 overflow-y-auto">
               {filteredRooms.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full p-8 text-center text-slate-400">
                   <UserIcon size={36} className="text-slate-300 mb-2" />
                   <p className="text-sm font-semibold text-slate-600">
-                    Belum ada pesan masuk
+                    No incoming messages
                   </p>
                   <p className="text-xs text-slate-400 mt-1 max-w-xs">
-                    Pesan dari konsumen yang menanyakan produk Anda akan muncul di sini.
+                    Messages from customers inquiring about your products will appear here.
                   </p>
                 </div>
               ) : (
                 filteredRooms.map((room) => {
                   const isUnread = room.unreadMerchant;
+                  const customerAccountName = room.consumerName || "Customer Account";
+
                   return (
                     <button
                       key={room.id}
@@ -133,7 +143,7 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
                       }`}
                     >
                       <div className="relative shrink-0">
-                        <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm border border-slate-200">
+                        <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm">
                           <UserIcon size={20} />
                         </div>
                         {isUnread && (
@@ -150,7 +160,7 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
                                 : "font-semibold text-slate-700"
                             }`}
                           >
-                            {room.consumerName}
+                            {customerAccountName}
                           </h4>
                           {room.activeProduct && (
                             <span className="text-[10px] bg-primary-100 text-primary-700 font-semibold px-2 py-0.5 rounded-md truncate max-w-[120px]">

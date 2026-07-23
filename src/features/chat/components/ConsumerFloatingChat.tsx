@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MessageSquare, X, Store, ChevronRight, Search } from "lucide-react";
+import { db } from "@/config/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { useAuthStore } from "@/features/auth";
 import { useChatStore } from "../hooks/useChatStore";
 import { chatService } from "../services/chatService";
@@ -46,10 +48,22 @@ export const ConsumerFloatingChat: React.FC = () => {
 
       const initProductChat = async () => {
         try {
+          let realName = user.displayName || user.email?.split("@")[0] || "";
+          let realEmail = user.email || "";
+
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+              const uData = userDoc.data();
+              if (uData.name) realName = uData.name;
+              if (uData.email) realEmail = uData.email;
+            }
+          } catch (e) {}
+
           await chatService.getOrCreateChatRoom(
             user.uid,
-            user.displayName || user.email?.split("@")[0] || "Konsumen",
-            user.email || "",
+            realName || "Consumer Account",
+            realEmail || "",
             merchantId,
             activeProduct.merchantName,
             activeProduct

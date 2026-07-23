@@ -7,11 +7,20 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useAuthStore, type UserRole } from '@/features/auth';
 import { Toaster } from '@/components/ui/sonner';
 
+import { presenceService } from '@/features/chat/services/presenceService';
+
 function App() {
   const { setUser } = useAuthStore();
 
   useEffect(() => {
+    let cleanupPresence: (() => void) | null = null;
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (cleanupPresence) {
+        cleanupPresence();
+        cleanupPresence = null;
+      }
+
       if (firebaseUser) {
         try {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
@@ -21,12 +30,18 @@ function App() {
           console.error("Error fetching user role:", error);
           setUser(firebaseUser, 'consumer');
         }
+
+        // Setup Realtime Database Presence (Online/Offline)
+        cleanupPresence = presenceService.setupPresence(firebaseUser.uid);
       } else {
         setUser(null, null);
       }
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (cleanupPresence) cleanupPresence();
+      unsubscribe();
+    };
   }, [setUser]);
 
   return (
