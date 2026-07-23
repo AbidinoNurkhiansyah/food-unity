@@ -42,6 +42,7 @@ export const useCartCheckout = () => {
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({
+          userId: user.uid,
           items: [
             ...selectedItems.map((item) => ({
               id: item.product.id,
@@ -74,8 +75,24 @@ export const useCartCheckout = () => {
 
         // Run Midtrans Snap
         window.snap.pay(data.token, {
-          onSuccess: function (result: any) {
+          onSuccess: async function (result: any) {
             console.log("Success:", result);
+            try {
+              const orderId = result?.order_id || data.orderId;
+              if (orderId && user) {
+                const userToken = await user.getIdToken();
+                await fetch(`http://localhost:3001/api/orders/${orderId}/confirm-payment`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${userToken}`,
+                  },
+                  body: JSON.stringify(result),
+                });
+              }
+            } catch (err) {
+              console.error("Confirm Payment Error:", err);
+            }
             toast.success("Pembayaran Berhasil!");
             removeSelectedItems();
             navigate("/orders");
@@ -93,6 +110,9 @@ export const useCartCheckout = () => {
           },
           onClose: function () {
             console.log("Customer closed the popup without finishing the payment");
+            toast.info("Pesanan disimpan di Belum Dibayar. Silakan selesaikan pembayaran.");
+            removeSelectedItems();
+            navigate("/orders");
             setIsLoading(false);
           },
         });
@@ -101,9 +121,14 @@ export const useCartCheckout = () => {
         toast.error(data.error || "Gagal mendapatkan token transaksi.");
         setIsLoading(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Checkout Error:", error);
-      toast.error("Terjadi kesalahan pada sistem.");
+      const isConnectionError = error?.message === "Failed to fetch" || error?.name === "TypeError";
+      toast.error(
+        isConnectionError
+          ? "Gagal terhubung ke server backend (port 3001). Pastikan Docker / Server Backend sudah berjalan."
+          : (error?.message || "Terjadi kesalahan pada sistem.")
+      );
       setIsLoading(false);
     }
   };
