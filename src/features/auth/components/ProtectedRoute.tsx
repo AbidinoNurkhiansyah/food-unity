@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) {
-  const { isAuthenticated, role, isLoading } = useAuthStore();
+  const { isAuthenticated, role, isProfileCompleted, isLoading } = useAuthStore();
   const location = useLocation();
 
   if (isLoading) {
@@ -22,6 +22,16 @@ export function ProtectedRoute({ allowedRoles, children }: ProtectedRouteProps) 
   if (!isAuthenticated) {
     // Redirect to login but save the attempted location
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Redirect merchant to onboarding if profile is not completed
+  if (role === 'merchant' && !isProfileCompleted && location.pathname !== '/onboarding') {
+    return <Navigate to="/onboarding" replace />;
+  }
+
+  // Redirect onboarded merchant away from onboarding page to dashboard
+  if (role === 'merchant' && isProfileCompleted && location.pathname === '/onboarding') {
+    return <Navigate to="/dashboard" replace />;
   }
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {

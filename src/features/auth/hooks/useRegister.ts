@@ -14,7 +14,7 @@ export function useRegister(role: UserRole) {
     setError('');
     try {
       const result = await registerWithEmail(data.email, data.password, data.name, role);
-      setUser(result.user, result.role);
+      setUser(result.user, result.role, result.isCompleted);
       navigate(role === 'merchant' ? '/dashboard' : '/explore');
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
@@ -32,7 +32,7 @@ export function useRegister(role: UserRole) {
     setError('');
     try {
       const result = await loginWithGoogle(role);
-      setUser(result.user, result.role);
+      setUser(result.user, result.role, result.isCompleted);
       navigate(result.role === 'merchant' ? '/dashboard' : '/explore');
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {

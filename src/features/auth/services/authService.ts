@@ -22,10 +22,12 @@ export const registerWithEmail = async (email: string, password: string, name: s
     email,
     role,
     createdAt: new Date().toISOString(),
-    profile: {} // Will be completed later
+    profile: {
+      isCompleted: false
+    }
   });
 
-  return { user, role };
+  return { user, role, isCompleted: false };
 };
 
 // Login with Email
@@ -33,11 +35,13 @@ export const loginWithEmail = async (email: string, password: string) => {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
 
-  // Fetch role from Firestore
+  // Fetch role & profile completion status from Firestore
   const userDoc = await getDoc(doc(db, 'users', user.uid));
-  const role = userDoc.exists() ? (userDoc.data().role as UserRole) : 'consumer';
+  const userData = userDoc.exists() ? userDoc.data() : null;
+  const role = userData ? (userData.role as UserRole) : 'consumer';
+  const isCompleted = userData?.profile?.isCompleted ?? false;
 
-  return { user, role };
+  return { user, role, isCompleted };
 };
 
 // Login/Register with Google
@@ -53,6 +57,7 @@ export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
   const userDoc = await getDoc(userDocRef);
   
   let role = defaultRole;
+  let isCompleted = false;
 
   if (!userDoc.exists()) {
     // New Google user, register them
@@ -62,14 +67,18 @@ export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
       email: user.email,
       role: defaultRole,
       createdAt: new Date().toISOString(),
-      profile: {}
+      profile: {
+        isCompleted: false
+      }
     });
   } else {
-    // Existing Google user, get their role
-    role = userDoc.data().role as UserRole;
+    // Existing Google user, get their role & profile completion status
+    const userData = userDoc.data();
+    role = userData.role as UserRole;
+    isCompleted = userData.profile?.isCompleted ?? false;
   }
 
-  return { user, role };
+  return { user, role, isCompleted };
 };
 
 // Logout

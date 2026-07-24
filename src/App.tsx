@@ -24,11 +24,13 @@ function App() {
       if (firebaseUser) {
         try {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          const role = userDoc.exists() ? (userDoc.data().role as UserRole) : 'consumer';
-          setUser(firebaseUser, role);
+          const userData = userDoc.exists() ? userDoc.data() : null;
+          const role = userData ? (userData.role as UserRole) : 'consumer';
+          const isProfileCompleted = userData?.profile?.isCompleted ?? false;
+          setUser(firebaseUser, role, isProfileCompleted);
         } catch (error) {
           console.error("Error fetching user role:", error);
-          setUser(firebaseUser, 'consumer');
+          setUser(firebaseUser, 'consumer', false);
         }
 
         // Setup Realtime Database Presence (Online/Offline)
