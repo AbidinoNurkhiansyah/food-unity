@@ -13,8 +13,8 @@ export function useLogin() {
     setIsLoading(true);
     setError('');
     try {
-      const { user, role } = await loginWithEmail(data.email, data.password);
-      setUser(user, role);
+      const { user, role, isCompleted } = await loginWithEmail(data.email, data.password);
+      setUser(user, role, isCompleted);
       navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
     } catch (err: any) {
       if (
@@ -35,8 +35,8 @@ export function useLogin() {
     setIsLoading(true);
     setError('');
     try {
-      const { user, role } = await loginWithGoogle('consumer');
-      setUser(user, role);
+      const { user, role, isCompleted } = await loginWithGoogle('consumer');
+      setUser(user, role, isCompleted);
       navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {
