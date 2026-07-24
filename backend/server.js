@@ -45,6 +45,47 @@ app.use(express.json());
 app.use('/', paymentRoutes);
 app.use('/', walletRoutes);
 
+// Proxy endpoints for Indonesia administrative regions (wilayah.id) to bypass browser CORS
+app.get('/api/location/provinces', async (req, res) => {
+  try {
+    const response = await fetch('https://wilayah.id/api/provinces.json');
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/location/regencies/:provinceId', async (req, res) => {
+  try {
+    const response = await fetch(`https://wilayah.id/api/regencies/${req.params.provinceId}.json`);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/location/districts/:regencyId', async (req, res) => {
+  try {
+    const response = await fetch(`https://wilayah.id/api/districts/${req.params.regencyId}.json`);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/location/villages/:districtId', async (req, res) => {
+  try {
+    const response = await fetch(`https://wilayah.id/api/villages/${req.params.districtId}.json`);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend Server running on port ${PORT} (Modular Architecture)`);
