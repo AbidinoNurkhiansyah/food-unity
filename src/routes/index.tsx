@@ -3,6 +3,7 @@ import { HomePage } from '@/pages/HomePage';
 import { LoginPage } from '@/pages/LoginPage';
 import { ConsumerRegisterPage } from '@/pages/auth/ConsumerRegisterPage';
 import { MerchantRegisterPage } from '@/pages/auth/MerchantRegisterPage';
+import { MerchantOnboardingPage } from '@/pages/auth/MerchantOnboardingPage';
 import { ProtectedRoute } from '@/features/auth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { MerchantDashboardPage } from '@/pages/dashboard/MerchantDashboardPage';
@@ -17,6 +18,14 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <HomePage />,
+  },
+  {
+    path: '/onboarding',
+    element: (
+      <ProtectedRoute allowedRoles={['merchant']}>
+        <MerchantOnboardingPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/explore',
