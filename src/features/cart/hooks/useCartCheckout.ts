@@ -4,11 +4,26 @@ import { toast } from "sonner";
 import { useCartStore } from "./useCartStore";
 import { useAuthStore } from "@/features/auth";
 
+interface SnapResult {
+  order_id?: string;
+}
+
+interface SnapOptions {
+  onSuccess?: (result: SnapResult) => void;
+  onPending?: (result: SnapResult) => void;
+  onError?: (result: SnapResult) => void;
+  onClose?: () => void;
+}
+
 declare global {
   interface Window {
-    snap: any;
+    snap: {
+      pay: (token: string, options: SnapOptions) => void;
+    };
   }
 }
+
+const BACKEND_URL = import.meta.env.VITE_API_URL;
 
 export const useCartCheckout = () => {
   const { getSelectedItems, getTotalPrice, removeSelectedItems } = useCartStore();
@@ -35,7 +50,7 @@ export const useCartCheckout = () => {
 
       const token = await user.getIdToken();
 
-      const response = await fetch("http://localhost:3001/api/checkout", {
+      const response = await fetch(`${BACKEND_URL}/api/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,13 +90,13 @@ export const useCartCheckout = () => {
 
         // Run Midtrans Snap
         window.snap.pay(data.token, {
-          onSuccess: async function (result: any) {
+          onSuccess: async function (result) {
             console.log("Success:", result);
             try {
               const orderId = result?.order_id || data.orderId;
               if (orderId && user) {
                 const userToken = await user.getIdToken();
-                await fetch(`http://localhost:3001/api/orders/${orderId}/confirm-payment`, {
+                await fetch(`${BACKEND_URL}/api/orders/${orderId}/confirm-payment`, {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
@@ -97,13 +112,13 @@ export const useCartCheckout = () => {
             removeSelectedItems();
             navigate("/orders");
           },
-          onPending: function (result: any) {
+          onPending: function (result) {
             console.log("Pending:", result);
             toast.success("Menunggu pembayaran...");
             removeSelectedItems();
             navigate("/orders");
           },
-          onError: function (result: any) {
+          onError: function (result) {
             console.log("Error:", result);
             toast.error("Pembayaran gagal!");
             setIsLoading(false);
@@ -121,13 +136,14 @@ export const useCartCheckout = () => {
         toast.error(data.error || "Gagal mendapatkan token transaksi.");
         setIsLoading(false);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Checkout Error:", error);
-      const isConnectionError = error?.message === "Failed to fetch" || error?.name === "TypeError";
+      const errMsg = error instanceof Error ? error.message : "";
+      const isConnectionError = errMsg === "Failed to fetch" || (error && typeof error === "object" && "name" in error && error.name === "TypeError");
       toast.error(
         isConnectionError
-          ? "Gagal terhubung ke server backend (port 3001). Pastikan Docker / Server Backend sudah berjalan."
-          : (error?.message || "Terjadi kesalahan pada sistem.")
+          ? "Gagal terhubung ke server backend. Pastikan Docker / Server Backend sudah berjalan."
+          : (errMsg || "Terjadi kesalahan pada sistem.")
       );
       setIsLoading(false);
     }
@@ -135,4 +151,5 @@ export const useCartCheckout = () => {
 
   return { handleCheckout, isLoading };
 };
+
 
