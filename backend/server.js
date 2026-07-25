@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import paymentRoutes from './modules/payment/payment.routes.js';
 import walletRoutes from './modules/wallet/wallet.routes.js';
+import { CleanupService } from './modules/cleanup/cleanup.service.js';
 
 dotenv.config();
 
@@ -89,4 +90,18 @@ app.get('/api/location/villages/:districtId', async (req, res) => {
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Backend Server running on port ${PORT} (Modular Architecture)`);
+  
+  // Start background cleanup scheduler (running immediately and then every 60 seconds)
+  CleanupService.runCleanup().catch(error => {
+    console.error("Initial background cleanup error:", error);
+  });
+
+  setInterval(async () => {
+    try {
+      await CleanupService.runCleanup();
+    } catch (error) {
+      console.error("Error in background cleanup job:", error);
+    }
+  }, 60 * 1000);
 });
+

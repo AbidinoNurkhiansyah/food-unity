@@ -18,7 +18,7 @@ export const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange }) 
               : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
           }`}
         >
-          {tab === "ALL" ? "Semua" : tab === "PENDING" ? "Belum Dibayar" : tab === "PAID" ? "Lunas" : "Dibatalkan"}
+          {tab === "ALL" ? "All" : tab === "PENDING" ? "Unpaid" : tab === "PAID" ? "Paid" : "Cancelled / Expired"}
         </button>
       ))}
     </div>

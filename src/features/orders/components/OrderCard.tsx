@@ -28,14 +28,22 @@ interface OrderCardProps {
 export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelClick }) => {
   const [showQR, setShowQR] = useState(false);
 
+  const isExpired = order.items.some((item: any) => {
+    if (!item.pickupDeadline) return false;
+    return new Date(item.pickupDeadline).getTime() <= Date.now();
+  });
+
   const getStatusBadge = (status: string) => {
+    if (status === "PAID" && isExpired) {
+      return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Expired (Uncollected)</span>;
+    }
     switch (status) {
       case "PENDING":
-        return <span className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md text-xs font-semibold border border-yellow-200"><Clock size={14} /> Belum Dibayar</span>;
+        return <span className="flex items-center gap-1 text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md text-xs font-semibold border border-yellow-200"><Clock size={14} /> Unpaid</span>;
       case "PAID":
-        return <span className="flex items-center gap-1 text-palette-600 bg-palette-50 px-2 py-1 rounded-md text-xs font-semibold border border-palette-200"><CheckCircle2 size={14} /> Lunas</span>;
+        return <span className="flex items-center gap-1 text-palette-600 bg-palette-50 px-2 py-1 rounded-md text-xs font-semibold border border-palette-200"><CheckCircle2 size={14} /> Paid</span>;
       case "FAILED":
-        return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Gagal/Batal</span>;
+        return <span className="flex items-center gap-1 text-red-600 bg-red-50 px-2 py-1 rounded-md text-xs font-semibold border border-red-200"><XCircle size={14} /> Failed/Cancelled</span>;
       default:
         return <span className="flex items-center gap-1 text-gray-600 bg-gray-50 px-2 py-1 rounded-md text-xs font-semibold border border-gray-200">{status}</span>;
     }
@@ -53,7 +61,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
           </div>
           <div className="flex items-center gap-3">
             <p className="text-xs text-gray-500">
-              {new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              {new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
             </p>
             {getStatusBadge(order.status)}
           </div>
@@ -76,7 +84,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
 
           <div className="pt-4 border-t border-gray-100 flex flex-wrap justify-between items-center gap-4">
             <div>
-              <p className="text-xs text-gray-500">Total Pembayaran</p>
+              <p className="text-xs text-gray-500">Total Payment</p>
               <p className="text-lg font-bold text-primary-600">{formatCurrency(order.total)}</p>
             </div>
 
@@ -86,28 +94,34 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
                   onClick={() => onCancelClick(order.orderId)}
                   className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
                 >
-                  Batalkan Pesanan
+                  Cancel Order
                 </button>
                 <button
                   onClick={() => onPayNow(order.snapToken)}
                   disabled={!order.snapToken}
                   className="px-6 py-2 bg-gradient-to-r from-primary-500 to-red-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-500/30 transition-all disabled:opacity-50"
                 >
-                  {order.snapToken ? "Bayar Sekarang" : "Token Kedaluwarsa"}
+                  {order.snapToken ? "Pay Now" : "Token Expired"}
                 </button>
               </div>
             )}
 
-            {order.status === "PAID" && (
+            {order.status === "PAID" && !isExpired && (
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowQR(true)}
                   className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-palette-500 to-teal-500 text-white rounded-lg font-semibold hover:shadow-lg hover:shadow-emerald-500/30 transition-all"
                 >
                   <QrCode size={18} />
-                  Tiket Pengambilan
+                  Pickup Ticket
                 </button>
               </div>
+            )}
+
+            {order.status === "PAID" && isExpired && (
+              <span className="text-xs font-semibold text-red-500 bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg">
+                Pickup Deadline Passed
+              </span>
             )}
           </div>
         </div>
@@ -116,9 +130,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
       <Dialog open={showQR} onOpenChange={setShowQR}>
         <DialogContent className="sm:max-w-md text-center">
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Tiket Pengambilan</DialogTitle>
+            <DialogTitle className="text-center text-xl">Pickup Ticket</DialogTitle>
             <DialogDescription className="text-center">
-              Tunjukkan QR Code ini kepada kasir atau penjaga toko untuk mengambil makanan Anda.
+              Show this QR Code to the cashier or store staff to retrieve your food.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center p-6 space-y-6">
@@ -126,7 +140,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, onPayNow, onCancelC
               <QRCode value={order.orderId} size={200} />
             </div>
             <div>
-              <p className="text-sm text-gray-500 mb-1">Kode Unik / Order ID</p>
+              <p className="text-sm text-gray-500 mb-1">Unique Code / Order ID</p>
               <p className="text-2xl font-mono font-bold tracking-widest text-palette-600">{shortCode}</p>
             </div>
           </div>
