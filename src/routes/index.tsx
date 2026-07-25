@@ -13,6 +13,7 @@ import { MyOrdersPage } from '@/pages/consumer/MyOrdersPage';
 import { CartPage } from '@/pages/consumer/CartPage';
 import { WalletPage } from '@/pages/dashboard/WalletPage';
 import { ClaimsPage } from '@/pages/dashboard/ClaimsPage';
+import { MerchantProfilePage } from '@/pages/dashboard/MerchantProfilePage';
 
 export const router = createBrowserRouter([
   {
@@ -82,6 +83,10 @@ export const router = createBrowserRouter([
       {
         path: 'claims',
         element: <ClaimsPage />
+      },
+      {
+        path: 'profile',
+        element: <MerchantProfilePage />
       }
     ]
   }
