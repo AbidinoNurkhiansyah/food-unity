@@ -1,7 +1,5 @@
-import { useAuthStore } from '@/features/auth';
-import { useEffect, useState } from 'react';
-import { ProductModal } from '@/features/products';
-import { MerchantBentoGrid } from '@/features/dashboard';
+import { useAuthStore } from "@/features/auth";
+import { MerchantBentoGrid } from "@/features/dashboard";
 
 // Bento Grid Theme Styles (Modern Minimalist / Cobalt-inspired)
 const themeStyles = `
@@ -24,28 +22,13 @@ const themeStyles = `
 
 export function MerchantDashboardPage() {
   const { user } = useAuthStore();
-  const [mounted, setMounted] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <>
       <style>{themeStyles}</style>
-      <div className="max-w-6xl mx-auto px-4 py-10 font-sans-bento bg-slate-50 min-h-screen text-slate-900">
-        <MerchantBentoGrid 
-          user={user} 
-          mounted={mounted} 
-          setIsCreateModalOpen={setIsCreateModalOpen} 
-        />
+      <div className="max-w-full font-sans-bento min-h-screen text-slate-900 mt-2">
+        <MerchantBentoGrid user={user} />
       </div>
-      
-      <ProductModal 
-        isOpen={isCreateModalOpen} 
-        onClose={() => setIsCreateModalOpen(false)} 
-      />
     </>
   );
 }

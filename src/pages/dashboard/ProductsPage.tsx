@@ -29,7 +29,7 @@ export function ProductsPage() {
   } = useProductManagement();
 
   return (
-    <div className="max-w-6xl mx-auto font-sans-bento bg-slate-50 min-h-[calc(100vh-4rem)] p-4 md:p-8">
+    <div className="w-full px-6 py-4 font-sans-bento">
       
       <header className="mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-white shadow-sm border border-slate-200/60 text-slate-600 rounded-full text-xs font-medium mb-4">
