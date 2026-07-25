@@ -10,6 +10,7 @@ import {
   History,
   LogOut,
   MessageSquare,
+  Store,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -112,10 +113,7 @@ export function DashboardLayout() {
         onScan={handleGlobalScan}
       />
 
-      <MerchantChatModal
-        isOpen={isChatOpen}
-        onClose={setIsChatOpen}
-      />
+      <MerchantChatModal isOpen={isChatOpen} onClose={setIsChatOpen} />
 
       {/* Sidebar Extracted */}
       <DashboardSidebar
@@ -128,8 +126,12 @@ export function DashboardLayout() {
         {/* Desktop Header Topbar */}
         <header className="h-16 bg-background/80 backdrop-blur-md border-b border-primary/10 hidden md:flex items-center justify-between px-8 sticky top-0 z-40">
           <div>
-            <h2 className="text-lg font-bold text-slate-800">Dashboard Mitra</h2>
-            <p className="text-xs text-slate-500">Kelola toko dan pesanan pelanggan Anda</p>
+            <h2 className="text-lg font-bold text-slate-800">
+              Dashboard Mitra
+            </h2>
+            <p className="text-xs text-slate-500">
+              Kelola toko dan pesanan pelanggan Anda
+            </p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -140,12 +142,22 @@ export function DashboardLayout() {
               className="gap-2 rounded-xl relative cursor-pointer hover:bg-primary-50 hover:text-primary-600 border-slate-200"
             >
               <MessageSquare className="w-4 h-4 text-primary-600" />
-              <span className="font-semibold text-xs">Chat Pelanggan</span>
+              <span className="font-semibold text-xs">Consumer Chat</span>
               {unreadCount > 0 && (
                 <span className="ml-1 px-1.5 py-0.5 bg-red-500 text-white font-extrabold text-[10px] rounded-full animate-pulse">
                   {unreadCount}
                 </span>
               )}
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/dashboard/profile")}
+              className="gap-2 rounded-xl cursor-pointer hover:bg-primary-50 hover:text-primary-600 border-slate-200"
+            >
+              <Store className="w-4 h-4 text-primary-600" />
+              <span className="font-semibold text-xs">Merchant Profile</span>
             </Button>
           </div>
         </header>
@@ -172,6 +184,16 @@ export function DashboardLayout() {
               )}
             </Button>
 
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/dashboard/profile")}
+              className="text-slate-600 hover:text-primary-600 rounded-full cursor-pointer"
+              title="Profil Toko"
+            >
+              <Store className="w-5 h-5" />
+            </Button>
+
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
@@ -190,7 +212,9 @@ export function DashboardLayout() {
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-xl">Batal</AlertDialogCancel>
+                  <AlertDialogCancel className="rounded-xl">
+                    Batal
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleLogout}
                     className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
@@ -238,7 +262,9 @@ export function DashboardLayout() {
                 }`}
               >
                 <Icon
-                  className={`w-5 h-5 ${isActive ? "fill-primary/20 stroke-primary-600" : ""}`}
+                  className={`w-5 h-5 ${
+                    isActive ? "fill-primary/20 stroke-primary-600" : ""
+                  }`}
                 />
                 <span className="text-[10px] font-semibold">{item.name}</span>
               </Link>
@@ -249,4 +275,3 @@ export function DashboardLayout() {
     </div>
   );
 }
-

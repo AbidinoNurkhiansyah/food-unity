@@ -5,6 +5,27 @@ import { useAuthStore } from "@/features/auth";
 import { toast } from "sonner";
 import type { Order } from "../components/OrderCard";
 
+interface SnapResult {
+  order_id?: string;
+}
+
+interface SnapOptions {
+  onSuccess?: (result: SnapResult) => void;
+  onPending?: (result: SnapResult) => void;
+  onError?: (result: SnapResult) => void;
+  onClose?: () => void;
+}
+
+declare global {
+  interface Window {
+    snap: {
+      pay: (token: string, options: SnapOptions) => void;
+    };
+  }
+}
+
+const BACKEND_URL = import.meta.env.VITE_API_URL;
+
 export const useOrders = () => {
   const { user } = useAuthStore();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -14,8 +35,6 @@ export const useOrders = () => {
 
   useEffect(() => {
     if (!user?.uid) return;
-
-    setIsLoading(true);
     
     // Real-time listener ke Firestore berdasarkan userId
     const q = query(
@@ -67,7 +86,7 @@ export const useOrders = () => {
 
       // Panggil backend untuk membatalkan di Midtrans (asinkron)
       const token = await user.getIdToken();
-      fetch(`http://localhost:3001/api/orders/${orderToCancel}/cancel`, {
+      fetch(`${BACKEND_URL}/api/orders/${orderToCancel}/cancel`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -89,17 +108,15 @@ export const useOrders = () => {
       return;
     }
     
-    // @ts-ignore
     if (window.snap) {
-      // @ts-ignore
       window.snap.pay(snapToken, {
-        onSuccess: async function (result: any) {
+        onSuccess: async function (result) {
           console.log('Success:', result);
           try {
             const orderId = result?.order_id;
             if (orderId && user) {
               const userToken = await user.getIdToken();
-              await fetch(`http://localhost:3001/api/orders/${orderId}/confirm-payment`, {
+              await fetch(`${BACKEND_URL}/api/orders/${orderId}/confirm-payment`, {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -113,11 +130,11 @@ export const useOrders = () => {
           }
           toast.success("Pembayaran Berhasil!");
         },
-        onPending: function (result: any) {
+        onPending: function (result) {
           console.log('Pending:', result);
           toast.info("Menunggu pembayaran...");
         },
-        onError: function (result: any) {
+        onError: function (result) {
           console.log('Error:', result);
           toast.error("Pembayaran gagal!");
         },
@@ -146,3 +163,4 @@ export const useOrders = () => {
     handlePayNow
   };
 };
+

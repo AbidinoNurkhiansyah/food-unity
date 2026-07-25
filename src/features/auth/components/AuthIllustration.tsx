@@ -19,7 +19,7 @@ export function AuthIllustration() {
       <div className="absolute inset-0 bg-gradient-to-t to-transparent" />
 
       {/* Brand Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
@@ -28,12 +28,12 @@ export function AuthIllustration() {
         <img
           src={appLogo}
           alt="FoodUnity Logo"
-          className="w-32 h-32 object-contain"
+          className="w-32 h-32 object-contain brightness-0 invert"
         />
       </motion.div>
 
       {/* Hero Text di Bawah Kiri */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3, ease: "easeOut" }}
@@ -43,12 +43,13 @@ export function AuthIllustration() {
           Zero Food Waste Movement
         </h3>
         <p className="text-sm text-white/90 leading-relaxed max-w-md drop-shadow-sm font-medium">
-          Connecting surplus high-quality food with consumers affordably. Reduce food waste and share goodness for a better environment.
+          Connecting surplus high-quality food with consumers affordably. Reduce
+          food waste and share goodness for a better environment.
         </p>
       </motion.div>
 
       {/* Footer Ilustrasi */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.5, ease: "easeOut" }}

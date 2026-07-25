@@ -28,7 +28,7 @@ export function LoginPanel() {
       {/* Soft background blur for the form side */}
       <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary-100 rounded-full opacity-50 pointer-events-none"></div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
@@ -52,7 +52,10 @@ export function LoginPanel() {
         <CardContent className="p-0">
           <form onSubmit={handleSubmit(handleEmailLogin)} className="space-y-5">
             <div className="space-y-1">
-              <Label htmlFor="email" className="text-xs font-bold text-gray-700">
+              <Label
+                htmlFor="email"
+                className="text-xs font-bold text-gray-700"
+              >
                 Email
               </Label>
               <div className="relative">
@@ -76,7 +79,10 @@ export function LoginPanel() {
 
             <div className="space-y-1 relative">
               <div className="flex items-center justify-between mb-1">
-                <Label htmlFor="password" className="text-xs font-bold text-gray-700">
+                <Label
+                  htmlFor="password"
+                  className="text-xs font-bold text-gray-700"
+                >
                   Password
                 </Label>
                 <Link
