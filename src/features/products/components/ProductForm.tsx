@@ -268,7 +268,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pickupDeadline">Batas Waktu Ambil</Label>
+              <Label htmlFor="pickupDeadline">Batas Akhir Pengambilan Paket Ini</Label>
               <Input
                 id="pickupDeadline"
                 type="datetime-local"
@@ -286,6 +286,9 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
                   },
                 })}
               />
+              <p className="text-[11px] text-slate-400 font-medium leading-normal">
+                Disarankan otomatis sesuai jam operasional rutin Anda.
+              </p>
               {errors.pickupDeadline && (
                 <p className="text-sm text-red-500">
                   {errors.pickupDeadline.message}

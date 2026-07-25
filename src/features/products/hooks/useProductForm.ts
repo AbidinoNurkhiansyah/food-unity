@@ -6,6 +6,8 @@ import type { ProductFormValues, Product } from '../types';
 import { useCreateProduct, useUpdateProduct } from './useProducts';
 import { uploadImageToCloudinary } from '../services/cloudinaryApi';
 import { useAuthStore } from '@/features/auth';
+import { db } from '@/config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const getEffectiveStatus = (product?: Product | null): 'active' | 'sold_out' | 'expired' => {
   if (!product) return 'active';
@@ -18,6 +20,26 @@ export const getEffectiveStatus = (product?: Product | null): 'active' | 'sold_o
   }
   if (product.status === 'sold_out' || product.stock <= 0) return 'sold_out';
   return product.status || 'active';
+};
+
+const parseEndTimeFromPickupHours = (pickupHours?: string): string => {
+  if (!pickupHours) return '20:00'; // Default fallback
+  const parts = pickupHours.split(' - ');
+  if (parts.length === 2) {
+    const time = parts[1].trim();
+    if (/^\d{2}:\d{2}$/.test(time)) {
+      return time;
+    }
+  }
+  return '20:00';
+};
+
+const getTodayWithTime = (timeStr: string): string => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}T${timeStr}`;
 };
 
 const getFormValuesFromProduct = (prod?: Product | null): ProductFormValues => {
@@ -60,6 +82,28 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
       setImageFile(null);
     }
   }, [initialData, form]);
+
+  useEffect(() => {
+    if (!initialData && user) {
+      const fetchMerchantProfile = async () => {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const profile = userDoc.data()?.profile;
+            if (profile?.pickupHours) {
+              const endTime = parseEndTimeFromPickupHours(profile.pickupHours);
+              const defaultDeadline = getTodayWithTime(endTime);
+              form.setValue('pickupDeadline', defaultDeadline);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching merchant profile for default deadline:', error);
+        }
+      };
+      
+      fetchMerchantProfile();
+    }
+  }, [user, initialData, form]);
 
   const onSubmit = async (data: ProductFormValues) => {
     if (!user) return;
