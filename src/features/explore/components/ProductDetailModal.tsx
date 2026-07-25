@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Clock, Store, Scale, MessageSquare } from "lucide-react";
 import {
   Dialog,
@@ -12,6 +12,8 @@ import { useAuthStore } from "@/features/auth";
 import { useChatStore } from "@/features/chat";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
 
 interface ProductDetailModalProps {
   isOpen: boolean;
@@ -28,6 +30,35 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const { isAuthenticated, user } = useAuthStore();
   const { openChatWithProduct } = useChatStore();
   const navigate = useNavigate();
+
+  const [realMerchantName, setRealMerchantName] = useState<string>("");
+
+  useEffect(() => {
+    if (!product?.merchantId) {
+      setRealMerchantName("");
+      return;
+    }
+
+    setRealMerchantName(product.merchantName || "");
+
+    const fetchMerchantBusinessName = async () => {
+      try {
+        const userDocRef = doc(db, "users", product.merchantId);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const businessName = userData?.profile?.businessName;
+          if (businessName) {
+            setRealMerchantName(businessName);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengambil nama usaha merchant:", error);
+      }
+    };
+
+    fetchMerchantBusinessName();
+  }, [product]);
 
   const formatDeadline = (deadline: string) => {
     try {
@@ -96,9 +127,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     <Store size={14} className="text-primary-500" />
                     <span>
                       Posted by:{" "}
-                      <strong className="text-gray-700 font-medium">
-                        {product.merchantName}
-                      </strong>
+                      <button
+                        onClick={() => {
+                          onClose(false);
+                          navigate(`/merchant/${product.merchantId}`);
+                        }}
+                        className="text-primary-600 hover:text-primary-700 font-semibold hover:underline transition-all cursor-pointer focus:outline-none"
+                      >
+                        {realMerchantName}
+                      </button>
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm mt-3 leading-relaxed">
