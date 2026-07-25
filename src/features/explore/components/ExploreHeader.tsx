@@ -63,7 +63,7 @@ export const ExploreHeader: React.FC = () => {
                 <button
                   onClick={() => (window.location.href = "/orders")}
                   className="p-2 text-gray-400 hover:text-primary-500 transition-colors cursor-pointer"
-                  title="Pesanan Saya"
+                  title="My Orders"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -109,15 +109,15 @@ export const ExploreHeader: React.FC = () => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
+                      <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Apakah Anda yakin ingin keluar dari aplikasi?
+                        Are you sure you want to log out of the application?
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Batal</AlertDialogCancel>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction onClick={handleLogout}>
-                        Ya, Keluar
+                        Yes, Log Out
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

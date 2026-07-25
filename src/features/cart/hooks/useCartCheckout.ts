@@ -65,6 +65,7 @@ export const useCartCheckout = () => {
               price: item.product.isDonation ? 0 : item.product.discountPrice,
               quantity: item.quantity,
               merchantId: item.product.merchantId,
+              pickupDeadline: item.product.pickupDeadline,
             })),
             {
               id: "FEE-01",

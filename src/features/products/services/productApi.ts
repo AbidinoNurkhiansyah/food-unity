@@ -100,8 +100,27 @@ export const productApi = {
             data.updatedAt?.toDate().toISOString() || new Date().toISOString(),
         } as Product;
 
-        // Filter produk yang stoknya habis atau sudah lewat batas waktu (expired)
+        // Calculate available stock by subtracting active locks
+        const locks = (data as any).locks || [];
         const nowTime = new Date().getTime();
+        const activeLocks = locks.filter((lock: any) => {
+          let expTime = 0;
+          if (lock.expiresAt) {
+            if (typeof lock.expiresAt.toDate === "function") {
+              expTime = lock.expiresAt.toDate().getTime();
+            } else {
+              expTime = new Date(lock.expiresAt).getTime();
+            }
+          }
+          return expTime > nowTime;
+        });
+        const totalLocked = activeLocks.reduce(
+          (sum: number, lock: any) => sum + (lock.quantity || 0),
+          0,
+        );
+        product.stock = Math.max(0, (data.stock || 0) - totalLocked);
+
+        // Filter produk yang stoknya habis atau sudah lewat batas waktu (expired)
         let isExpired = false;
         if (product.pickupDeadline) {
           const deadlineTime = new Date(product.pickupDeadline).getTime();

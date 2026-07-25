@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Clock, Store, Scale, MessageSquare } from "lucide-react";
 import {
   Dialog,
@@ -12,6 +12,8 @@ import { useAuthStore } from "@/features/auth";
 import { useChatStore } from "@/features/chat";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
 
 interface ProductDetailModalProps {
   isOpen: boolean;
@@ -28,6 +30,35 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const { isAuthenticated, user } = useAuthStore();
   const { openChatWithProduct } = useChatStore();
   const navigate = useNavigate();
+
+  const [realMerchantName, setRealMerchantName] = useState<string>("");
+
+  useEffect(() => {
+    if (!product?.merchantId) {
+      setRealMerchantName("");
+      return;
+    }
+
+    setRealMerchantName(product.merchantName || "");
+
+    const fetchMerchantBusinessName = async () => {
+      try {
+        const userDocRef = doc(db, "users", product.merchantId);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const businessName = userData?.profile?.businessName;
+          if (businessName) {
+            setRealMerchantName(businessName);
+          }
+        }
+      } catch (error) {
+        console.error("Gagal mengambil nama usaha merchant:", error);
+      }
+    };
+
+    fetchMerchantBusinessName();
+  }, [product]);
 
   const formatDeadline = (deadline: string) => {
     try {
@@ -49,7 +80,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-[95vw] md:max-w-3xl bg-white border-none ring-0 p-6">
         <DialogHeader>
-          <DialogTitle>Detail Produk</DialogTitle>
+          <DialogTitle>Product Details</DialogTitle>
         </DialogHeader>
         {product && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
@@ -83,10 +114,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       }`}
                     >
                       {product.status === "active"
-                        ? "Tersedia"
+                        ? "Available"
                         : product.status === "expired"
-                        ? "Kedaluwarsa"
-                        : "Habis"}
+                        ? "Expired"
+                        : "Sold Out"}
                     </span>
                   </div>
                   <h3 className="font-bold text-2xl text-gray-900 leading-tight">
@@ -95,10 +126,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <div className="flex items-center gap-1.5 text-gray-500 text-xs mt-1.5">
                     <Store size={14} className="text-primary-500" />
                     <span>
-                      Diposting oleh:{" "}
-                      <strong className="text-gray-700 font-medium">
-                        {product.merchantName}
-                      </strong>
+                      Posted by:{" "}
+                      <button
+                        onClick={() => {
+                          onClose(false);
+                          navigate(`/merchant/${product.merchantId}`);
+                        }}
+                        className="text-primary-600 hover:text-primary-700 font-semibold hover:underline transition-all cursor-pointer focus:outline-none"
+                      >
+                        {realMerchantName}
+                      </button>
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm mt-3 leading-relaxed">
@@ -109,11 +146,11 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-100/50">
                     <span className="text-gray-500 block text-xs mb-1">
-                      Harga
+                      Price
                     </span>
                     <span className="font-extrabold text-xl text-primary-500 block">
                       {product.isDonation
-                        ? "Gratis"
+                        ? "Free"
                         : `Rp ${product.discountPrice.toLocaleString("id-ID")}`}
                     </span>
                     {!product.isDonation &&
@@ -127,7 +164,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     <div className="flex justify-between items-center">
                       <div>
                         <span className="text-gray-500 block text-xs">
-                          Sisa Stok
+                          Stock Left
                         </span>
                         <span className="font-semibold text-gray-800">
                           {product.stock}{" "}
@@ -147,7 +184,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                       {product.weightInGrams && (
                         <div className="text-right">
                           <span className="text-gray-500 block text-xs">
-                            Estimasi Berat
+                            Estimated Weight
                           </span>
                           <span className="font-semibold text-gray-800 flex items-center gap-1 justify-end">
                             <Scale size={13} className="text-gray-400" />{" "}
@@ -158,7 +195,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     </div>
                     <div className="pt-2 border-t border-gray-200/60">
                       <span className="text-gray-500 block text-xs mb-0.5">
-                        Batas Ambil
+                        Pickup Deadline
                       </span>
                       <span className="font-semibold text-gray-800 flex items-center gap-1.5 text-xs">
                         <Clock size={13} className="text-primary-500" />{" "}
@@ -175,7 +212,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 <button
                   onClick={() => {
                     if (!isAuthenticated) {
-                      toast.error("Silakan login terlebih dahulu untuk chat penjual");
+                      toast.error("Please sign in first to chat with the merchant");
                       navigate("/login");
                       return;
                     }
@@ -185,7 +222,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     }
                   }}
                   className="flex items-center cursor-pointer justify-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-600 hover:text-primary-600 transition-colors"
-                  title="Chat Penjual"
+                  title="Chat Merchant"
                 >
                   <MessageSquare size={20} />
                 </button>

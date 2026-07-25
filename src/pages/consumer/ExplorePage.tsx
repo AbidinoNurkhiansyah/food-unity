@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 export const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,16 +32,64 @@ export const ExplorePage: React.FC = () => {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
 
+  // Search and Filter States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [priceFilter, setPriceFilter] = useState<"all" | "paid" | "donation">("all");
+
+  // Filtering Logic
+  const filteredProducts = products?.filter((product) => {
+    // 1. Text Search Query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const matchTitle = product.title.toLowerCase().includes(query);
+      const matchMerchant = product.merchantName.toLowerCase().includes(query);
+      const matchDesc = product.description?.toLowerCase().includes(query) || false;
+      const matchCat = product.category?.toLowerCase().includes(query) || false;
+      if (!matchTitle && !matchMerchant && !matchDesc && !matchCat) {
+        return false;
+      }
+    }
+
+    // 2. Category Filter
+    if (selectedCategory !== "All") {
+      if (product.category !== selectedCategory) {
+        return false;
+      }
+    }
+
+    // 3. Price/Type Filter
+    if (priceFilter === "donation" && !product.isDonation) {
+      return false;
+    }
+    if (priceFilter === "paid" && product.isDonation) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
       <TopBar />
       <ExploreHeader />
 
       <main className="px-4 sm:px-6 lg:px-[130px] py-6">
-        <ExploreSearch />
+        <ExploreSearch
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          priceFilter={priceFilter}
+          setPriceFilter={setPriceFilter}
+          onGetCurrentLocation={() => {
+            // Placeholder for GPS location flow (F1)
+            toast.info("Geolocation feature is in planning phase.");
+          }}
+        />
 
         <ProductGrid
-          products={products}
+          products={filteredProducts}
           isLoading={isLoading}
           onSelectProduct={(product) => {
             if (!isAuthenticated) {

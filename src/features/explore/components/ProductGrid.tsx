@@ -148,14 +148,14 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                       if (product.stock > 0) addItem(product, 1);
                     }}
                     disabled={product.stock <= 0}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 active:scale-95 shrink-0 cursor-pointer ${
+                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 active:scale-95 shrink-0 cursor-pointer ${
                       product.stock <= 0
                         ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                         : "bg-primary-50 text-primary-600 hover:bg-primary-100"
                     }`}
                   >
                     <ShoppingBag size={14} />
-                    <span>{product.stock <= 0 ? "Habis" : "Add"}</span>
+                    <span>{product.stock <= 0 ? "Sold Out" : "Add"}</span>
                   </button>
                 </div>
               </div>
@@ -167,9 +167,9 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
           <div className="bg-slate-50 p-6 rounded-full mb-4">
             <MapPin size={32} className="text-slate-300" />
           </div>
-          <p className="text-lg font-medium text-slate-600">Belum ada produk</p>
+          <p className="text-lg font-medium text-slate-600">No products available</p>
           <p className="text-sm text-slate-400 mt-1">
-            Coba kembali beberapa saat lagi.
+            Please check back again later.
           </p>
         </div>
       )}

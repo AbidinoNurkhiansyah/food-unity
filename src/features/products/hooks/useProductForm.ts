@@ -123,10 +123,23 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
           imageUrl,
         });
       } else {
+        let merchantName = user.displayName || 'Mitra';
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const profile = userDoc.data()?.profile;
+            if (profile?.businessName) {
+              merchantName = profile.businessName;
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching merchant profile for product creation:', error);
+        }
+
         await createProduct.mutateAsync({
           data,
           merchantId: user.uid,
-          merchantName: user.displayName || 'Mitra',
+          merchantName,
           imageUrl,
         });
       }

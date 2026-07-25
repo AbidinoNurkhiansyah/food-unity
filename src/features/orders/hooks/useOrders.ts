@@ -73,7 +73,7 @@ export const useOrders = () => {
     if (!orderToCancel) return;
     try {
       if (!user) {
-        toast.error("Silakan login terlebih dahulu.");
+        toast.error("Please log in first.");
         return;
       }
 
@@ -93,10 +93,10 @@ export const useOrders = () => {
         },
       }).catch(err => console.warn("Backend cancel error:", err));
 
-      toast.success("Pesanan berhasil dibatalkan.");
+      toast.success("Order successfully cancelled.");
     } catch (error) {
       console.error("Cancel Order Error:", error);
-      toast.error("Gagal membatalkan pesanan.");
+      toast.error("Failed to cancel order.");
     } finally {
       setOrderToCancel(null);
     }
@@ -104,7 +104,7 @@ export const useOrders = () => {
 
   const handlePayNow = (snapToken: string | undefined) => {
     if (!snapToken) {
-      alert("Token pembayaran tidak ditemukan. Tidak dapat melanjutkan.");
+      alert("Payment token not found. Cannot proceed.");
       return;
     }
     
@@ -128,27 +128,38 @@ export const useOrders = () => {
           } catch (err) {
             console.error("Confirm Payment Error:", err);
           }
-          toast.success("Pembayaran Berhasil!");
+          toast.success("Payment Successful!");
         },
         onPending: function (result) {
           console.log('Pending:', result);
-          toast.info("Menunggu pembayaran...");
+          toast.info("Waiting for payment...");
         },
         onError: function (result) {
           console.log('Error:', result);
-          toast.error("Pembayaran gagal!");
+          toast.error("Payment failed!");
         },
         onClose: function () {
           console.log('Customer closed the popup');
         }
       });
     } else {
-      alert("Sistem pembayaran belum siap.");
+      alert("Payment system is not ready.");
     }
   };
 
   const filteredOrders = orders.filter((order) => {
+    const isExpired = order.items.some((item: any) => {
+      if (!item.pickupDeadline) return false;
+      return new Date(item.pickupDeadline).getTime() <= Date.now();
+    });
+
     if (activeTab === "ALL") return true;
+    if (activeTab === "PAID") {
+      return order.status === "PAID" && !isExpired;
+    }
+    if (activeTab === "FAILED") {
+      return order.status === "FAILED" || (order.status === "PAID" && isExpired);
+    }
     return order.status === activeTab;
   });
 

@@ -11,6 +11,7 @@ import { ProductsPage } from '@/pages/dashboard/ProductsPage';
 import { ExplorePage } from '@/pages/consumer/ExplorePage';
 import { MyOrdersPage } from '@/pages/consumer/MyOrdersPage';
 import { CartPage } from '@/pages/consumer/CartPage';
+import { MerchantProfileDetailPage } from '@/pages/consumer/MerchantProfileDetailPage';
 import { WalletPage } from '@/pages/dashboard/WalletPage';
 import { ClaimsPage } from '@/pages/dashboard/ClaimsPage';
 import { MerchantProfilePage } from '@/pages/dashboard/MerchantProfilePage';
@@ -31,6 +32,10 @@ export const router = createBrowserRouter([
   {
     path: '/explore',
     element: <ExplorePage />,
+  },
+  {
+    path: '/merchant/:merchantId',
+    element: <MerchantProfileDetailPage />,
   },
   {
     path: '/orders',
