@@ -31,4 +31,13 @@
   --color-palette-800: #005223;
   --color-palette-900: #002912;
   --color-palette-950: #001409;
+
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
 }
