@@ -3,14 +3,76 @@ import { db, admin } from '../../config/firebase.js';
 
 export class PaymentService {
   /**
-   * Creates a pending order in Firestore and generates a Snap Token
+   * Creates a pending order in Firestore and generates a Snap Token with 5-minute stock locking
    */
   static async createCheckoutSession(items, total, customerDetails, userId) {
     const orderId = `ORDER-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
     const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-    // 1. Prepare Midtrans Transaction Data
+    if (!db) {
+      throw new Error("Firebase DB not initialized");
+    }
+
+    const productItems = items.filter(item => item.id && item.merchantId && item.id !== "FEE-01");
+
+    // 1. Run Firestore Transaction to check stock availability and write lock entry
+    await db.runTransaction(async (transaction) => {
+      const nowMs = Date.now();
+      const expiresAt = new Date(nowMs + 5 * 60 * 1000); // 5 minutes lock duration
+
+      // Fetch all products in parallel
+      const productDocs = await Promise.all(
+        productItems.map(item => transaction.get(db.collection('products').doc(item.id)))
+      );
+
+      for (let i = 0; i < productItems.length; i++) {
+        const item = productItems[i];
+        const doc = productDocs[i];
+
+        if (!doc.exists) {
+          throw new Error(`Produk ${item.id} tidak ditemukan`);
+        }
+
+        const data = doc.data();
+
+        // Clean up expired locks from the locks array
+        const locks = data.locks || [];
+        const activeLocks = locks.filter(lock => {
+          let expTime = 0;
+          if (lock.expiresAt) {
+            if (typeof lock.expiresAt.toDate === 'function') {
+              expTime = lock.expiresAt.toDate().getTime();
+            } else {
+              expTime = new Date(lock.expiresAt).getTime();
+            }
+          }
+          return expTime > nowMs;
+        });
+
+        // Calculate available stock
+        const lockedQuantity = activeLocks.reduce((sum, l) => sum + (l.quantity || 0), 0);
+        const availableStock = (data.stock || 0) - lockedQuantity;
+
+        if (availableStock < item.quantity) {
+          throw new Error(`Stok tidak mencukupi untuk ${data.title || data.name || item.name}. Tersedia: ${availableStock}, Diminta: ${item.quantity}`);
+        }
+
+        // Add new lock
+        const newLock = {
+          orderId,
+          quantity: item.quantity,
+          expiresAt: admin.firestore.Timestamp.fromDate(expiresAt)
+        };
+
+        const updatedLocks = [...activeLocks, newLock];
+        transaction.update(doc.ref, {
+          locks: updatedLocks,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    });
+
+    // 2. Prepare Midtrans Transaction Data
     const parameter = {
       transaction_details: {
         order_id: orderId,
@@ -28,33 +90,46 @@ export class PaymentService {
       }
     };
 
-    // 2. Create Transaction Token first
-    const transaction = await snap.createTransaction(parameter);
-    const snapToken = transaction.token;
+    let snapToken;
+    try {
+      const transaction = await snap.createTransaction(parameter);
+      snapToken = transaction.token;
+    } catch (midtransError) {
+      console.error("Midtrans transaction creation failed, rolling back locks...", midtransError);
+      try {
+        await PaymentService.removeLocksForOrder(productItems, orderId);
+      } catch (rollbackError) {
+        console.error("Failed to rollback locks:", rollbackError);
+      }
+      throw new Error(`Gagal membuat sesi pembayaran Midtrans: ${midtransError.message}`);
+    }
 
-    // 3. Create Order in Firestore WITH snapToken and userId (stok BELUM dikurangi saat PENDING)
-    if (db) {
-      const batch = db.batch();
+    // 3. Create Order in Firestore WITH snapToken and userId
+    try {
       const orderRef = db.collection('orders').doc(orderId);
-      
-      // Extract unique merchantIds from items
       const merchantIds = [...new Set(items.map(item => item.merchantId).filter(Boolean))];
 
-      batch.set(orderRef, {
+      await orderRef.set({
         orderId,
         userId: userId || null,
         items,
         total,
         customerDetails,
-        snapToken, // Simpan token agar bisa dibayar ulang
-        merchantIds, // Tambahkan merchantIds agar mudah diquery
+        snapToken,
+        merchantIds,
         status: 'PENDING',
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
-
-      await batch.commit();
+    } catch (dbError) {
+      console.error("Failed to save order to Firestore, rolling back locks...", dbError);
+      try {
+        await PaymentService.removeLocksForOrder(productItems, orderId);
+      } catch (rollbackError) {
+        console.error("Failed to rollback locks:", rollbackError);
+      }
+      throw new Error(`Gagal menyimpan data pesanan: ${dbError.message}`);
     }
-    
+
     return { token: snapToken, orderId };
   }
 
@@ -99,6 +174,10 @@ export class PaymentService {
       const orderRef = db.collection('orders').doc(orderId);
       const orderDoc = await orderRef.get();
       
+      if (!orderDoc.exists) return false;
+      const orderData = orderDoc.data();
+      const currentStatus = orderData.status;
+      
       const batch = db.batch();
       batch.update(orderRef, {
         status: 'FAILED',
@@ -106,21 +185,23 @@ export class PaymentService {
       });
 
       // Kembalikan stok hanya jika sebelumnya pesanan sudah PAID
-      if (orderDoc.exists) {
-        const orderData = orderDoc.data();
-        if (orderData.status === 'PAID' && orderData.items && Array.isArray(orderData.items)) {
-          for (const item of orderData.items) {
-            if (item.id && item.merchantId) { // Hindari item fee
-              const productRef = db.collection('products').doc(item.id);
-              batch.update(productRef, {
-                stock: admin.firestore.FieldValue.increment(item.quantity)
-              });
-            }
+      if (currentStatus === 'PAID' && orderData.items && Array.isArray(orderData.items)) {
+        for (const item of orderData.items) {
+          if (item.id && item.merchantId && item.id !== "FEE-01") { // Hindari item fee
+            const productRef = db.collection('products').doc(item.id);
+            batch.update(productRef, {
+              stock: admin.firestore.FieldValue.increment(item.quantity)
+            });
           }
         }
       }
 
       await batch.commit();
+
+      // Clean up locks!
+      if (orderData.items) {
+        await PaymentService.removeLocksForOrder(orderData.items, orderId);
+      }
 
       return true;
     } catch (error) {
@@ -183,7 +264,7 @@ export class PaymentService {
       // Jika transaksi gagal/expire/batal dari status PAID, kembalikan stok
       if (orderStatus === 'FAILED' && currentStatus === 'PAID' && orderData.items && Array.isArray(orderData.items)) {
         for (const item of orderData.items) {
-          if (item.id && item.merchantId) {
+          if (item.id && item.merchantId && item.id !== "FEE-01") {
             const productRef = db.collection('products').doc(item.id);
             batch.update(productRef, {
               stock: admin.firestore.FieldValue.increment(item.quantity)
@@ -196,7 +277,7 @@ export class PaymentService {
       if (orderStatus === 'PAID' && currentStatus !== 'PAID' && orderData.items && Array.isArray(orderData.items)) {
         // 1. Kurangi stok produk secara resmi setelah pembayaran berhasil
         for (const item of orderData.items) {
-          if (item.id && item.merchantId) {
+          if (item.id && item.merchantId && item.id !== "FEE-01") {
             const productRef = db.collection('products').doc(item.id);
             batch.update(productRef, {
               stock: admin.firestore.FieldValue.increment(-item.quantity)
@@ -230,6 +311,13 @@ export class PaymentService {
       }
 
       await batch.commit();
+
+      // Clean up locks on transition to PAID or FAILED
+      if ((orderStatus === 'PAID' && currentStatus !== 'PAID') || (orderStatus === 'FAILED' && currentStatus === 'PENDING') || (orderStatus === 'FAILED' && currentStatus === 'PAID')) {
+        if (orderData.items) {
+          await PaymentService.removeLocksForOrder(orderData.items, orderId);
+        }
+      }
     }
 
     return statusResponse;
@@ -259,7 +347,7 @@ export class PaymentService {
 
       if (orderData.items && Array.isArray(orderData.items)) {
         for (const item of orderData.items) {
-          if (item.id && item.merchantId) {
+          if (item.id && item.merchantId && item.id !== "FEE-01") {
             const productRef = db.collection('products').doc(item.id);
             batch.update(productRef, {
               stock: admin.firestore.FieldValue.increment(-item.quantity)
@@ -292,9 +380,64 @@ export class PaymentService {
       }
 
       await batch.commit();
+
+      // Clean up locks!
+      if (orderData.items) {
+        await PaymentService.removeLocksForOrder(orderData.items, orderId);
+      }
       console.log(`Order ${orderId} status successfully updated to PAID via client confirmation.`);
     }
 
     return true;
+  }
+
+  /**
+   * Helper to clean up locks for a given orderId on all items in the order
+   */
+  static async removeLocksForOrder(items, orderId) {
+    if (!db || !items || !Array.isArray(items)) return;
+
+    const productItems = items.filter(item => item.id && item.merchantId && item.id !== "FEE-01");
+    if (productItems.length === 0) return;
+
+    try {
+      await db.runTransaction(async (transaction) => {
+        const productDocs = await Promise.all(
+          productItems.map(item => transaction.get(db.collection('products').doc(item.id)))
+        );
+
+        const nowMs = Date.now();
+
+        productDocs.forEach((doc) => {
+          if (!doc.exists) return;
+
+          const data = doc.data();
+          const locks = data.locks || [];
+
+          // Filter out locks for this orderId and also any expired locks
+          const updatedLocks = locks.filter(lock => {
+            let expTime = 0;
+            if (lock.expiresAt) {
+              if (typeof lock.expiresAt.toDate === 'function') {
+                expTime = lock.expiresAt.toDate().getTime();
+              } else {
+                expTime = new Date(lock.expiresAt).getTime();
+              }
+            }
+            const isExpired = expTime <= nowMs;
+            const isCurrentOrder = lock.orderId === orderId;
+            return !isExpired && !isCurrentOrder;
+          });
+
+          transaction.update(doc.ref, {
+            locks: updatedLocks,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          });
+        });
+      });
+      console.log(`[Locks] Successfully cleaned up locks for order ${orderId}`);
+    } catch (error) {
+      console.error(`[Locks] Error removing locks for order ${orderId}:`, error);
+    }
   }
 }
