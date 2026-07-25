@@ -1,4 +1,4 @@
-import { MerchantOnboardingForm } from "@/features/auth";
+import { MerchantOnboardingForm } from "@/features/merchant-onboarding";
 
 export function MerchantOnboardingPage() {
   return <MerchantOnboardingForm />;
