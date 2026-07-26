@@ -4,11 +4,15 @@ import { useAuthStore } from "@/features/auth";
 import { useAllProducts } from "@/features/products/hooks/useProducts";
 import type { Product } from "@/features/products/types";
 import { TopBar } from "@/components/layout/TopBar";
+import { Loader2 } from "lucide-react";
 import {
   ExploreHeader,
   ExploreSearch,
   ProductGrid,
   ProductDetailModal,
+  ExploreMap,
+  MobileProductBottomSheet,
+  useExploreMerchants,
 } from "@/features/explore";
 import { ConsumerFloatingChat } from "@/features/chat";
 import {
@@ -23,10 +27,23 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
+const CATEGORIES = [
+  "All",
+  "Bakery",
+  "Beverages",
+  "Fast Food",
+  "Wet Food",
+  "Dry Food",
+  "Vegetables",
+  "Fruits",
+  "Meat & Seafood",
+];
+
 export const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { data: products, isLoading } = useAllProducts();
+  const { data: merchants = [] } = useExploreMerchants();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -37,7 +54,58 @@ export const ExplorePage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [priceFilter, setPriceFilter] = useState<"all" | "paid" | "donation">("all");
 
-  // Filtering Logic
+  // Map and Geolocation States
+  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: -6.2088, lng: 106.8456 });
+  const [isLocating, setIsLocating] = useState(false);
+
+  // Geolocation Handler
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Browser Anda tidak mendukung deteksi lokasi otomatis.");
+      return;
+    }
+
+    setIsLocating(true);
+    toast.loading("Mendeteksi lokasi Anda...", { id: "geolocation" });
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const newCoords = { lat: latitude, lng: longitude };
+        setUserLocation(newCoords);
+        setMapCenter(newCoords);
+        setViewMode("map"); // Otomatis pindah ke tampilan peta
+        setIsLocating(false);
+        toast.success("Lokasi berhasil dideteksi!", { id: "geolocation" });
+      },
+      (error) => {
+        console.error("Error detecting location:", error);
+        let errorMsg = "Gagal mendeteksi lokasi.";
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMsg = "Izin lokasi ditolak. Menggunakan lokasi default (Jakarta).";
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          errorMsg = "Informasi lokasi tidak tersedia. Menggunakan lokasi default (Jakarta).";
+        } else if (error.code === error.TIMEOUT) {
+          errorMsg = "Deteksi lokasi timeout. Menggunakan lokasi default (Jakarta).";
+        }
+        
+        toast.info(errorMsg, { id: "geolocation" });
+        setMapCenter({ lat: -6.2088, lng: 106.8456 });
+        setViewMode("map"); // Tetap pindah ke tampilan peta
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: false, timeout: 20000, maximumAge: 600000 }
+    );
+  };
+
+  const handleViewModeChange = (mode: "grid" | "map") => {
+    setViewMode(mode);
+    if (mode === "map") {
+      handleGetCurrentLocation();
+    }
+  };
   const filteredProducts = products?.filter((product) => {
     // 1. Text Search Query
     if (searchQuery.trim()) {
@@ -70,37 +138,90 @@ export const ExplorePage: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
-      <TopBar />
+    <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
+      <div className={viewMode === "map" ? "hidden md:block" : "block"}>
+        <TopBar />
+      </div>
       <ExploreHeader />
 
-      <main className="px-4 sm:px-6 lg:px-[130px] py-6">
-        <ExploreSearch
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          priceFilter={priceFilter}
-          setPriceFilter={setPriceFilter}
-          onGetCurrentLocation={() => {
-            // Placeholder for GPS location flow (F1)
-            toast.info("Geolocation feature is in planning phase.");
-          }}
-        />
+      <main className={
+        viewMode === "map"
+          ? "relative w-full flex-1 md:h-auto px-0 md:px-6 lg:px-[130px] py-0 md:py-6 overflow-hidden md:overflow-visible"
+          : "px-4 sm:px-6 lg:px-[130px] py-6"
+      }>
+        <div className={viewMode === "map" ? "absolute md:relative top-3 md:top-auto left-3 md:left-auto right-3 md:right-auto z-20 md:z-auto" : ""}>
+          <ExploreSearch
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            priceFilter={priceFilter}
+            setPriceFilter={setPriceFilter}
+            viewMode={viewMode}
+            setViewMode={handleViewModeChange}
+          />
+        </div>
 
-        <ProductGrid
-          products={filteredProducts}
-          isLoading={isLoading}
-          onSelectProduct={(product) => {
-            if (!isAuthenticated) {
-              setIsLoginPromptOpen(true);
-              return;
-            }
-            setSelectedProduct(product);
-            setIsProductModalOpen(true);
-          }}
-          onRequireAuth={() => setIsLoginPromptOpen(true)}
-        />
+        {viewMode === "grid" ? (
+          <ProductGrid
+            products={filteredProducts}
+            isLoading={isLoading}
+            onSelectProduct={(product) => {
+              if (!isAuthenticated) {
+                setIsLoginPromptOpen(true);
+                return;
+              }
+              setSelectedProduct(product);
+              setIsProductModalOpen(true);
+            }}
+            onRequireAuth={() => setIsLoginPromptOpen(true)}
+          />
+        ) : isLocating ? (
+          <div className="flex flex-col items-center justify-center bg-white border border-slate-100 md:rounded-3xl h-[calc(100vh-4rem)] md:h-[550px] rounded-none border-x-0 md:border-x shadow-md text-center p-6 mx-4 md:mx-0">
+            <Loader2 className="w-10 h-10 text-primary-500 animate-spin mb-3.5" />
+            <h3 className="font-bold text-slate-800 text-base mb-1">
+              Mendeteksi Lokasi Anda...
+            </h3>
+            <p className="text-xs text-slate-500 max-w-xs">
+              Mohon tunggu sebentar, sistem sedang mendeteksi koordinat GPS perangkat Anda.
+            </p>
+          </div>
+        ) : (
+          <div className="relative w-full overflow-hidden md:rounded-3xl rounded-none">
+            <ExploreMap
+              products={filteredProducts || []}
+              merchants={merchants}
+              userLocation={userLocation}
+              mapCenter={mapCenter}
+              setMapCenter={setMapCenter}
+              onSelectProduct={(product) => {
+                if (!isAuthenticated) {
+                  setIsLoginPromptOpen(true);
+                  return;
+                }
+                setSelectedProduct(product);
+                setIsProductModalOpen(true);
+              }}
+            />
+            
+            {/* Mobile Draggable Bottom Sheet */}
+            <div className="md:hidden">
+              <MobileProductBottomSheet
+                products={filteredProducts}
+                isLoading={isLoading}
+                onSelectProduct={(product) => {
+                  if (!isAuthenticated) {
+                    setIsLoginPromptOpen(true);
+                    return;
+                  }
+                  setSelectedProduct(product);
+                  setIsProductModalOpen(true);
+                }}
+                onRequireAuth={() => setIsLoginPromptOpen(true)}
+              />
+            </div>
+          </div>
+        )}
       </main>
 
       <ProductDetailModal
