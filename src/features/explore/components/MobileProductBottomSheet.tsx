@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, useDragControls } from "framer-motion";
-import { ShoppingBag, GripHorizontal, MapPin, Loader2 } from "lucide-react";
+import { ShoppingBag, MapPin, Loader2 } from "lucide-react";
 import type { Product } from "@/features/products/types";
 import { useCartStore } from "@/features/cart";
 import { useAuthStore } from "@/features/auth";
