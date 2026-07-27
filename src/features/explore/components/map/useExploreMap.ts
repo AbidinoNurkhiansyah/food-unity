@@ -9,6 +9,8 @@ interface UseExploreMapOptions {
   merchants: MerchantUser[];
   searchQuery?: string;
   setMapCenter: (center: { lat: number; lng: number }) => void;
+  selectedMerchant: MerchantUser | null;
+  setSelectedMerchant: (merchant: MerchantUser | null) => void;
 }
 
 export function useExploreMap({
@@ -16,8 +18,9 @@ export function useExploreMap({
   merchants,
   searchQuery = "",
   setMapCenter,
+  selectedMerchant,
+  setSelectedMerchant,
 }: UseExploreMapOptions) {
-  const [selectedMerchant, setSelectedMerchant] = useState<MerchantUser | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
@@ -149,6 +152,14 @@ export function useExploreMap({
     map.panTo({ lat, lng });
   }, [searchQuery, map, merchantsWithCoords]);
 
+  // Geser peta secara halus saat selectedMerchant dipilih
+  useEffect(() => {
+    if (!selectedMerchant || !map) return;
+    const lat = Number(selectedMerchant.profile?.coordinates?.latitude);
+    const lng = Number(selectedMerchant.profile?.coordinates?.longitude);
+    if (isNaN(lat) || isNaN(lng)) return;
+    map.panTo({ lat, lng });
+  }, [selectedMerchant, map]);
 
   // Reset selectedMerchant saat search dikosongkan
   useEffect(() => {
