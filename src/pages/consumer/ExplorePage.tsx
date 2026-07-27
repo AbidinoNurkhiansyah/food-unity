@@ -27,18 +27,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
-const CATEGORIES = [
-  "All",
-  "Bakery",
-  "Beverages",
-  "Fast Food",
-  "Wet Food",
-  "Dry Food",
-  "Vegetables",
-  "Fruits",
-  "Meat & Seafood",
-];
-
 export const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
@@ -194,6 +182,7 @@ export const ExplorePage: React.FC = () => {
               userLocation={userLocation}
               mapCenter={mapCenter}
               setMapCenter={setMapCenter}
+              searchQuery={searchQuery}
               onSelectProduct={(product) => {
                 if (!isAuthenticated) {
                   setIsLoginPromptOpen(true);
