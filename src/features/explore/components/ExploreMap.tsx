@@ -18,6 +18,9 @@ interface ExploreMapProps {
   setMapCenter: (center: { lat: number; lng: number }) => void;
   onSelectProduct: (product: Product) => void;
   searchQuery?: string;
+  selectedMerchant: MerchantUser | null;
+  setSelectedMerchant: (merchant: MerchantUser | null) => void;
+  onCloseStart?: () => void;
 }
 
 export const ExploreMap: React.FC<ExploreMapProps> = ({
@@ -28,6 +31,9 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   setMapCenter,
   onSelectProduct,
   searchQuery = "",
+  selectedMerchant,
+  setSelectedMerchant,
+  onCloseStart,
 }) => {
   const {
     isLoaded,
@@ -37,12 +43,17 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
     handleDragEnd,
     dynamicMapOptions,
     activeMerchants,
-    selectedMerchant,
-    setSelectedMerchant,
     selectedMerchantProducts,
     userIcon,
     merchantIcon,
-  } = useExploreMap({ products, merchants, searchQuery, setMapCenter });
+  } = useExploreMap({
+    products,
+    merchants,
+    searchQuery,
+    setMapCenter,
+    selectedMerchant,
+    setSelectedMerchant,
+  });
 
   if (loadError) return <MapErrorState />;
   if (!isLoaded) return <MapLoadingState />;
@@ -71,9 +82,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         <MerchantMarkers
           activeMerchants={activeMerchants}
           merchantIcon={merchantIcon}
-          onSelectMerchant={(merchant, lat, lng) => {
+          onSelectMerchant={(merchant) => {
             setSelectedMerchant(merchant);
-            setMapCenter({ lat, lng });
           }}
         />
       </GoogleMap>
@@ -83,6 +93,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
         <MerchantInfoWindow
           merchant={selectedMerchant}
           products={selectedMerchantProducts}
+          onCloseStart={onCloseStart}
           onClose={() => setSelectedMerchant(null)}
           onSelectProduct={(product) => {
             setSelectedMerchant(null);

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth";
 import { useAllProducts } from "@/features/products/hooks/useProducts";
 import type { Product } from "@/features/products/types";
+import type { MerchantUser } from "@/features/merchant-profile/types";
 import { TopBar } from "@/components/layout/TopBar";
 import { Loader2 } from "lucide-react";
 import {
@@ -34,6 +35,8 @@ export const ExplorePage: React.FC = () => {
   const { data: merchants = [] } = useExploreMerchants();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedMerchant, setSelectedMerchant] = useState<MerchantUser | null>(null);
+  const [isSheetHidden, setIsSheetHidden] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
 
@@ -183,6 +186,16 @@ export const ExplorePage: React.FC = () => {
               mapCenter={mapCenter}
               setMapCenter={setMapCenter}
               searchQuery={searchQuery}
+              selectedMerchant={selectedMerchant}
+              setSelectedMerchant={(merchant) => {
+                setSelectedMerchant(merchant);
+                if (merchant) {
+                  setIsSheetHidden(true);
+                } else {
+                  setIsSheetHidden(false);
+                }
+              }}
+              onCloseStart={() => setIsSheetHidden(false)}
               onSelectProduct={(product) => {
                 if (!isAuthenticated) {
                   setIsLoginPromptOpen(true);
@@ -207,6 +220,7 @@ export const ExplorePage: React.FC = () => {
                   setIsProductModalOpen(true);
                 }}
                 onRequireAuth={() => setIsLoginPromptOpen(true)}
+                isHidden={isSheetHidden}
               />
             </div>
           </div>
