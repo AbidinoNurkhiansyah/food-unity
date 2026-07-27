@@ -21,6 +21,8 @@ interface ProductDetailModalProps {
   product: Product | null;
 }
 
+const merchantNameCache: Record<string, string> = {};
+
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   isOpen,
   onClose,
@@ -39,21 +41,34 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       return;
     }
 
-    setRealMerchantName(product.merchantName || "");
+    // Jika sudah ada di cache, gunakan langsung untuk mencegah kedipan nama akun
+    if (merchantNameCache[product.merchantId]) {
+      setRealMerchantName(merchantNameCache[product.merchantId]);
+      return;
+    }
+
+    // Set kosong sementara untuk memicu skeleton loader (bukan nama akun)
+    setRealMerchantName("");
 
     const fetchMerchantBusinessName = async () => {
       try {
         const userDocRef = doc(db, "users", product.merchantId);
         const userDoc = await getDoc(userDocRef);
+        let finalName = product.merchantName || "";
+
         if (userDoc.exists()) {
           const userData = userDoc.data();
           const businessName = userData?.profile?.businessName;
           if (businessName) {
-            setRealMerchantName(businessName);
+            finalName = businessName;
           }
         }
+
+        merchantNameCache[product.merchantId] = finalName;
+        setRealMerchantName(finalName);
       } catch (error) {
-        console.error("Gagal mengambil nama usaha merchant:", error);
+        console.error("Failed to fetch merchant business name:", error);
+        setRealMerchantName(product.merchantName || "");
       }
     };
 
@@ -64,7 +79,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     try {
       const date = new Date(deadline);
       if (isNaN(date.getTime())) return deadline; // if parsing fails
-      return new Intl.DateTimeFormat("id-ID", {
+      return new Intl.DateTimeFormat("en-US", {
         day: "numeric",
         month: "short",
         year: "numeric",
@@ -127,15 +142,19 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     <Store size={14} className="text-primary-500" />
                     <span>
                       Posted by:{" "}
-                      <button
-                        onClick={() => {
-                          onClose(false);
-                          navigate(`/merchant/${product.merchantId}`);
-                        }}
-                        className="text-primary-600 hover:text-primary-700 font-semibold hover:underline transition-all cursor-pointer focus:outline-none"
-                      >
-                        {realMerchantName}
-                      </button>
+                      {realMerchantName ? (
+                        <button
+                          onClick={() => {
+                            onClose(false);
+                            navigate(`/merchant/${product.merchantId}`);
+                          }}
+                          className="text-primary-600 hover:text-primary-700 font-semibold hover:underline transition-all cursor-pointer focus:outline-none align-middle"
+                        >
+                          {realMerchantName}
+                        </button>
+                      ) : (
+                        <span className="inline-block w-24 h-3.5 bg-slate-200 animate-pulse rounded align-middle" />
+                      )}
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm mt-3 leading-relaxed">
@@ -171,13 +190,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                           {product.unit === "pcs"
                             ? "Pcs"
                             : product.unit === "porsi"
-                            ? "Porsi"
+                            ? "Portions"
                             : product.unit === "box"
                             ? "Box"
                             : product.unit === "kg"
                             ? "Kg"
                             : product.unit === "gram"
-                            ? "Gram"
+                            ? "Grams"
                             : product.unit}
                         </span>
                       </div>

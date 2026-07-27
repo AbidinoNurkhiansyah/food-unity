@@ -10,6 +10,7 @@ interface MobileProductBottomSheetProps {
   isLoading: boolean;
   onSelectProduct: (product: Product) => void;
   onRequireAuth: () => void;
+  isHidden?: boolean;
 }
 
 type SnapState = "expanded" | "half" | "collapsed";
@@ -19,6 +20,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
   isLoading,
   onSelectProduct,
   onRequireAuth,
+  isHidden = false,
 }) => {
   const { addItem } = useCartStore();
   const { isAuthenticated } = useAuthStore();
@@ -31,6 +33,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
     expanded: { y: 0 },
     half: { y: 220 },
     collapsed: { y: 380 },
+    hidden: { y: 460 },
   };
 
   const handleDragEnd = (_event: any, info: any) => {
@@ -70,13 +73,13 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
 
   return (
     <motion.div
-      drag="y"
+      drag={isHidden ? false : "y"} // Disable drag when hidden
       dragControls={dragControls}
       dragListener={false} // Only drag via the drag handle
-      dragConstraints={{ top: 0, bottom: 380 }}
+      dragConstraints={{ top: 0, bottom: isHidden ? 460 : 380 }}
       dragElastic={0.15}
       variants={variants}
-      animate={activeState}
+      animate={isHidden ? "hidden" : activeState}
       onDragEnd={handleDragEnd}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed bottom-0 left-0 right-0 w-full h-[460px] bg-white rounded-t-[28px] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.05)] border-t border-slate-100 flex flex-col z-30 overflow-hidden"

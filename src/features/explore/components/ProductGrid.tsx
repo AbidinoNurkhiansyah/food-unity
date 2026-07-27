@@ -80,7 +80,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                   {product.isDonation ? (
                     <div className="bg-primary-600 px-2.5 py-1 rounded-md">
                       <span className="text-[10px] font-bold text-white tracking-wide uppercase">
-                        Gratis
+                        FREE
                       </span>
                     </div>
                   ) : discountPercentage > 0 ? (
@@ -104,13 +104,13 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                     {product.unit === "pcs"
                       ? "Pcs"
                       : product.unit === "porsi"
-                      ? "Porsi"
+                      ? "Portions"
                       : product.unit === "box"
                       ? "Box"
                       : product.unit === "kg"
                       ? "Kg"
                       : product.unit === "gram"
-                      ? "Gram"
+                      ? "Grams"
                       : product.unit}
                   </span>
                 </div>
