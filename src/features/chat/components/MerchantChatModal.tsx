@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { MessageSquare, Search, User as UserIcon, ChevronRight } from "lucide-react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
 import { useAuthStore } from "@/features/auth";
 import { chatService } from "../services/chatService";
 import { ChatWindow } from "./ChatWindow";
@@ -10,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { motion } from "framer-motion";
 
 interface MerchantChatModalProps {
   isOpen: boolean;
@@ -24,6 +27,33 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [merchantName, setMerchantName] = useState("");
+
+  // Fetch merchant's business name from database
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    const fetchMerchantName = async () => {
+      try {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          const name =
+            data?.profile?.businessName ||
+            data?.profile?.storeName ||
+            data?.name ||
+            user.displayName ||
+            user.email?.split("@")[0] ||
+            "Merchant Partner";
+          setMerchantName(name);
+        }
+      } catch (err) {
+        console.error("Failed to fetch merchant name in chat modal:", err);
+      }
+    };
+
+    fetchMerchantName();
+  }, [user?.uid]);
 
   // Reset active room to list view whenever modal closes
   useEffect(() => {
@@ -64,22 +94,28 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
           <DialogTitle>Customer Messages</DialogTitle>
         </DialogHeader>
 
-        {activeChatId ? (
-          <div className="h-full">
-            <ChatWindow
-              chatId={activeChatId}
-              currentUserId={user.uid}
-              currentUserName={
-                user.displayName || user.email?.split("@")[0] || "Merchant Partner"
-              }
-              currentUserRole="merchant"
-              chatRoom={activeRoom}
-              onBack={() => setActiveChatId(null)}
-              onClose={() => onClose(false)}
-            />
-          </div>
-        ) : (
-          <div className="flex flex-col h-full bg-white">
+        <motion.div
+          initial={{ opacity: 0, y: 15, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="flex flex-col h-full w-full overflow-hidden"
+        >
+          {activeChatId ? (
+            <div className="h-full">
+              <ChatWindow
+                chatId={activeChatId}
+                currentUserId={user.uid}
+                currentUserName={
+                  merchantName || user.displayName || user.email?.split("@")[0] || "Merchant Partner"
+                }
+                currentUserRole="merchant"
+                chatRoom={activeRoom}
+                onBack={() => setActiveChatId(null)}
+                onClose={() => onClose(false)}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col h-full bg-white">
             {/* Header */}
             <div className="bg-gradient-to-r from-primary-600 to-primary-500 text-white px-6 py-4 flex items-center justify-between shadow-xs">
               <div className="flex items-center gap-2.5">
@@ -188,8 +224,9 @@ export const MerchantChatModal: React.FC<MerchantChatModalProps> = ({
                 })
               )}
             </div>
-          </div>
-        )}
+            </div>
+          )}
+        </motion.div>
       </DialogContent>
     </Dialog>
   );

@@ -74,17 +74,6 @@ const resolveMerchantName = async (
   merchantId: string,
   fallbackName?: string
 ): Promise<string> => {
-  if (
-    fallbackName &&
-    fallbackName !== 'Merchant Partner' &&
-    fallbackName !== 'Mitra Merchant' &&
-    fallbackName !== 'Mitra FoodUnity' &&
-    fallbackName !== 'Mitra' &&
-    fallbackName !== 'Merchant'
-  ) {
-    return fallbackName;
-  }
-
   if (merchantId) {
     if (merchantNamesCache[merchantId]) {
       return merchantNamesCache[merchantId];
@@ -95,6 +84,7 @@ const resolveMerchantName = async (
       if (userDoc.exists()) {
         const data = userDoc.data();
         const resolved =
+          data.profile?.businessName ||
           data.profile?.storeName ||
           data.name ||
           data.displayName ||
@@ -107,6 +97,17 @@ const resolveMerchantName = async (
     } catch (err) {
       console.warn('Error fetching merchant profile for chat:', err);
     }
+  }
+
+  if (
+    fallbackName &&
+    fallbackName !== 'Merchant Partner' &&
+    fallbackName !== 'Mitra Merchant' &&
+    fallbackName !== 'Mitra FoodUnity' &&
+    fallbackName !== 'Mitra' &&
+    fallbackName !== 'Merchant'
+  ) {
+    return fallbackName;
   }
 
   return fallbackName || 'Merchant Partner';
