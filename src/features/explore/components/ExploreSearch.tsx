@@ -57,7 +57,7 @@ export const ExploreSearch: React.FC<ExploreSearchProps> = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="block w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl leading-5 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all shadow-sm text-sm"
+            className="block w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl leading-5 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-out shadow-sm text-sm"
             placeholder="Search food, restaurants, or categories..."
           />
         </div>
@@ -76,7 +76,7 @@ export const ExploreSearch: React.FC<ExploreSearchProps> = ({
                   key={mode.id}
                   onClick={() => setViewMode(mode.id as any)}
                   className={`
-                    flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 cursor-pointer select-none active:scale-95 flex-1 sm:flex-initial
+                    flex items-center justify-center gap-1 px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-[background-color,color,transform] duration-200 ease-out cursor-pointer select-none active:scale-95 flex-1 sm:flex-initial
                     ${viewMode === mode.id
                       ? "bg-palette-800 text-white shadow-md hover:bg-palette-900"
                       : "text-slate-500 hover:text-slate-800"}
@@ -100,7 +100,7 @@ export const ExploreSearch: React.FC<ExploreSearchProps> = ({
                 key={type.id}
                 onClick={() => setPriceFilter(type.id as any)}
                 className={`
-                  px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 cursor-pointer select-none active:scale-95 flex-1 sm:flex-initial text-center whitespace-nowrap
+                  px-2 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-[background-color,color,transform] duration-200 ease-out cursor-pointer select-none active:scale-95 flex-1 sm:flex-initial text-center whitespace-nowrap
                   ${priceFilter === type.id
                     ? "bg-palette-800 text-white shadow-md hover:bg-palette-900"
                     : "text-slate-500 hover:text-slate-800"}
@@ -122,7 +122,7 @@ export const ExploreSearch: React.FC<ExploreSearchProps> = ({
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`
-                whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer select-none active:scale-95
+                whitespace-nowrap px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs font-bold tracking-wide transition-[background-color,color,border-color,transform] duration-200 ease-out cursor-pointer select-none active:scale-95
                 ${selectedCategory === category
                   ? "bg-palette-800 text-white shadow-md hover:bg-palette-900"
                   : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50"}

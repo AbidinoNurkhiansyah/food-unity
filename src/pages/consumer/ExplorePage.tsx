@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth";
 import { useAllProducts } from "@/features/products/hooks/useProducts";
 import type { Product } from "@/features/products/types";
-import { TopBar } from "@/components/layout/TopBar";
+import type { MerchantUser } from "@/features/merchant-profile/types";
 import { Loader2 } from "lucide-react";
 import {
   ExploreHeader,
@@ -34,6 +34,8 @@ export const ExplorePage: React.FC = () => {
   const { data: merchants = [] } = useExploreMerchants();
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedMerchant, setSelectedMerchant] = useState<MerchantUser | null>(null);
+  const [isSheetHidden, setIsSheetHidden] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
 
@@ -127,9 +129,6 @@ export const ExplorePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
-      <div className={viewMode === "map" ? "hidden md:block" : "block"}>
-        <TopBar />
-      </div>
       <ExploreHeader />
 
       <main className={
@@ -183,6 +182,16 @@ export const ExplorePage: React.FC = () => {
               mapCenter={mapCenter}
               setMapCenter={setMapCenter}
               searchQuery={searchQuery}
+              selectedMerchant={selectedMerchant}
+              setSelectedMerchant={(merchant) => {
+                setSelectedMerchant(merchant);
+                if (merchant) {
+                  setIsSheetHidden(true);
+                } else {
+                  setIsSheetHidden(false);
+                }
+              }}
+              onCloseStart={() => setIsSheetHidden(false)}
               onSelectProduct={(product) => {
                 if (!isAuthenticated) {
                   setIsLoginPromptOpen(true);
@@ -207,6 +216,7 @@ export const ExplorePage: React.FC = () => {
                   setIsProductModalOpen(true);
                 }}
                 onRequireAuth={() => setIsLoginPromptOpen(true)}
+                isHidden={isSheetHidden}
               />
             </div>
           </div>

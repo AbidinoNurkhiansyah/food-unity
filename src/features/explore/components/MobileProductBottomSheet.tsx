@@ -10,6 +10,7 @@ interface MobileProductBottomSheetProps {
   isLoading: boolean;
   onSelectProduct: (product: Product) => void;
   onRequireAuth: () => void;
+  isHidden?: boolean;
 }
 
 type SnapState = "expanded" | "half" | "collapsed";
@@ -19,6 +20,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
   isLoading,
   onSelectProduct,
   onRequireAuth,
+  isHidden = false,
 }) => {
   const { addItem } = useCartStore();
   const { isAuthenticated } = useAuthStore();
@@ -31,6 +33,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
     expanded: { y: 0 },
     half: { y: 220 },
     collapsed: { y: 380 },
+    hidden: { y: 460 },
   };
 
   const handleDragEnd = (_event: any, info: any) => {
@@ -70,13 +73,13 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
 
   return (
     <motion.div
-      drag="y"
+      drag={isHidden ? false : "y"} // Disable drag when hidden
       dragControls={dragControls}
       dragListener={false} // Only drag via the drag handle
-      dragConstraints={{ top: 0, bottom: 380 }}
+      dragConstraints={{ top: 0, bottom: isHidden ? 460 : 380 }}
       dragElastic={0.15}
       variants={variants}
-      animate={activeState}
+      animate={isHidden ? "hidden" : activeState}
       onDragEnd={handleDragEnd}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       className="fixed bottom-0 left-0 right-0 w-full h-[460px] bg-white rounded-t-[28px] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1),0_-8px_10px_-6px_rgba(0,0,0,0.05)] border-t border-slate-100 flex flex-col z-30 overflow-hidden"
@@ -125,7 +128,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
-                className="flex gap-3 bg-white p-3 rounded-2xl border border-slate-100/80 shadow-sm active:scale-[0.99] transition-all duration-200 cursor-pointer"
+                className="flex gap-3 bg-white p-3 rounded-2xl border border-slate-100/80 shadow-sm active:scale-[0.99] transition-transform duration-200 ease-out cursor-pointer"
               >
                 {/* Product Image */}
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-slate-100 shrink-0">
@@ -197,7 +200,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
                         if (product.stock > 0) addItem(product, 1);
                       }}
                       disabled={product.stock <= 0}
-                      className={`flex items-center gap-1 p-1.5 px-2.5 rounded-lg text-[10px] font-bold transition-all active:scale-95 shrink-0 cursor-pointer ${
+                      className={`flex items-center gap-1 p-1.5 px-2.5 rounded-lg text-[10px] font-bold transition-[background-color,color,transform] duration-200 ease-out active:scale-95 shrink-0 cursor-pointer ${
                         product.stock <= 0
                           ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                           : "bg-primary-50 text-primary-600 hover:bg-primary-100"

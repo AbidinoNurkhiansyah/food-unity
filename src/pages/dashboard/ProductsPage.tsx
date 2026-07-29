@@ -1,9 +1,9 @@
-import { Package, AlertCircle } from 'lucide-react';
-import { 
-  ProductList, 
-  ProductModal, 
-  useProductManagement 
-} from '@/features/products';
+import { AlertCircle } from "lucide-react";
+import {
+  ProductList,
+  ProductModal,
+  useProductManagement,
+} from "@/features/products";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +13,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 export function ProductsPage() {
   const {
@@ -25,51 +25,42 @@ export function ProductsPage() {
     isDeleting,
     handleCreate,
     handleEdit,
-    handleDelete
+    handleDelete,
   } = useProductManagement();
 
   return (
-    <div className="w-full px-6 py-4 font-sans-bento">
-      
-      <header className="mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white shadow-sm border border-slate-200/60 text-slate-600 rounded-full text-xs font-medium mb-4">
-          <Package className="w-3.5 h-3.5 text-palette-600" />
-          Manajemen Stok
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Kelola Produk Surplus
-        </h1>
-        <p className="mt-2 text-slate-500 font-medium">
-          Daftar makanan surplus yang siap diselamatkan dari toko Anda.
-        </p>
-      </header>
-
-      <ProductList 
-        onCreateClick={handleCreate} 
+    <div className="w-full font-sans min-h-screen">
+      <ProductList
+        onCreateClick={handleCreate}
         onEditClick={handleEdit}
         onDeleteClick={setDeletingProduct}
       />
 
-      <ProductModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <ProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         initialData={editingProduct}
       />
 
-      <AlertDialog open={!!deletingProduct} onOpenChange={(open) => !open && setDeletingProduct(null)}>
+      <AlertDialog
+        open={!!deletingProduct}
+        onOpenChange={(open) => !open && setDeletingProduct(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <AlertCircle className="h-5 w-5 text-red-500" />
-              Hapus Produk?
+              Delete Product?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Apakah Anda yakin ingin menghapus produk <strong>{deletingProduct?.title}</strong>? Data yang sudah dihapus tidak dapat dikembalikan.
+              Are you sure you want to delete product{" "}
+              <strong>{deletingProduct?.title}</strong>? Once deleted, this
+              action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
                 handleDelete();
@@ -77,7 +68,7 @@ export function ProductsPage() {
               className="bg-red-600 hover:bg-red-700"
               disabled={isDeleting}
             >
-              {isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
+              {isDeleting ? "Deleting..." : "Yes, Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -85,4 +76,3 @@ export function ProductsPage() {
     </div>
   );
 }
-
