@@ -1,6 +1,5 @@
 import React from "react";
-import { Package, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Package } from "lucide-react";
 
 import {
   AlertDialog,
@@ -12,7 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { ExploreHeader } from "@/features/explore";
+import { ConsumerPageHeader } from "@/components/layout/ConsumerPageHeader";
 import {
   OrderTabs,
   OrderCard,
@@ -24,7 +23,6 @@ import {
 import { ConsumerFloatingChat } from "@/features/chat";
 
 export const MyOrdersPage: React.FC = () => {
-  const navigate = useNavigate();
   const {
     orders,
     isLoading,
@@ -38,21 +36,13 @@ export const MyOrdersPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-      <ExploreHeader />
+      <ConsumerPageHeader
+        title="My Orders"
+        icon={<Package className="text-primary-500 w-5 h-5" />}
+        backTo="/explore"
+      />
 
       <main className="px-4 sm:px-6 lg:px-[130px] py-8">
-        <div className="flex items-center gap-3 mb-8">
-          <button
-            onClick={() => navigate("/explore")}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <ChevronRight className="rotate-180 text-gray-500" />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Package className="text-primary-500" />
-            My Orders
-          </h1>
-        </div>
 
         <OrderTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
