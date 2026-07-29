@@ -26,7 +26,6 @@ import logo from "@/assets/logo.svg";
 
 interface DashboardSidebarProps {
   onLogout: () => void;
-  onOpenScanner: () => void;
 }
 
 type NavItem = {
@@ -38,7 +37,6 @@ type NavItem = {
 
 export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   onLogout,
-  onOpenScanner,
 }) => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -46,7 +44,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const navItems: NavItem[] = [
     { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
     { name: "Kelola Stok", href: "/dashboard/products", icon: Package },
-    { name: "Scan Tiket", action: "scan", icon: QrCode },
+    { name: "Scan Tiket", href: "/dashboard/scan", icon: QrCode },
     { name: "Dompet", href: "/dashboard/wallet", icon: Wallet },
     { name: "Riwayat Klaim", href: "/dashboard/claims", icon: History },
   ];
@@ -81,26 +79,6 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       <nav className="flex-1 p-3 flex flex-col gap-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          if (item.action === "scan") {
-            return (
-              <Button
-                key={item.name}
-                variant="ghost"
-                onClick={onOpenScanner}
-                className={`w-full rounded-xl transition-all duration-300 text-muted-foreground hover:bg-muted/50 hover:text-foreground cursor-pointer ${
-                  isCollapsed
-                    ? "justify-center gap-0 px-2"
-                    : "justify-start gap-3 px-4"
-                }`}
-                title={isCollapsed ? item.name : undefined}
-              >
-                <Icon className="w-5 h-5" />
-                {!isCollapsed && (
-                  <span className="font-medium">{item.name}</span>
-                )}
-              </Button>
-            );
-          }
 
           const isActive = location.pathname === item.href;
           return (

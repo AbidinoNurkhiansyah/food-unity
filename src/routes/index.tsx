@@ -15,6 +15,7 @@ import { MerchantProfileDetailPage } from '@/pages/consumer/MerchantProfileDetai
 import { WalletPage } from '@/pages/dashboard/WalletPage';
 import { ClaimsPage } from '@/pages/dashboard/ClaimsPage';
 import { MerchantProfilePage } from '@/pages/dashboard/MerchantProfilePage';
+import { ScannerPage } from '@/pages/dashboard/ScannerPage';
 
 export const router = createBrowserRouter([
   {
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
       {
         path: 'products',
         element: <ProductsPage />
+      },
+      {
+        path: 'scan',
+        element: <ScannerPage />
       },
       {
         path: 'wallet',

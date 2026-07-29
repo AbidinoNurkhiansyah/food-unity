@@ -1,36 +1,55 @@
 import React from "react";
-import { Wallet } from "lucide-react";
+import { Wallet, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface WalletBalanceCardProps {
   balance: number;
   isLoading: boolean;
+  onWithdrawClick: () => void;
 }
 
-export const WalletBalanceCard: React.FC<WalletBalanceCardProps> = ({ balance, isLoading }) => {
+export const WalletBalanceCard: React.FC<WalletBalanceCardProps> = ({
+  balance,
+  isLoading,
+  onWithdrawClick,
+}) => {
   return (
-    <div className="md:col-span-2 bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-lg border border-slate-800">
-      <div className="absolute right-0 top-0 w-64 h-64 bg-palette-500 rounded-full blur-3xl opacity-20 translate-x-1/3 -translate-y-1/3"></div>
+    <div className="bg-slate-900 rounded-3xl p-8 md:p-10 text-white relative overflow-hidden shadow-2xl border border-slate-800">
+      {/* Decorative Gradients */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-primary-500/30 to-primary-700/0 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-gradient-to-tr from-primary-500/20 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
 
-      <div className="relative z-10">
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-2.5 bg-white/10 rounded-xl">
-            <Wallet className="w-6 h-6 text-palette-400" />
+      <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-md shadow-inner border border-white/10">
+            <Wallet className="w-6 h-6 text-primary-300" />
           </div>
-          <span className="font-medium text-slate-300">
-            Total Saldo Aktif
+          <span className="font-semibold text-lg text-slate-300 tracking-wide">
+            Total Active Balance
           </span>
         </div>
 
-        <div className="mb-2">
-          <span className="text-4xl md:text-6xl font-bold tracking-tighter">
-            {isLoading ? "..." : `Rp ${balance.toLocaleString("id-ID")}`}
-          </span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div className="mb-1">
+              <span className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">
+                {isLoading ? "..." : `Rp ${balance.toLocaleString("id-ID")}`}
+              </span>
+            </div>
+            <p className="text-sm md:text-base text-slate-400 font-medium max-w-sm mt-2">
+              Your balance is available to withdraw at any time to your registered bank account.
+            </p>
+          </div>
+
+          <Button
+            onClick={onWithdrawClick}
+            className="h-12 px-6 md:h-14 md:px-8 rounded-2xl bg-primary-500 hover:bg-primary-400 text-white font-bold text-sm md:text-base shadow-lg shadow-primary-500/30 active:scale-[0.98] transition-all cursor-pointer"
+          >
+            Withdraw Funds
+            <ArrowUpRight className="w-5 h-5 ml-2" />
+          </Button>
         </div>
-        <p className="text-sm text-slate-400">
-          Tersedia untuk ditarik kapan saja.
-        </p>
       </div>
     </div>
   );
 };
-
