@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useProductList } from '../hooks/useProductList';
-import { Plus, Search, X, Package, Heart, CheckCircle2, Eye, ShoppingBag } from 'lucide-react';
+import { Plus, Search, X, Package, Heart, Eye, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductEmptyState } from './ProductEmptyState';
 import { ProductTableRow } from './ProductTableRow';
+import type { Product } from '../types';
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -15,8 +15,8 @@ import {
 
 interface ProductListProps {
   onCreateClick: () => void;
-  onEditClick: (product: any) => void;
-  onDeleteClick: (product: any) => void;
+  onEditClick: (product: Product) => void;
+  onDeleteClick: (product: Product) => void;
 }
 
 export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: ProductListProps) {
@@ -24,6 +24,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'sold_out' | 'expired'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'discount' | 'donation'>('all');
+  const [now] = useState(() => Date.now());
 
   if (isLoading) {
     return (
@@ -87,7 +88,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
   // Calculate dynamic stats from all products
   const totalProducts = products.length;
   const activeProducts = products.filter(p => {
-    const isExpired = p.pickupDeadline ? new Date(p.pickupDeadline).getTime() <= Date.now() : false;
+    const isExpired = p.pickupDeadline ? new Date(p.pickupDeadline).getTime() <= now : false;
     return p.status === 'active' && p.stock > 0 && !isExpired;
   }).length;
   const soldOutProducts = products.filter(p => p.status === 'sold_out' || p.stock <= 0).length;
@@ -102,7 +103,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
 
     // 2. Status Filter
     const isExpired = product.pickupDeadline
-      ? new Date(product.pickupDeadline).getTime() <= Date.now()
+      ? new Date(product.pickupDeadline).getTime() <= now
       : false;
     
     let matchesStatus = true;

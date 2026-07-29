@@ -17,8 +17,9 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
   onEditClick,
   onDeleteClick,
 }) => {
+  const [now] = React.useState(() => Date.now());
   const isExpired = product.pickupDeadline
-    ? new Date(product.pickupDeadline).getTime() <= Date.now()
+    ? new Date(product.pickupDeadline).getTime() <= now
     : false;
 
   const formatDeadline = (deadlineStr: string) => {
