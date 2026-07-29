@@ -12,7 +12,7 @@ export const OrderTabs: React.FC<OrderTabsProps> = ({ activeTab, onTabChange }) 
         <button
           key={tab}
           onClick={() => onTabChange(tab as any)}
-          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+          className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-[background-color,color,border-color,box-shadow] duration-200 ease-out ${
             activeTab === tab
               ? "bg-gray-900 text-white shadow-md"
               : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
