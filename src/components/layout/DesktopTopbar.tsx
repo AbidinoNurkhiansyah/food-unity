@@ -15,9 +15,7 @@ export function DesktopTopbar({
   return (
     <header className="sticky top-0 z-40 h-16 bg-white rounded-2xl shadow-sm hidden md:flex items-center justify-between px-6 shrink-0">
       <div>
-        <h2 className="text-lg font-bold text-slate-800">
-          Dashboard Mitra
-        </h2>
+        <h2 className="text-lg font-bold text-slate-800">Dashboard Mitra</h2>
         <p className="text-xs text-slate-500">
           Kelola toko dan pesanan pelanggan Anda
         </p>
