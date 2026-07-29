@@ -8,7 +8,8 @@ import {
   CartSummary,
   isProductExpired,
 } from "@/features/cart";
-import { TopBar } from "@/components/layout/TopBar";
+
+import { ConsumerFloatingChat } from "@/features/chat";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,7 +42,6 @@ export const CartPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col relative">
-      <TopBar />
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-30 shadow-sm">
         <div className="px-4 sm:px-6 lg:px-[130px] h-16 flex items-center gap-4">
@@ -53,7 +53,7 @@ export const CartPage: React.FC = () => {
           </Link>
           <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-primary-500" />
-            Keranjang Pesanan
+            My Cart
           </h1>
         </div>
       </header>
@@ -68,23 +68,23 @@ export const CartPage: React.FC = () => {
             <div className="flex border border-gray-100 bg-white rounded-2xl p-1.5 shadow-sm gap-2 max-w-md">
               <button
                 onClick={() => setActiveTab("active")}
-                className={`flex-1 py-3 text-center font-bold text-sm rounded-xl transition-all cursor-pointer ${
+                className={`flex-1 py-3 text-center font-bold text-sm rounded-xl transition-[background-color,color,box-shadow] duration-200 ease-out cursor-pointer ${
                   activeTab === "active"
                     ? "bg-primary-500 text-white shadow-md shadow-primary-500/10"
                     : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
                 }`}
               >
-                Aktif ({activeItems.length})
+                Active ({activeItems.length})
               </button>
               <button
                 onClick={() => setActiveTab("expired")}
-                className={`flex-1 py-3 text-center font-bold text-sm rounded-xl transition-all cursor-pointer ${
+                className={`flex-1 py-3 text-center font-bold text-sm rounded-xl transition-[background-color,color,box-shadow] duration-200 ease-out cursor-pointer ${
                   activeTab === "expired"
                     ? "bg-primary-500 text-white shadow-md shadow-primary-500/10"
                     : "text-gray-500 hover:text-gray-800 hover:bg-gray-50"
                 }`}
               >
-                Kadaluarsa ({expiredItems.length})
+                Expired ({expiredItems.length})
               </button>
             </div>
 
@@ -93,16 +93,16 @@ export const CartPage: React.FC = () => {
                 <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-200 flex flex-col items-center justify-center">
                   <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
-                    Keranjang Aktif Kosong
+                    Active Cart is Empty
                   </h3>
                   <p className="text-gray-500 mb-6">
-                    Tidak ada produk aktif di keranjang Anda.
+                    There are no active products in your cart.
                   </p>
                   <Link
                     to="/explore"
                     className="inline-flex items-center justify-center px-6 h-12 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-primary-500/20"
                   >
-                    Mulai Belanja
+                    Start Shopping
                   </Link>
                 </div>
               ) : (
@@ -131,23 +131,22 @@ export const CartPage: React.FC = () => {
                         <AlertDialogContent className="bg-white border-none ring-0 sm:rounded-2xl p-6">
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              Hapus Produk Terpilih?
+                              Remove Selected Products?
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Apakah Anda yakin ingin menghapus{" "}
-                              <strong>{selectedItems.length} produk</strong> yang
-                              dipilih dari keranjang belanja Anda?
+                              Are you sure you want to remove the{" "}
+                              <strong>{selectedItems.length} selected product{selectedItems.length > 1 ? "s" : ""}</strong> from your shopping cart?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter className="border-none bg-transparent mt-4">
                             <AlertDialogCancel className="border-none shadow-none hover:bg-gray-100 cursor-pointer rounded-xl font-medium">
-                              Batal
+                              Cancel
                             </AlertDialogCancel>
                             <AlertDialogAction
                               onClick={removeSelectedItems}
                               className="bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold cursor-pointer"
                             >
-                              Ya, Hapus
+                              Yes, Remove
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -164,24 +163,23 @@ export const CartPage: React.FC = () => {
               <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-200 flex flex-col items-center justify-center">
                 <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Tidak Ada Produk Kadaluarsa
+                  No Expired Products
                 </h3>
                 <p className="text-gray-500">
-                  Keranjang Anda bersih dari produk yang kadaluarsa.
+                  Your cart is free of expired products.
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="flex justify-between items-center bg-amber-50 text-amber-800 px-4 py-3 rounded-xl border border-amber-100 text-sm">
                   <span className="font-medium">
-                    Produk di tab ini sudah melewati batas waktu pengambilan dan
-                    tidak bisa di-checkout.
+                    Products in this tab have passed the pickup deadline and cannot be checked out.
                   </span>
                   <button
                     onClick={clearExpiredItems}
                     className="underline hover:text-amber-950 font-bold shrink-0 ml-2 cursor-pointer"
                   >
-                    Hapus Semua
+                    Remove All
                   </button>
                 </div>
                 <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6">
@@ -197,6 +195,8 @@ export const CartPage: React.FC = () => {
 
       {/* Order Summary Checkout Fixed Bottom Bar */}
       <CartSummary />
+
+      <ConsumerFloatingChat />
     </div>
   );
 };

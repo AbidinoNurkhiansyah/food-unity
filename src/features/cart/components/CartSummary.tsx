@@ -19,33 +19,33 @@ export const CartSummary: React.FC = () => {
   const grandTotal = subtotal + serviceFee;
 
   return (
-    <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] z-40 px-4 sm:px-6 lg:px-[130px] py-3.5 transition-all">
+    <div className="fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-gray-200/80 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] z-40 px-4 sm:px-6 lg:px-[130px] py-3.5">
       {/* Popover Rincian Pembayaran */}
       {showDetails && selectedItems.length > 0 && (
-        <div className="max-w-7xl mx-auto mb-3 p-4 bg-gray-50 border border-gray-200/80 rounded-2xl shadow-inner transition-all animate-in fade-in slide-in-from-bottom-2">
+        <div className="max-w-7xl mx-auto mb-3 p-4 bg-gray-50 border border-gray-200/80 rounded-2xl shadow-inner animate-in fade-in slide-in-from-bottom-2">
           <div className="flex items-center justify-between pb-2 border-b border-gray-200/60 mb-2.5">
             <h4 className="font-bold text-sm text-gray-900 flex items-center gap-1.5">
               <Info size={15} className="text-primary-500" />
-              Rincian Pembayaran
+              Payment Details
             </h4>
             <button
               onClick={() => setShowDetails(false)}
               className="text-xs text-gray-400 hover:text-gray-600 font-medium cursor-pointer"
             >
-              Tutup
+              Close
             </button>
           </div>
           <div className="space-y-2 text-xs">
             <div className="flex justify-between text-gray-600">
-              <span>Subtotal ({selectedItems.length} item)</span>
+              <span>Subtotal ({selectedItems.length} item{selectedItems.length > 1 ? "s" : ""})</span>
               <span className="font-medium">Rp {subtotal.toLocaleString("id-ID")}</span>
             </div>
             <div className="flex justify-between text-gray-600">
-              <span>Biaya Layanan</span>
+              <span>Service Fee</span>
               <span className="font-medium">Rp {serviceFee.toLocaleString("id-ID")}</span>
             </div>
             <div className="flex justify-between text-gray-900 font-bold text-sm pt-2 border-t border-gray-200/80">
-              <span>Total Tagihan</span>
+              <span>Total Payment</span>
               <span className="text-primary-600">Rp {grandTotal.toLocaleString("id-ID")}</span>
             </div>
           </div>
@@ -57,7 +57,7 @@ export const CartSummary: React.FC = () => {
           <div className="flex flex-col">
             <div className="flex items-center gap-2 text-xs text-gray-500 font-medium">
               <span>
-                {selectedItems.length} dari {activeItems.length} Produk dipilih
+                {selectedItems.length} of {activeItems.length} product{activeItems.length > 1 ? "s" : ""} selected
               </span>
               {selectedItems.length > 0 && (
                 <>
@@ -66,13 +66,13 @@ export const CartSummary: React.FC = () => {
                     onClick={() => setShowDetails(!showDetails)}
                     className="inline-flex items-center gap-0.5 text-primary-600 font-semibold hover:underline cursor-pointer"
                   >
-                    Rincian {showDetails ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                    Details {showDetails ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                   </button>
                 </>
               )}
             </div>
             <div className="flex items-baseline gap-2 mt-0.5">
-              <span className="text-xs text-gray-500 font-medium">Total Tagihan:</span>
+              <span className="text-xs text-gray-500 font-medium">Total Payment:</span>
               <span className="text-xl sm:text-2xl font-extrabold text-primary-600">
                 Rp {grandTotal.toLocaleString("id-ID")}
               </span>
@@ -88,14 +88,14 @@ export const CartSummary: React.FC = () => {
           {isLoading ? (
             <div className="flex items-center justify-center gap-2">
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              Memproses...
+              Processing...
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
               <ShoppingBag size={18} />
               <span>
                 {selectedItems.length === 0
-                  ? "Pilih Produk"
+                  ? "Select Products"
                   : `Checkout (${selectedItems.length})`}
               </span>
             </div>

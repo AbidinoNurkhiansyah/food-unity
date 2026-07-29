@@ -40,7 +40,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
     try {
       const date = new Date(deadline);
       if (isNaN(date.getTime())) return deadline;
-      return new Intl.DateTimeFormat("id-ID", {
+      return new Intl.DateTimeFormat("en-US", {
         day: "numeric",
         month: "short",
         hour: "2-digit",
@@ -65,7 +65,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
     item.product.unit === "pcs"
       ? "pcs"
       : item.product.unit === "porsi"
-      ? "porsi"
+      ? "portion"
       : item.product.unit === "box"
       ? "box"
       : item.product.unit === "kg"
@@ -76,7 +76,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
 
   return (
     <div
-      className={`flex flex-col md:flex-row justify-between gap-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0 transition-all ${
+      className={`flex flex-col md:flex-row justify-between gap-4 pb-6 border-b border-gray-100 last:border-0 last:pb-0 transition-opacity duration-200 ease-out ${
         expired ? "opacity-60" : ""
       }`}
     >
@@ -91,8 +91,8 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
             className="w-5 h-5 rounded-md accent-palette-700 border-gray-300 text-primary-500 focus:ring-primary-500 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
             title={
               expired
-                ? "Expired products cannot be selected."
-                : "Select this product for checkout."
+                ? "Produk kadaluarsa tidak dapat dipilih."
+                : "Pilih produk ini untuk checkout."
             }
           />
         </div>
@@ -110,13 +110,13 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
           {expired && (
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex items-center justify-center p-1">
               <span className="text-[10px] bg-red-600 text-white font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow">
-                Kadaluarsa
+                Expired
               </span>
             </div>
           )}
           {item.product.isDonation ? (
             <span className="absolute top-2 left-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
-              Donasi
+              Donation
             </span>
           ) : discountPercent > 0 ? (
             <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md shadow-sm flex items-center gap-0.5">
@@ -167,7 +167,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
               <div className="flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded text-gray-600 border border-gray-100">
                 <Package size={12} className="text-gray-400" />
                 <span>
-                  Stok: {item.product.stock} {unitLabel}
+                  Stock: {item.product.stock} {unitLabel}
                 </span>
               </div>
             )}
@@ -176,7 +176,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
               <div className="flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded text-amber-800 border border-amber-100/70">
                 <Clock size={12} className="text-amber-600 shrink-0" />
                 <span>
-                  Ambil s/d:{" "}
+                  Pick up by:{" "}
                   <strong>{formatDeadline(item.product.pickupDeadline)}</strong>
                 </span>
               </div>
@@ -187,7 +187,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
           <div className="pt-1.5 flex items-baseline gap-2 flex-wrap">
             <span className="font-extrabold text-lg text-primary-600">
               {item.product.isDonation
-                ? "Gratis"
+                ? "Free"
                 : `Rp ${(
                     item.product.discountPrice * item.quantity
                   ).toLocaleString("id-ID")}`}
@@ -250,8 +250,8 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
               }`}
               title={
                 item.quantity >= item.product.stock
-                  ? "Mencapai Batas Stok"
-                  : "Tambah Kuantitas"
+                  ? "Stock Limit Reached"
+                  : "Increase Quantity"
               }
             >
               <Plus className="w-4 h-4" />
@@ -259,7 +259,7 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
           </div>
           {item.quantity >= item.product.stock && !expired && (
             <span className="text-[10px] font-semibold text-amber-600">
-              Batas stok tercapai
+              Stock limit reached
             </span>
           )}
         </div>
@@ -268,29 +268,28 @@ export const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
           <AlertDialogTrigger asChild>
             <button
               className="text-red-500 hover:text-red-600 hover:bg-red-50 p-2.5 rounded-xl transition-colors cursor-pointer"
-              title="Hapus item"
+              title="Remove item"
             >
               <Trash2 className="w-5 h-5" />
             </button>
           </AlertDialogTrigger>
           <AlertDialogContent className="bg-white border-none ring-0 sm:rounded-2xl p-6">
             <AlertDialogHeader>
-              <AlertDialogTitle>Hapus dari Keranjang?</AlertDialogTitle>
+              <AlertDialogTitle>Remove from Cart?</AlertDialogTitle>
               <AlertDialogDescription>
-                Apakah Anda yakin ingin menghapus{" "}
-                <strong>{item.product.title}</strong> dari keranjang belanja
-                Anda?
+                Are you sure you want to remove{" "}
+                <strong>{item.product.title}</strong> from your shopping cart?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="border-none bg-transparent mt-4">
               <AlertDialogCancel className="border-none shadow-none hover:bg-gray-100 cursor-pointer rounded-xl font-medium">
-                Batal
+                Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => removeItem(item.product.id)}
                 className="bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold cursor-pointer"
               >
-                Ya, Hapus
+                Yes, Remove
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
