@@ -315,8 +315,8 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50/75 border-b border-slate-200/60">
-                <TableRow className="hover:bg-transparent">
+              <TableHeader className="bg-slate-50/75 border-b-0 [&_tr]:border-b-0">
+                <TableRow className="hover:bg-transparent border-b-0">
                   <TableHead className="w-[50px] text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
                     No.
                   </TableHead>
