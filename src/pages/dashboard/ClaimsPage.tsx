@@ -1,10 +1,9 @@
-import { 
-  ClaimCard, 
-  ClaimsTabs, 
-  ClaimsEmptyState, 
-  useClaims 
-} from '@/features/claims';
-import { History } from 'lucide-react';
+import {
+  ClaimCard,
+  ClaimsTabs,
+  ClaimsEmptyState,
+  useClaims,
+} from "@/features/claims";
 
 export function ClaimsPage() {
   const {
@@ -14,23 +13,11 @@ export function ClaimsPage() {
     setActiveTab,
     completingId,
     handleCompleteClaim,
-    merchantId
+    merchantId,
   } = useClaims();
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-            <History className="text-primary-500 w-8 h-8" />
-            Riwayat Klaim
-          </h1>
-          <p className="text-slate-500 mt-2">
-            Pantau daftar pesanan yang masuk dan validasi pengambilan makanan oleh konsumen.
-          </p>
-        </div>
-      </div>
-
+    <div className="max-w-full mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Tabs */}
       <ClaimsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -44,7 +31,7 @@ export function ClaimsPage() {
           <ClaimsEmptyState activeTab={activeTab} />
         ) : (
           claims.map((claim) => (
-            <ClaimCard 
+            <ClaimCard
               key={claim.orderId}
               claim={claim}
               merchantId={merchantId}
@@ -57,4 +44,3 @@ export function ClaimsPage() {
     </div>
   );
 }
-
