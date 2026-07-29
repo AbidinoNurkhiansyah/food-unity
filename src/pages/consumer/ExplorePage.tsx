@@ -4,7 +4,6 @@ import { useAuthStore } from "@/features/auth";
 import { useAllProducts } from "@/features/products/hooks/useProducts";
 import type { Product } from "@/features/products/types";
 import type { MerchantUser } from "@/features/merchant-profile/types";
-import { TopBar } from "@/components/layout/TopBar";
 import { Loader2 } from "lucide-react";
 import {
   ExploreHeader,
@@ -130,9 +129,6 @@ export const ExplorePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
-      <div className={viewMode === "map" ? "hidden md:block" : "block"}>
-        <TopBar />
-      </div>
       <ExploreHeader />
 
       <main className={

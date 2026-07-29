@@ -62,7 +62,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             <div
               key={product.id}
               onClick={() => onSelectProduct(product)}
-              className="group flex flex-col h-full bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer"
+              className="group flex flex-col h-full bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-shadow duration-300 ease-out cursor-pointer"
             >
               {/* Image Area */}
               <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl bg-slate-50 shrink-0">
@@ -148,7 +148,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                       if (product.stock > 0) addItem(product, 1);
                     }}
                     disabled={product.stock <= 0}
-                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-300 active:scale-95 shrink-0 cursor-pointer ${
+                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-[background-color,color,transform] duration-200 ease-out active:scale-95 shrink-0 cursor-pointer ${
                       product.stock <= 0
                         ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                         : "bg-primary-50 text-primary-600 hover:bg-primary-100"

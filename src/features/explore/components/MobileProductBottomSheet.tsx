@@ -128,7 +128,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
-                className="flex gap-3 bg-white p-3 rounded-2xl border border-slate-100/80 shadow-sm active:scale-[0.99] transition-all duration-200 cursor-pointer"
+                className="flex gap-3 bg-white p-3 rounded-2xl border border-slate-100/80 shadow-sm active:scale-[0.99] transition-transform duration-200 ease-out cursor-pointer"
               >
                 {/* Product Image */}
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-slate-100 shrink-0">
@@ -200,7 +200,7 @@ export const MobileProductBottomSheet: React.FC<MobileProductBottomSheetProps> =
                         if (product.stock > 0) addItem(product, 1);
                       }}
                       disabled={product.stock <= 0}
-                      className={`flex items-center gap-1 p-1.5 px-2.5 rounded-lg text-[10px] font-bold transition-all active:scale-95 shrink-0 cursor-pointer ${
+                      className={`flex items-center gap-1 p-1.5 px-2.5 rounded-lg text-[10px] font-bold transition-[background-color,color,transform] duration-200 ease-out active:scale-95 shrink-0 cursor-pointer ${
                         product.stock <= 0
                           ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                           : "bg-primary-50 text-primary-600 hover:bg-primary-100"
