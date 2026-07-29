@@ -29,18 +29,18 @@ export function ProductsPage() {
   } = useProductManagement();
 
   return (
-    <div className="w-full px-6 py-4 font-sans-bento">
+    <div className="w-full px-6 py-6 font-sans bg-slate-50/30 min-h-screen">
       
       <header className="mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white shadow-sm border border-slate-200/60 text-slate-600 rounded-full text-xs font-medium mb-4">
-          <Package className="w-3.5 h-3.5 text-palette-600" />
-          Manajemen Stok
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white shadow-sm border border-slate-200/60 text-slate-600 rounded-full text-xs font-semibold mb-4 transition-all hover:border-slate-300">
+          <Package className="w-3.5 h-3.5 text-palette-600 animate-pulse" />
+          <span>Manajemen Stok</span>
         </div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-900">
           Kelola Produk Surplus
         </h1>
-        <p className="mt-2 text-slate-500 font-medium">
-          Daftar makanan surplus yang siap diselamatkan dari toko Anda.
+        <p className="mt-2 text-sm text-slate-500 font-medium leading-relaxed max-w-2xl">
+          Pantau dan distribusikan makanan surplus Anda ke publik sebagai diskon atau donasi sosial untuk mengurangi limbah makanan.
         </p>
       </header>
 
