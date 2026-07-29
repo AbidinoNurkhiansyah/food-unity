@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const ProductFormSchema = z.object({
   title: z.string().min(3, 'Package name must be at least 3 characters').max(100),
   category: z.string().min(1, 'Category is required'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
+  description: z.string().min(10, 'Description must be at least 10 characters').optional().or(z.literal('')),
   originalPrice: z.number().min(0, 'Original price cannot be negative'),
   discountPrice: z.number().min(0, 'Discount price cannot be negative'),
   stock: z.number().min(1, 'Stock must be at least 1'),
@@ -22,7 +22,7 @@ export interface Product {
   merchantName: string;
   title: string;
   category: string;
-  description: string;
+  description?: string;
   imageUrl?: string;
   originalPrice: number;
   discountPrice: number;

@@ -18,7 +18,7 @@ interface ProductModalProps {
 export function ProductModal({ isOpen, onClose, initialData }: ProductModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto p-6 rounded-2xl border border-slate-200/80 shadow-2xl bg-white">
+      <DialogContent className="sm:max-w-[800px] max-h-[95vh] overflow-y-auto p-6 rounded-2xl border border-slate-200/80 shadow-2xl bg-white">
         <DialogHeader className="pb-4 border-b border-slate-100 flex flex-row items-center gap-3">
           <div className="p-2.5 rounded-xl bg-palette-50 text-palette-600 border border-palette-100/50 shadow-sm shrink-0">
             <Package className="w-5 h-5 text-palette-600 animate-pulse" />
