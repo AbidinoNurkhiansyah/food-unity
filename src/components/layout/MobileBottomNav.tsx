@@ -12,27 +12,27 @@ interface NavItem {
 interface MobileBottomNavProps {
   navItems: NavItem[];
   currentPath: string;
-  onOpenScanner: () => void;
 }
 
 export function MobileBottomNav({
   navItems,
   currentPath,
-  onOpenScanner,
 }: MobileBottomNavProps) {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background/90 backdrop-blur-lg border-t border-primary/10 flex justify-around items-center h-16 pb-safe z-40 px-2 shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
       {navItems.map((item) => {
         const Icon = item.icon;
-        if (item.action === "scan") {
+        if (item.action === "scan" || item.href === "/dashboard/scan") {
           return (
             <div key={item.name} className="relative -top-6">
               <Button
+                asChild
                 size="icon"
-                onClick={onOpenScanner}
                 className="w-14 h-14 bg-gradient-to-tr from-palette-600 to-palette-400 hover:from-palette-700 hover:to-palette-500 text-white rounded-full shadow-lg shadow-palette-500/40 transition-all hover:scale-105 active:scale-95"
               >
-                <Icon className="w-7 h-7" />
+                <Link to={item.href!}>
+                  <Icon className="w-7 h-7" />
+                </Link>
               </Button>
             </div>
           );
