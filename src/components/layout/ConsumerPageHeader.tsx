@@ -34,11 +34,11 @@ export const ConsumerPageHeader: React.FC<ConsumerPageHeaderProps> = ({
     <header className="bg-white sticky top-0 z-30 shadow-sm border-b border-gray-100">
       <div className="px-4 sm:px-6 lg:px-[130px] h-16 flex items-center gap-4">
         {backTo && !onBack ? (
-          <Link to={backTo} className={buttonClass}>
+          <Link to={backTo} className={buttonClass} aria-label="Back">
             <ArrowLeft className="w-5 h-5" />
           </Link>
         ) : (
-          <button onClick={handleBack} className={buttonClass}>
+          <button type="button" onClick={handleBack} className={buttonClass} aria-label="Back">
             <ArrowLeft className="w-5 h-5" />
           </button>
         )}
