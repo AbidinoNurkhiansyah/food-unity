@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
+import { ConsumerPageHeader } from "@/components/layout/ConsumerPageHeader";
 import {
   useCartStore,
   CartEmptyState,
@@ -41,22 +42,12 @@ export const CartPage: React.FC = () => {
   const someActiveSelected = selectedItems.length > 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col relative">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-30 shadow-sm">
-        <div className="px-4 sm:px-6 lg:px-[130px] h-16 flex items-center gap-4">
-          <Link
-            to="/explore"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-600"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <ShoppingBag className="w-5 h-5 text-primary-500" />
-            My Cart
-          </h1>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#f5f5f5] flex flex-col relative">
+      <ConsumerPageHeader
+        title="My Cart"
+        icon={<ShoppingBag className="w-5 h-5 text-primary-500" />}
+        backTo="/explore"
+      />
 
       <main className="flex-1 px-4 sm:px-6 lg:px-[130px] py-8 pb-36 space-y-6">
         {/* Cart Items Container */}
@@ -135,7 +126,11 @@ export const CartPage: React.FC = () => {
                             </AlertDialogTitle>
                             <AlertDialogDescription>
                               Are you sure you want to remove the{" "}
-                              <strong>{selectedItems.length} selected product{selectedItems.length > 1 ? "s" : ""}</strong> from your shopping cart?
+                              <strong>
+                                {selectedItems.length} selected product
+                                {selectedItems.length > 1 ? "s" : ""}
+                              </strong>{" "}
+                              from your shopping cart?
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter className="border-none bg-transparent mt-4">
@@ -173,7 +168,8 @@ export const CartPage: React.FC = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center bg-amber-50 text-amber-800 px-4 py-3 rounded-xl border border-amber-100 text-sm">
                   <span className="font-medium">
-                    Products in this tab have passed the pickup deadline and cannot be checked out.
+                    Products in this tab have passed the pickup deadline and
+                    cannot be checked out.
                   </span>
                   <button
                     onClick={clearExpiredItems}
