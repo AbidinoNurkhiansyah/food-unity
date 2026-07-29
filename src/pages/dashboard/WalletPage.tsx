@@ -1,8 +1,9 @@
-import { 
-  WalletBalanceCard, 
-  WalletWithdrawCard, 
-  WalletHistoryCard, 
-  useWallet 
+import React from "react";
+import {
+  WalletBalanceCard,
+  WalletWithdrawCard,
+  WalletHistoryCard,
+  useWallet,
 } from "@/features/wallet";
 import {
   AlertDialog,
@@ -14,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export function WalletPage() {
   const {
@@ -26,47 +28,68 @@ export function WalletPage() {
     handleWithdrawClick,
     processWithdrawal,
     handleSetMaxAmount,
-    handleAmountChange
+    handleAmountChange,
   } = useWallet();
 
+  const [showWithdrawModal, setShowWithdrawModal] = React.useState(false);
+
+  // Wrap the submit handler to close the dialog if needed, or rely on showConfirm
+  const handleWithdrawSubmit = (e: React.FormEvent) => {
+    handleWithdrawClick(e);
+    // Modal will stay open beneath the confirm dialog, which is fine.
+    // Or we can close it when confirm dialog opens. Let's close it.
+    setShowWithdrawModal(false);
+  };
+
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Dompet Mitra
-        </h1>
-        <p className="text-slate-500 mt-2">
-          Kelola pendapatan dan lakukan penarikan dana ke rekening Anda.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <WalletBalanceCard balance={balance} isLoading={isLoading} />
-        
-        <WalletWithdrawCard 
-          amountToWithdraw={amountToWithdraw}
-          isWithdrawing={isWithdrawing}
+    <div className="max-w-full mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
+      <div className="flex flex-col gap-8">
+        {/* Hero Section */}
+        <WalletBalanceCard
+          balance={balance}
           isLoading={isLoading}
-          onAmountChange={handleAmountChange}
-          onSetMaxAmount={handleSetMaxAmount}
-          onSubmit={handleWithdrawClick}
+          onWithdrawClick={() => setShowWithdrawModal(true)}
         />
+
+        {/* History Section */}
+        <WalletHistoryCard />
       </div>
 
-      <WalletHistoryCard />
+      <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
+        <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-md">
+          <WalletWithdrawCard
+            amountToWithdraw={amountToWithdraw}
+            isWithdrawing={isWithdrawing}
+            isLoading={isLoading}
+            onAmountChange={handleAmountChange}
+            onSetMaxAmount={handleSetMaxAmount}
+            onSubmit={handleWithdrawSubmit}
+          />
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Konfirmasi Penarikan</AlertDialogTitle>
             <AlertDialogDescription>
-              Anda akan menarik dana sebesar <b>Rp {amountToWithdraw ? Number(amountToWithdraw).toLocaleString("id-ID") : "0"}</b> ke rekening yang terdaftar.
-              Proses pencairan akan memakan waktu 1x24 jam kerja. Apakah Anda yakin ingin melanjutkan?
+              Anda akan menarik dana sebesar{" "}
+              <b>
+                Rp{" "}
+                {amountToWithdraw
+                  ? Number(amountToWithdraw).toLocaleString("id-ID")
+                  : "0"}
+              </b>{" "}
+              ke rekening yang terdaftar. Proses pencairan akan memakan waktu
+              1x24 jam kerja. Apakah Anda yakin ingin melanjutkan?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>
-            <AlertDialogAction onClick={processWithdrawal} className="bg-palette-600 hover:bg-palette-700 text-white">
+            <AlertDialogAction
+              onClick={processWithdrawal}
+              className="bg-primary-600 hover:bg-primary-700 text-white cursor-pointer"
+            >
               Ya, Tarik Dana
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -75,4 +98,3 @@ export function WalletPage() {
     </div>
   );
 }
-

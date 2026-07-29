@@ -14,31 +14,31 @@ export function ScannerPage() {
       const claim = await claimsApi.getClaimById(scannedCode);
 
       if (!claim) {
-        toast.error("Tiket tidak ditemukan! Pastikan kode benar.");
+        toast.error("Ticket not found! Make sure the code is correct.");
         return;
       }
 
       if (!user?.uid || !claim.merchantIds?.includes(user.uid)) {
-        toast.error("Tiket ini bukan untuk toko Anda.");
+        toast.error("This ticket is not for your store.");
         return;
       }
 
       if (claim.status === "COMPLETED") {
-        toast.warning("Pesanan ini sudah diambil sebelumnya!");
+        toast.warning("This order has already been picked up!");
         return;
       }
 
       if (claim.status !== "PAID") {
-        toast.warning(`Tiket tidak bisa divalidasi. Status: ${claim.status}`);
+        toast.warning(`Ticket cannot be validated. Status: ${claim.status}`);
         return;
       }
 
       await claimsApi.completeClaim(scannedCode);
-      toast.success("Pesanan berhasil ditandai selesai (sudah diambil)");
+      toast.success("Order successfully marked as completed (picked up)");
       // navigate('/dashboard/claims'); // Optional: redirect after success
     } catch (error) {
       console.error(error);
-      toast.error("Gagal memvalidasi tiket");
+      toast.error("Failed to validate ticket");
     }
   };
 
@@ -65,7 +65,7 @@ export function ScannerPage() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            <Camera size={18} /> Kamera
+            <Camera size={18} /> Camera
           </button>
           <button
             onClick={() => setMode("MANUAL")}
@@ -75,7 +75,7 @@ export function ScannerPage() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            <Keyboard size={18} /> Input Manual
+            <Keyboard size={18} /> Manual Input
           </button>
         </div>
       </div>
@@ -95,7 +95,7 @@ export function ScannerPage() {
           {error && (
             <div className="absolute bottom-4 left-4 right-4 bg-red-500/90 backdrop-blur-sm text-white p-3 rounded-xl text-sm flex items-center gap-2 shadow-lg max-w-md mx-auto">
               <AlertCircle size={18} className="shrink-0" />
-              <span>Gagal mengakses kamera atau scan error.</span>
+              <span>Failed to access camera or scan error.</span>
             </div>
           )}
         </div>
@@ -106,7 +106,7 @@ export function ScannerPage() {
         >
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Masukkan Kode Unik / Order ID
+              Enter Unique Code / Order ID
             </label>
             <input
               type="text"
@@ -115,7 +115,7 @@ export function ScannerPage() {
                 setManualCode(e.target.value);
                 setError(null);
               }}
-              placeholder="Contoh: ORDER-1234567..."
+              placeholder="Example: ORDER-1234567..."
               className="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-palette-500 focus:border-palette-500 outline-none transition-all text-base"
               autoFocus
             />
@@ -129,7 +129,7 @@ export function ScannerPage() {
             type="submit"
             className="w-full h-12 text-base font-semibold bg-palette-600 hover:bg-palette-700 rounded-xl shadow-md shadow-palette-600/20"
           >
-            Validasi Kode
+            Validate Code
           </Button>
         </form>
       )}
