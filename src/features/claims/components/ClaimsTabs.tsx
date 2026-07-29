@@ -6,33 +6,35 @@ interface ClaimsTabsProps {
   setActiveTab: (tab: TabStatus) => void;
 }
 
-export const ClaimsTabs: React.FC<ClaimsTabsProps> = ({ activeTab, setActiveTab }) => {
+export const ClaimsTabs: React.FC<ClaimsTabsProps> = ({
+  activeTab,
+  setActiveTab,
+}) => {
   const tabs: { label: string; value: TabStatus }[] = [
-    { label: 'Semua Pesanan', value: 'ALL' },
-    { label: 'Menunggu (Pending)', value: 'PENDING' },
-    { label: 'Siap Diambil (Paid)', value: 'PAID' },
-    { label: 'Selesai (Completed)', value: 'COMPLETED' },
+    { label: "All", value: "ALL" },
+    { label: "Pending", value: "PENDING" },
+    { label: "Paid", value: "PAID" },
+    { label: "Completed", value: "COMPLETED" },
   ];
 
   return (
-    <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-2 border-b border-gray-200">
+    <div className="flex overflow-x-auto hide-scrollbar gap-6 border-b border-gray-200/80">
       {tabs.map((tab) => (
         <button
           key={tab.value}
           onClick={() => setActiveTab(tab.value)}
-          className={`whitespace-nowrap px-4 py-2.5 rounded-t-lg font-medium text-sm transition-colors relative ${
+          className={`whitespace-nowrap py-3 font-medium text-sm transition-colors relative ${
             activeTab === tab.value
-              ? 'text-primary-600 bg-primary-50/50'
-              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              ? "text-primary-600"
+              : "text-gray-500 hover:text-gray-900"
           }`}
         >
           {tab.label}
           {activeTab === tab.value && (
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 rounded-t-full" />
+            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-primary-600 rounded-t-full" />
           )}
         </button>
       ))}
     </div>
   );
 };
-

@@ -17,12 +17,14 @@ export const ClaimsEmptyState: React.FC<ClaimsEmptyStateProps> = ({ activeTab })
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-16 text-center shadow-sm">
-      <PackageSearch className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-      <h3 className="text-xl font-bold text-gray-900 mb-2">Tidak Ada Pesanan</h3>
-      <p className="text-gray-500">
+    <div className="bg-white/50 rounded-2xl border border-gray-200/80 border-dashed p-16 text-center flex flex-col items-center justify-center">
+      <div className="h-16 w-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+        <PackageSearch className="h-8 w-8 text-gray-400" />
+      </div>
+      <h3 className="text-lg font-semibold text-gray-900 mb-1.5">Tidak Ada Pesanan</h3>
+      <p className="text-sm text-gray-500 max-w-sm">
         {activeTab === 'ALL' 
-          ? 'Belum ada pesanan yang masuk ke toko Anda.' 
+          ? 'Belum ada pesanan yang masuk ke toko Anda saat ini.' 
           : `Tidak ada pesanan dengan status ${getTabLabel(activeTab)}.`}
       </p>
     </div>
