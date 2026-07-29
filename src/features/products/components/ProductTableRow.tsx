@@ -43,7 +43,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 border border-slate-200/60">
           <CheckCircle className="w-3 h-3 text-slate-400" />
-          Habis Terjual
+          Sold Out
         </span>
       );
     }
@@ -52,7 +52,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
       return (
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-rose-50 text-rose-700 border border-rose-100">
           <AlertTriangle className="w-3 h-3 text-rose-500 animate-bounce" />
-          Kadaluarsa
+          Expired
         </span>
       );
     }
@@ -60,7 +60,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
     return (
       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
         <Clock className="w-3 h-3 text-emerald-500" />
-        Aktif
+        Active
       </span>
     );
   };
@@ -103,13 +103,15 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
               : "bg-amber-50 text-amber-700 border-amber-100"
           }`}
         >
-          {product.isDonation ? "DONASI" : "DISKON"}
+          {product.isDonation ? "DONATION" : "DISCOUNT"}
         </span>
       </TableCell>
       <TableCell className="py-4">
         <div className="flex items-baseline gap-0.5">
           <span className="font-bold text-slate-800 text-sm tabular-nums">{product.stock}</span>
-          <span className="text-[10px] font-bold text-slate-400">{product.unit}</span>
+          <span className="text-[10px] font-bold text-slate-400">
+            {product.unit === "porsi" ? "portion" : product.unit}
+          </span>
         </div>
       </TableCell>
       <TableCell className="py-4 text-xs font-semibold text-slate-500 tabular-nums">
@@ -129,7 +131,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
             product.isDonation ? "text-rose-600" : "text-palette-600"
           }`}>
             {product.isDonation
-              ? "Gratis"
+              ? "Free"
               : `Rp ${product.discountPrice.toLocaleString("id-ID")}`}
           </span>
         </div>
@@ -141,7 +143,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-slate-500 hover:text-blue-600 hover:bg-blue-50/50 rounded-lg transition-all"
-            title="Edit Produk"
+            title="Edit Product"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -150,7 +152,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50/50 rounded-lg transition-all"
-            title="Hapus Produk"
+            title="Delete Product"
           >
             <Trash2 className="h-4 w-4" />
           </Button>

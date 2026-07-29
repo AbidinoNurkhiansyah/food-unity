@@ -73,9 +73,9 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
         <div className="w-12 h-12 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mb-3 border border-rose-100">
           <X className="w-6 h-6" />
         </div>
-        <h3 className="text-base font-bold text-slate-900 mb-1">Gagal Memuat Stok</h3>
+        <h3 className="text-base font-bold text-slate-900 mb-1">Failed to Load Stock</h3>
         <p className="text-sm text-slate-500 max-w-sm mb-4">
-          Terjadi kesalahan saat mengambil data produk surplus dari server. Silakan coba beberapa saat lagi.
+          An error occurred while fetching surplus product data from the server. Please try again later.
         </p>
       </div>
     );
@@ -131,10 +131,10 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
       {/* 1. KPI Stats Summary Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Products Card */}
-        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-350">
+        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-355">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Total Makanan
+              Total Food
             </span>
             <div className="p-2 rounded-lg bg-blue-50 text-blue-600 border border-blue-100/50">
               <Package className="w-4 h-4" />
@@ -144,16 +144,16 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
             <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
               {totalProducts}
             </span>
-            <span className="text-xs font-semibold text-slate-400">paket</span>
+            <span className="text-xs font-semibold text-slate-400">pkg</span>
           </div>
-          <p className="text-[10.5px] text-slate-400 font-medium">Semua produk surplus terdaftar</p>
+          <p className="text-[10.5px] text-slate-400 font-medium">All registered surplus items</p>
         </div>
 
         {/* Active Listings Card */}
-        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-350">
+        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-355">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Listing Aktif
+              Active Listings
             </span>
             <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100/50">
               <Eye className="w-4 h-4" />
@@ -163,16 +163,16 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
             <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
               {activeProducts}
             </span>
-            <span className="text-xs font-semibold text-slate-400">aktif</span>
+            <span className="text-xs font-semibold text-slate-400">active</span>
           </div>
-          <p className="text-[10.5px] text-slate-400 font-medium">Tersedia & siap diklaim pembeli</p>
+          <p className="text-[10.5px] text-slate-400 font-medium">Available & ready for buyers</p>
         </div>
 
         {/* Sold Out Card */}
-        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-350">
+        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-355">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Habis Terjual
+              Sold Out
             </span>
             <div className="p-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-200/60">
               <ShoppingBag className="w-4 h-4" />
@@ -182,16 +182,16 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
             <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
               {soldOutProducts}
             </span>
-            <span className="text-xs font-semibold text-slate-400">habis</span>
+            <span className="text-xs font-semibold text-slate-400">sold</span>
           </div>
-          <p className="text-[10.5px] text-slate-400 font-medium">Stok habis dibeli konsumen</p>
+          <p className="text-[10.5px] text-slate-400 font-medium">Out of stock items</p>
         </div>
 
         {/* Donation Card */}
-        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-350">
+        <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-1.5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-355">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Donasi Sosial
+              Social Donation
             </span>
             <div className="p-2 rounded-lg bg-rose-50 text-rose-600 border border-rose-100/50">
               <Heart className="w-4 h-4" />
@@ -201,22 +201,22 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
             <span className="text-2xl font-bold tracking-tight text-slate-900 tabular-nums">
               {donationProducts}
             </span>
-            <span className="text-xs font-semibold text-slate-400">donasi</span>
+            <span className="text-xs font-semibold text-slate-400">donated</span>
           </div>
-          <p className="text-[10.5px] text-slate-400 font-medium">Dibagikan gratis bagi yang butuh</p>
+          <p className="text-[10.5px] text-slate-400 font-medium">Shared free for those in need</p>
         </div>
       </div>
 
       {/* 2. Title & Action Row */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Daftar Paket Makanan</h2>
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Surplus Packages List</h2>
           <p className="text-xs text-slate-500 font-medium mt-0.5">
-            Kelola diskon, donasi, stok, serta masa kedaluwarsa produk Anda.
+            Manage your discounts, donations, stock, and product expiration.
           </p>
         </div>
         <Button onClick={onCreateClick} className="gap-2 px-4 shadow-sm bg-palette-600 hover:bg-palette-700 text-white font-semibold rounded-xl text-sm transition-all duration-200 active:scale-98">
-          <Plus className="w-4 h-4" /> Tambah Paket
+          <Plus className="w-4 h-4" /> Add Package
         </Button>
       </div>
 
@@ -227,7 +227,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Cari makanan surplus..."
+            placeholder="Search surplus food..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-8 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-palette-500/10 focus:border-palette-500 transition-all bg-slate-50/50 hover:bg-slate-50/10"
@@ -249,9 +249,9 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
             {(['all', 'active', 'sold_out', 'expired'] as const).map((status) => {
               const isActive = statusFilter === status;
               const label = 
-                status === 'all' ? 'Semua' :
-                status === 'active' ? 'Aktif' :
-                status === 'sold_out' ? 'Habis' : 'Kadaluarsa';
+                status === 'all' ? 'All' :
+                status === 'active' ? 'Active' :
+                status === 'sold_out' ? 'Sold Out' : 'Expired';
               return (
                 <button
                   key={status}
@@ -278,7 +278,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
                   : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
               }`}
             >
-              Diskon
+              Discount
             </button>
             <button
               onClick={() => setTypeFilter(typeFilter === 'donation' ? 'all' : 'donation')}
@@ -288,7 +288,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
                   : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
               }`}
             >
-              Donasi
+              Donation
             </button>
           </div>
         </div>
@@ -300,15 +300,15 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
           <div className="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mb-3 border border-slate-100">
             <Search className="w-5 h-5" />
           </div>
-          <h3 className="text-sm font-bold text-slate-900 mb-1">Hasil Tidak Ditemukan</h3>
+          <h3 className="text-sm font-bold text-slate-900 mb-1">No Results Found</h3>
           <p className="text-xs text-slate-500 max-w-sm">
-            Tidak ada produk surplus yang cocok dengan filter atau kata kunci pencarian Anda. Coba ubah pencarian atau filter Anda.
+            No surplus products match your filters or search keywords. Try changing filters or search.
           </p>
           <button 
             onClick={() => { setSearchQuery(''); setStatusFilter('all'); setTypeFilter('all'); }}
             className="mt-4 text-xs font-bold text-palette-600 hover:text-palette-700 transition-colors"
           >
-            Reset Semua Filter
+            Reset All Filters
           </button>
         </div>
       ) : (
@@ -321,25 +321,25 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
                     No.
                   </TableHead>
                   <TableHead className="w-[300px] text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
-                    Produk
+                    Product
                   </TableHead>
                   <TableHead className="text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
-                    Tipe
+                    Type
                   </TableHead>
                   <TableHead className="text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
-                    Stok
+                    Stock
                   </TableHead>
                   <TableHead className="text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
-                    Batas Waktu Pengambilan
+                    Pickup Deadline
                   </TableHead>
                   <TableHead className="text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
                     Status
                   </TableHead>
                   <TableHead className="text-right text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
-                    Harga
+                    Price
                   </TableHead>
                   <TableHead className="text-center w-[100px] text-[10px] font-bold text-slate-400 uppercase tracking-wider py-3.5">
-                    Aksi
+                    Action
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -358,7 +358,7 @@ export function ProductList({ onCreateClick, onEditClick, onDeleteClick }: Produ
           </div>
           {/* Table Footer Count indicator */}
           <div className="px-4 py-3.5 bg-slate-50/50 border-t border-slate-200/50 flex justify-between items-center text-xs font-medium text-slate-500">
-            <span>Menampilkan {filteredProducts.length} dari {products.length} produk</span>
+            <span>Showing {filteredProducts.length} of {products.length} products</span>
             {filteredProducts.length < products.length && (
               <span className="text-slate-400 italic">(filtered)</span>
             )}

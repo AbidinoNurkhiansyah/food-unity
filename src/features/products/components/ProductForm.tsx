@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { Product } from "../types";
 import { useProductForm } from "../hooks/useProductForm";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
+  const [now] = useState(() => Date.now());
   const {
     form,
     imagePreview,
@@ -42,13 +44,13 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Kolom Kiri */}
+        {/* Left Column */}
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Nama Produk / Paket</Label>
+            <Label htmlFor="title">Product / Package Name</Label>
             <Input
               id="title"
-              placeholder="Contoh: Paket Roti Manis Sore"
+              placeholder="e.g., Afternoon Sweet Bread Package"
               {...register("title")}
             />
             {errors.title && (
@@ -57,7 +59,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="category">Kategori Produk</Label>
+            <Label htmlFor="category">Product Category</Label>
             <Select
               value={currentCategory || ""}
               onValueChange={(val) =>
@@ -65,7 +67,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="Pilih kategori" />
+                <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Dry Food">Dry Food</SelectItem>
@@ -84,10 +86,10 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description">Deskripsi</Label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
-              placeholder="Deskripsikan kondisi produk, alasan surplus, dll."
+              placeholder="Describe the product condition, reason for surplus, etc."
               rows={4}
               {...register("description")}
             />
@@ -99,7 +101,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image">Foto Produk (Opsional)</Label>
+            <Label htmlFor="image">Product Image (Optional)</Label>
             <div className="flex items-center gap-4">
               {imagePreview && (
                 <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-slate-200 shadow-sm shrink-0">
@@ -121,11 +123,11 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
           </div>
         </div>
 
-        {/* Kolom Kanan */}
+        {/* Right Column */}
         <div className="space-y-4">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Tipe Penjualan</Label>
+              <Label>Sale Type</Label>
               <Select
                 value={isDonation ? "true" : "false"}
                 onValueChange={(val) => {
@@ -137,25 +139,25 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih tipe penjualan" />
+                  <SelectValue placeholder="Select sale type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="false">Berbayar (Diskon)</SelectItem>
-                  <SelectItem value="true">Donasi (Gratis)</SelectItem>
+                  <SelectItem value="false">Paid (Discount)</SelectItem>
+                  <SelectItem value="true">Donation (Free)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label>Status Produk</Label>
+              <Label>Product Status</Label>
               <Select
                 value={currentStatus || "active"}
                 onValueChange={(val) =>
-                  setValue("status", val as any, { shouldValidate: true })
+                  setValue("status", val as 'active' | 'sold_out' | 'expired', { shouldValidate: true })
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih status produk" />
+                  <SelectValue placeholder="Select product status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="active">Active</SelectItem>
@@ -171,7 +173,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="originalPrice">Harga Asli (Rp)</Label>
+              <Label htmlFor="originalPrice">Original Price (Rp)</Label>
               <Input
                 id="originalPrice"
                 type="number"
@@ -186,7 +188,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="discountPrice">Harga Diskon (Rp)</Label>
+              <Label htmlFor="discountPrice">Discount Price (Rp)</Label>
               <Input
                 id="discountPrice"
                 type="number"
@@ -204,7 +206,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="stock">Sisa Stok</Label>
+              <Label htmlFor="stock">Remaining Stock</Label>
               <Input
                 id="stock"
                 type="number"
@@ -227,18 +229,18 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="unit">Satuan</Label>
+              <Label htmlFor="unit">Unit</Label>
               <Select
                 value={currentUnit || "porsi"}
                 onValueChange={(val) =>
-                  setValue("unit", val as any, { shouldValidate: true })
+                  setValue("unit", val as 'pcs' | 'box' | 'kg' | 'gram' | 'porsi', { shouldValidate: true })
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Pilih satuan" />
+                  <SelectValue placeholder="Select unit" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="porsi">Porsi</SelectItem>
+                  <SelectItem value="porsi">Portion</SelectItem>
                   <SelectItem value="pcs">Pcs</SelectItem>
                   <SelectItem value="box">Box</SelectItem>
                   <SelectItem value="kg">Kg</SelectItem>
@@ -253,7 +255,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="weightInGrams">Berat per Satuan (Gram)</Label>
+              <Label htmlFor="weightInGrams">Weight per Unit (Grams)</Label>
               <Input
                 id="weightInGrams"
                 type="number"
@@ -268,7 +270,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pickupDeadline">Batas Akhir Pengambilan Paket Ini</Label>
+              <Label htmlFor="pickupDeadline">Final Pickup Deadline</Label>
               <Input
                 id="pickupDeadline"
                 type="datetime-local"
@@ -277,7 +279,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
                     const val = e.target.value;
                     if (val) {
                       const deadlineTime = new Date(val).getTime();
-                      if (!isNaN(deadlineTime) && deadlineTime <= Date.now()) {
+                      if (!isNaN(deadlineTime) && deadlineTime <= now) {
                         setValue("status", "expired", { shouldValidate: true });
                       } else if (currentStatus === "expired") {
                         setValue("status", "active", { shouldValidate: true });
@@ -287,7 +289,7 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
                 })}
               />
               <p className="text-[11px] text-slate-400 font-medium leading-normal">
-                Disarankan otomatis sesuai jam operasional rutin Anda.
+                Suggested automatically according to your store operational hours.
               </p>
               {errors.pickupDeadline && (
                 <p className="text-sm text-red-500">
@@ -303,8 +305,8 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
         <p className="text-sm text-red-500 font-medium">{uploadError}</p>
       )}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Menyimpan..." : initialData ? "Update" : "Add Product"}
+      <Button type="submit" className="w-full font-semibold rounded-xl" disabled={isSubmitting}>
+        {isSubmitting ? "Saving..." : initialData ? "Update Package" : "Add Package"}
       </Button>
     </form>
   );

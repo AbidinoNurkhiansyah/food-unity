@@ -1,15 +1,15 @@
 import { z } from 'zod';
 
 export const ProductFormSchema = z.object({
-  title: z.string().min(3, 'Nama paket minimal 3 karakter').max(100),
-  category: z.string().min(1, 'Kategori wajib dipilih'),
-  description: z.string().min(10, 'Deskripsi minimal 10 karakter'),
-  originalPrice: z.number().min(0, 'Harga tidak boleh negatif'),
-  discountPrice: z.number().min(0, 'Harga diskon tidak boleh negatif'),
-  stock: z.number().min(1, 'Stok minimal 1'),
+  title: z.string().min(3, 'Package name must be at least 3 characters').max(100),
+  category: z.string().min(1, 'Category is required'),
+  description: z.string().min(10, 'Description must be at least 10 characters'),
+  originalPrice: z.number().min(0, 'Original price cannot be negative'),
+  discountPrice: z.number().min(0, 'Discount price cannot be negative'),
+  stock: z.number().min(1, 'Stock must be at least 1'),
   unit: z.enum(['pcs', 'box', 'kg', 'gram', 'porsi']),
-  weightInGrams: z.number().min(1, 'Estimasi berat (gram) wajib diisi'),
-  pickupDeadline: z.string().min(1, 'Batas waktu pengambilan wajib diisi'),
+  weightInGrams: z.number().min(1, 'Estimated weight (grams) is required'),
+  pickupDeadline: z.string().min(1, 'Pickup deadline is required'),
   isDonation: z.boolean(),
   status: z.enum(['active', 'sold_out', 'expired']).optional(),
 });

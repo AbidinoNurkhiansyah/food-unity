@@ -123,7 +123,7 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
           imageUrl,
         });
       } else {
-        let merchantName = user.displayName || 'Mitra';
+        let merchantName = user.displayName || 'Partner';
         try {
           const userDoc = await getDoc(doc(db, 'users', user.uid));
           if (userDoc.exists()) {
@@ -146,7 +146,7 @@ export function useProductForm(onSuccess?: () => void, initialData?: Product) {
       onSuccess?.();
     } catch (error) {
       console.error('Failed to save product', error);
-      setUploadError(error instanceof Error ? error.message : 'Gagal mengunggah gambar atau menyimpan data');
+      setUploadError(error instanceof Error ? error.message : 'Failed to upload image or save data');
     }
   };
 
