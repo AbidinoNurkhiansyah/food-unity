@@ -6,16 +6,16 @@ import { type OnboardingValues } from "../constants/schemas";
 import { cn } from "@/lib/utils";
 
 const DAYS = [
-  { id: "sen", label: "Sen" },
-  { id: "sel", label: "Sel" },
-  { id: "rab", label: "Rab" },
-  { id: "kam", label: "Kam" },
-  { id: "jum", label: "Jum" },
-  { id: "sab", label: "Sab" },
-  { id: "min", label: "Min" },
+  { id: "sen", label: "Mon" },
+  { id: "sel", label: "Tue" },
+  { id: "rab", label: "Wed" },
+  { id: "kam", label: "Thu" },
+  { id: "jum", label: "Fri" },
+  { id: "sab", label: "Sat" },
+  { id: "min", label: "Sun" },
 ];
 
-const ALL_DAYS_LABEL = "Setiap Hari";
+const ALL_DAYS_LABEL = "Every Day";
 
 function serializePickupHours(
   days: string[],
@@ -123,14 +123,14 @@ export function MerchantOperationsSection({
       <div className="space-y-3">
         <Label className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
           <Clock className="w-4 h-4 text-slate-400" />
-          Jam Operasional Rutin Pengambilan{" "}
+          Routine Pickup Hours{" "}
           <span className="text-red-500">*</span>
         </Label>
 
         {/* Day Selector */}
         <div className="space-y-1.5">
           <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">
-            Hari Operasional Mingguan
+            Weekly Operational Days
           </p>
           <div className="flex flex-wrap gap-2">
             {/* Setiap Hari toggle */}
@@ -144,7 +144,7 @@ export function MerchantOperationsSection({
                   : "bg-white text-slate-500 border-slate-200 hover:border-primary-300 hover:text-primary-600"
               )}
             >
-              Setiap Hari
+              Every Day
             </button>
             {/* Individual day toggles */}
             {DAYS.map((day) => (
@@ -168,12 +168,12 @@ export function MerchantOperationsSection({
         {/* Time Range */}
         <div className="space-y-1.5">
           <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wide">
-            Rentang Waktu
+            Time Range
           </p>
           <div className="flex items-center gap-3">
             <div className="flex-1 space-y-1">
               <label htmlFor="startTime" className="text-[11px] text-slate-500 font-medium">
-                Mulai
+                Start
               </label>
               <input
                 id="startTime"
@@ -186,7 +186,7 @@ export function MerchantOperationsSection({
             <span className="text-slate-400 font-bold mt-5">—</span>
             <div className="flex-1 space-y-1">
               <label htmlFor="endTime" className="text-[11px] text-slate-500 font-medium">
-                Selesai
+                End
               </label>
               <input
                 id="endTime"
@@ -202,7 +202,7 @@ export function MerchantOperationsSection({
         {/* Preview */}
         {selectedDays.length > 0 && (
           <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-2.5 text-xs text-slate-600 font-medium">
-            <span className="text-slate-400 mr-1.5">Ringkasan:</span>
+            <span className="text-slate-400 mr-1.5">Summary:</span>
             {serializePickupHours(selectedDays, startTime, endTime)}
           </div>
         )}

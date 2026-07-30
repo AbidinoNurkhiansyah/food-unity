@@ -1,4 +1,6 @@
 export interface MerchantProfile {
+  bannerImageUrl?: string;
+  logoImageUrl?: string;
   businessName?: string;
   merchantType?: string;
   phoneNumber?: string;

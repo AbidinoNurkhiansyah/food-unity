@@ -37,7 +37,7 @@ export function GPSLocationSection({
     <div className="space-y-4">
       {showTitle && (
         <h3 className="font-bold text-lg text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-primary-500" /> Lokasi GPS & Navigasi
+          <MapPin className="w-5 h-5 text-primary-500" /> GPS Location & Navigation
         </h3>
       )}
 
@@ -52,12 +52,12 @@ export function GPSLocationSection({
           {isDetectingLocation ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin text-primary-500" />
-              Mendeteksi Lokasi GPS...
+              Detecting GPS Location...
             </>
           ) : (
             <>
               <Compass className="w-4 h-4 mr-2 text-primary-500" />
-              Deteksi GPS Saya (Share Location)
+              Detect My GPS (Share Location)
             </>
           )}
         </Button>
@@ -80,16 +80,16 @@ export function GPSLocationSection({
           <div className="bg-gray-100 rounded-xl border border-gray-200 h-[350px] flex flex-col items-center justify-center p-4 text-center">
             <AlertCircle className="w-10 h-10 text-gray-400 mb-2 animate-bounce" />
             <p className="text-sm font-semibold text-gray-700">
-              Peta Interaktif Dimuat Statis
+              Interactive Map Loaded Statically
             </p>
             <p className="text-xs text-gray-400 mt-1 max-w-sm">
-              Layanan peta menggunakan koordinat GPS perangkat. Anda dapat
-              verifikasi koordinat Latitude & Longitude secara manual di bawah.
+              Map services use device GPS coordinates. You can
+              manually verify Latitude & Longitude coordinates below.
             </p>
           </div>
         )}
         <p className="text-[10px] text-gray-400 text-center mt-1">
-          * Klik/sentuh peta di atas untuk menggeser penanda lokasi pengambilan secara presisi.
+          * Click/touch the map above to move the pickup location marker precisely.
         </p>
       </div>
 

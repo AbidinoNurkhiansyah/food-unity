@@ -32,7 +32,7 @@ export function RegionCombobox({
   value,
   onChange,
   placeholder,
-  searchPlaceholder = "Cari...",
+  searchPlaceholder = "Search...",
   disabled = false,
   id,
 }: RegionComboboxProps) {
@@ -66,7 +66,7 @@ export function RegionCombobox({
         <Command>
           <CommandInput placeholder={searchPlaceholder} className="h-9" />
           <CommandList>
-            <CommandEmpty>Tidak ada hasil ditemukan.</CommandEmpty>
+            <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>
               {items.map((item) => (
                 <CommandItem
