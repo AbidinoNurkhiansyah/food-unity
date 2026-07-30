@@ -71,7 +71,7 @@ export function EcoImpactPanel({
   isLoading,
 }: EcoImpactPanelProps) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col h-full">
       <div className="px-5 py-4 border-b border-slate-100">
         <h2 className="font-semibold text-slate-900">Environmental Impact</h2>
         <p className="text-xs text-slate-500 mt-0.5">

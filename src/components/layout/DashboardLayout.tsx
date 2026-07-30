@@ -57,14 +57,14 @@ export function DashboardLayout() {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-100 p-3 gap-3">
+    <div className="flex h-screen bg-slate-100 p-4 gap-3">
       <MerchantChatModal isOpen={isChatOpen} onClose={setIsChatOpen} />
 
       {/* Sidebar Extracted */}
       <DashboardSidebar onLogout={handleLogout} />
 
       {/* Main Content Area Wrapper */}
-      <div className="flex-1 px-4 flex flex-col min-w-0 gap-3 overflow-y-auto no-scrollbar pb-16 md:pb-0">
+      <div className="flex-1 md:px-4 flex flex-col min-w-0 gap-3 overflow-y-auto no-scrollbar pb-16 md:pb-0">
         {/* Desktop Header Topbar */}
         <DesktopTopbar
           onOpenChat={() => setIsChatOpen(true)}

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Store, LogOut } from "lucide-react";
+import logo from "@/assets/logo.svg";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,9 +29,7 @@ export function MobileTopbar({
   return (
     <header className="sticky top-0 z-40 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-between px-4 md:hidden shrink-0">
       <div className="flex items-center gap-2">
-        <h1 className="text-xl font-extrabold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
-          FoodUnity Merchant
-        </h1>
+        <img src={logo} alt="FoodUnity Logo" className="h-6 w-auto" />
       </div>
 
       <div className="flex items-center gap-1">

@@ -31,12 +31,16 @@ export function KpiCard({
   });
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/80 p-4 flex flex-col gap-2 shadow-sm hover:shadow-md hover:border-slate-300 transition-all">
+    <div className="bg-white backdrop-blur-md rounded-2xl border border-slate-100 p-5 flex flex-col gap-2 shadow-sm hover:bg-white hover:shadow-md hover:-translate-y-1 hover:border-slate-200 transition-all duration-300 cursor-default group">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-widest group-hover:text-slate-700 transition-colors">
           {label}
         </span>
-        <div className={`p-1.5 rounded-lg ${iconBg}`}>{icon}</div>
+        <div
+          className={`p-2 rounded-xl ${iconBg} group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm`}
+        >
+          {icon}
+        </div>
       </div>
 
       {isLoading ? (
