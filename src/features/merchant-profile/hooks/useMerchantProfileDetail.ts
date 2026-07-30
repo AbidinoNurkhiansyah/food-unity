@@ -33,16 +33,16 @@ export function useMerchantProfileDetail(
           if (userData.role === "merchant") {
             setMerchant(userData);
           } else {
-            toast.error("User ini bukan merupakan merchant.");
+            toast.error("This user is not a merchant.");
             navigate("/explore");
           }
         } else {
-          toast.error("Merchant tidak ditemukan.");
+          toast.error("Merchant not found.");
           navigate("/explore");
         }
       } catch (error) {
-        console.error("Gagal memuat profil merchant:", error);
-        toast.error("Terjadi kesalahan saat memuat profil merchant.");
+        console.error("Failed to load merchant profile:", error);
+        toast.error("An error occurred while loading the merchant profile.");
       } finally {
         setLoading(false);
       }
@@ -53,7 +53,7 @@ export function useMerchantProfileDetail(
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
-    toast.success("Tautan profil toko berhasil disalin ke papan klip!");
+    toast.success("Store profile link successfully copied to clipboard!");
   };
 
   const getFullAddress = () => {

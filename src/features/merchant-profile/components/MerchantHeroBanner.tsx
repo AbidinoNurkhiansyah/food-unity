@@ -28,12 +28,12 @@ export const MerchantHeroBanner: React.FC<MerchantHeroBannerProps> = ({
           onClick={onBackClick}
           className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all font-semibold text-sm cursor-pointer shadow-sm active:scale-95"
         >
-          <ArrowLeft className="w-4 h-4" /> Kembali
+          <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <button
           onClick={onShareClick}
           className="flex items-center justify-center p-2.5 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all cursor-pointer shadow-sm active:scale-95"
-          title="Bagikan Profil"
+          title="Share Profile"
         >
           <Share2 className="w-4 h-4" />
         </button>
@@ -57,7 +57,7 @@ export const MerchantHeroBanner: React.FC<MerchantHeroBannerProps> = ({
               )}
             </div>
             <p className="text-white/80 text-sm max-w-xl line-clamp-2 leading-relaxed">
-              {description || "Belum ada deskripsi profil toko."}
+              {description || "No store profile description available yet."}
             </p>
           </div>
         </div>

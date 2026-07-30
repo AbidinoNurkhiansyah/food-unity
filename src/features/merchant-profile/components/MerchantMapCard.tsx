@@ -32,7 +32,7 @@ export const MerchantMapCard: React.FC<MerchantMapCardProps> = ({
   return (
     <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-4">
       <h3 className="font-bold text-slate-800 flex items-center gap-2 border-b border-slate-50 pb-2">
-        <Map className="w-4 h-4 text-primary-500" /> Peta Lokasi
+        <Map className="w-4 h-4 text-primary-500" /> Location Map
       </h3>
 
       {isLoaded && !loadError && coordinates ? (
@@ -53,10 +53,10 @@ export const MerchantMapCard: React.FC<MerchantMapCardProps> = ({
         <div className="bg-slate-50 rounded-xl border border-slate-100 h-[280px] flex flex-col items-center justify-center p-4 text-center">
           <MapPin className="w-10 h-10 text-slate-300 mb-2 animate-bounce" />
           <p className="text-sm font-semibold text-slate-600">
-            Peta Interaktif Tidak Tersedia
+            Interactive Map Unavailable
           </p>
           <p className="text-xs text-slate-400 mt-1 max-w-xs">
-            Merchant belum menyimpan koordinat lokasi GPS secara presisi atau API key belum dikonfigurasi.
+            Merchant has not saved precise GPS coordinates or API key has not been configured.
           </p>
         </div>
       )}
@@ -68,7 +68,7 @@ export const MerchantMapCard: React.FC<MerchantMapCardProps> = ({
           rel="noopener noreferrer"
           className="w-full flex items-center justify-center gap-2 py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl transition-all text-xs cursor-pointer active:scale-95"
         >
-          <MapPin className="w-4 h-4 text-primary-500" /> Buka di Google Maps
+          <MapPin className="w-4 h-4 text-primary-500" /> Open in Google Maps
         </a>
       )}
     </div>

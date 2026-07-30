@@ -20,14 +20,14 @@ export const MerchantInfoCard: React.FC<MerchantInfoCardProps> = ({
     <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6">
       <div>
         <h2 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-50 pb-2 flex items-center gap-2">
-          <Store className="w-5 h-5 text-primary-500" /> Profil Detail Toko
+          <Store className="w-5 h-5 text-primary-500" /> Store Details
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
           
           {/* Address */}
           <div className="space-y-1.5">
             <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider block">
-              Alamat Lengkap
+              Full Address
             </span>
             <div className="flex items-start gap-2 text-slate-700">
               <MapPin className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
@@ -38,12 +38,12 @@ export const MerchantInfoCard: React.FC<MerchantInfoCardProps> = ({
           {/* Operational Hours */}
           <div className="space-y-1.5">
             <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider block">
-              Waktu Pengambilan
+              Pickup Time
             </span>
             <div className="flex items-start gap-2 text-slate-700">
               <Clock className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
               <span className="leading-relaxed font-medium">
-                {pickupHours || "Tidak ditentukan"}
+                {pickupHours || "Not specified"}
               </span>
             </div>
           </div>
@@ -51,7 +51,7 @@ export const MerchantInfoCard: React.FC<MerchantInfoCardProps> = ({
           {/* Phone */}
           <div className="space-y-1.5">
             <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider block">
-              Kontak Telepon
+              Phone Contact
             </span>
             <div className="flex items-center gap-2 text-slate-700">
               <Phone className="w-4 h-4 text-primary-500 shrink-0" />
@@ -62,7 +62,7 @@ export const MerchantInfoCard: React.FC<MerchantInfoCardProps> = ({
           {/* Email */}
           <div className="space-y-1.5">
             <span className="text-slate-400 font-semibold text-xs uppercase tracking-wider block">
-              Alamat Email
+              Email Address
             </span>
             <div className="flex items-center gap-2 text-slate-700">
               <Mail className="w-4 h-4 text-primary-500 shrink-0" />
@@ -76,7 +76,7 @@ export const MerchantInfoCard: React.FC<MerchantInfoCardProps> = ({
       {locationNotes && (
         <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-sm">
           <span className="text-slate-400 font-bold text-[10px] uppercase tracking-wider block mb-1">
-            Catatan Lokasi / Petunjuk Arah
+            Location Notes / Directions
           </span>
           <p className="text-slate-600 italic">"{locationNotes}"</p>
         </div>
