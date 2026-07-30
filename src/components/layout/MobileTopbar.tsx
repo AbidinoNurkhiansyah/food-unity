@@ -29,7 +29,7 @@ export function MobileTopbar({
     <header className="sticky top-0 z-40 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-between px-4 md:hidden shrink-0">
       <div className="flex items-center gap-2">
         <h1 className="text-xl font-extrabold bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent">
-          Mitra FoodUnity
+          FoodUnity Merchant
         </h1>
       </div>
 
@@ -39,7 +39,7 @@ export function MobileTopbar({
           size="icon"
           onClick={onOpenChat}
           className="relative text-slate-600 hover:text-primary-600 rounded-full cursor-pointer"
-          title="Chat Pelanggan"
+          title="Customer Chat"
         >
           <MessageSquare className="w-5 h-5" />
           {unreadCount > 0 && (
@@ -52,7 +52,7 @@ export function MobileTopbar({
           size="icon"
           onClick={onOpenProfile}
           className="text-slate-600 hover:text-primary-600 rounded-full cursor-pointer"
-          title="Profil Toko"
+          title="Store Profile"
         >
           <Store className="w-5 h-5" />
         </Button>
@@ -69,20 +69,20 @@ export function MobileTopbar({
           </AlertDialogTrigger>
           <AlertDialogContent className="w-[90vw] max-w-md rounded-2xl">
             <AlertDialogHeader>
-              <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
+              <AlertDialogTitle>Logout Confirmation</AlertDialogTitle>
               <AlertDialogDescription>
-                Apakah Anda yakin ingin keluar dari aplikasi?
+                Are you sure you want to log out of the application?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl">
-                Batal
+                Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={onLogout}
                 className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               >
-                Ya, Keluar
+                Yes, Logout
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

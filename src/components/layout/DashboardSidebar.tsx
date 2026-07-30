@@ -42,11 +42,11 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navItems: NavItem[] = [
-    { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Kelola Stok", href: "/dashboard/products", icon: Package },
-    { name: "Scan Tiket", href: "/dashboard/scan", icon: QrCode },
-    { name: "Dompet", href: "/dashboard/wallet", icon: Wallet },
-    { name: "Riwayat Klaim", href: "/dashboard/claims", icon: History },
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Manage Stock", href: "/dashboard/products", icon: Package },
+    { name: "Scan Ticket", href: "/dashboard/scan", icon: QrCode },
+    { name: "Wallet", href: "/dashboard/wallet", icon: Wallet },
+    { name: "Claim History", href: "/dashboard/claims", icon: History },
   ];
 
   return (
@@ -120,28 +120,28 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
               className={`w-full rounded-xl text-destructive hover:text-destructive hover:bg-destructive/10 cursor-pointer ${
                 isCollapsed ? "justify-center px-2" : "justify-start gap-3 px-4"
               }`}
-              title={isCollapsed ? "Keluar" : undefined}
+              title={isCollapsed ? "Logout" : undefined}
             >
               <LogOut className="w-5 h-5 shrink-0" />
-              {!isCollapsed && <span>Keluar</span>}
+              {!isCollapsed && <span>Logout</span>}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="rounded-2xl">
             <AlertDialogHeader>
-              <AlertDialogTitle>Konfirmasi Keluar</AlertDialogTitle>
+              <AlertDialogTitle>Logout Confirmation</AlertDialogTitle>
               <AlertDialogDescription>
-                Apakah Anda yakin ingin keluar dari aplikasi?
+                Are you sure you want to log out of the application?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel className="rounded-xl">
-                Batal
+                Cancel
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={onLogout}
                 className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               >
-                Ya, Keluar
+                Yes, Logout
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

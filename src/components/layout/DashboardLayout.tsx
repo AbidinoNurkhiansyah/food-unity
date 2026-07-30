@@ -49,11 +49,11 @@ export function DashboardLayout() {
   };
 
   const navItems = [
-    { name: "Ringkasan", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Stok", href: "/dashboard/products", icon: Package },
+    { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Stock", href: "/dashboard/products", icon: Package },
     { name: "Scan", href: "/dashboard/scan", icon: QrCode },
-    { name: "Dompet", href: "/dashboard/wallet", icon: Wallet },
-    { name: "Riwayat", href: "/dashboard/claims", icon: History },
+    { name: "Wallet", href: "/dashboard/wallet", icon: Wallet },
+    { name: "History", href: "/dashboard/claims", icon: History },
   ];
 
   return (
