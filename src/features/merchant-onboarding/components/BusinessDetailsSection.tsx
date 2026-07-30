@@ -20,7 +20,7 @@ export function BusinessDetailsSection({
     <div className="space-y-4">
       {showTitle && (
         <h3 className="font-bold text-lg text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-          <Store className="w-5 h-5 text-primary-500" /> Detail Usaha / Donor
+          <Store className="w-5 h-5 text-primary-500" /> Business / Donor Details
         </h3>
       )}
 
@@ -30,17 +30,17 @@ export function BusinessDetailsSection({
           htmlFor="businessName"
           className="text-xs font-bold text-gray-700"
         >
-          Nama Usaha / Nama Donor{" "}
+          Business Name / Donor Name{" "}
           <span className="text-gray-400 font-normal">(Optional)</span>
         </Label>
         <Input
           id="businessName"
-          placeholder="Contoh: Bakery Barokah / Ibu Aminah"
+          placeholder="Example: Barokah Bakery / Mrs. Aminah"
           className="rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white text-sm"
           {...register("businessName")}
         />
         <p className="text-[10px] text-gray-400 pl-1 mt-0.5">
-          Kosongkan jika ingin menggunakan nama lengkap profil utama Anda.
+          Leave blank if you want to use the full name of your main profile.
         </p>
       </div>
 
@@ -51,24 +51,24 @@ export function BusinessDetailsSection({
             htmlFor="merchantType"
             className="text-xs font-bold text-gray-700"
           >
-            Tipe Donor / Usaha <span className="text-red-500">*</span>
+            Donor / Business Type <span className="text-red-500">*</span>
           </Label>
           <select
             id="merchantType"
             className="w-full h-10 px-3 rounded-xl border border-gray-200 bg-gray-50/50 text-sm focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:outline-none transition-all"
             {...register("merchantType")}
           >
-            <option value="">Pilih Tipe</option>
+            <option value="">Select Type</option>
             <option value="Rumah Tangga / Personal">
-              Rumah Tangga / Personal
+              Household / Personal
             </option>
-            <option value="Restoran / Kafe">Restoran / Kafe</option>
-            <option value="Toko Roti / Bakery">Toko Roti / Bakery</option>
-            <option value="Katering">Katering</option>
+            <option value="Restoran / Kafe">Restaurant / Cafe</option>
+            <option value="Toko Roti / Bakery">Bakery</option>
+            <option value="Katering">Catering</option>
             <option value="Supermarket / Toko Kelontong">
-              Supermarket / Toko Kelontong
+              Supermarket / Grocery Store
             </option>
-            <option value="Lainnya">Lainnya</option>
+            <option value="Lainnya">Other</option>
           </select>
           {errors.merchantType && (
             <p className="text-xs text-red-500 mt-0.5 font-medium pl-1">
@@ -82,7 +82,7 @@ export function BusinessDetailsSection({
             htmlFor="phoneNumber"
             className="text-xs font-bold text-gray-700"
           >
-            Nomor WhatsApp <span className="text-red-500">*</span>
+            WhatsApp Number <span className="text-red-500">*</span>
           </Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -90,7 +90,7 @@ export function BusinessDetailsSection({
             </div>
             <Input
               id="phoneNumber"
-              placeholder="Contoh: 08123456789"
+              placeholder="Example: 08123456789"
               className="pl-9 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white text-sm"
               {...register("phoneNumber")}
             />
@@ -109,12 +109,12 @@ export function BusinessDetailsSection({
           htmlFor="description"
           className="text-xs font-bold text-gray-700 flex items-center gap-1.5"
         >
-          <Building className="w-4 h-4 text-gray-400" /> Deskripsi Usaha / Donor{" "}
-          <span className="text-gray-450 font-normal">(Opsional)</span>
+          <Building className="w-4 h-4 text-gray-400" /> Business / Donor Description{" "}
+          <span className="text-gray-450 font-normal">(Optional)</span>
         </Label>
         <Textarea
           id="description"
-          placeholder="Tuliskan deskripsi singkat atau pesan ramah mengenai profil usaha/donor Anda..."
+          placeholder="Write a short description or friendly message about your business/donor profile..."
           className="min-h-[100px] rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white text-sm"
           {...register("description")}
         />

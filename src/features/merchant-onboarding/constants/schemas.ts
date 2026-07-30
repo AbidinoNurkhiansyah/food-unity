@@ -2,22 +2,22 @@ import * as z from "zod";
 
 export const onboardingSchema = z.object({
   businessName: z.string().optional(),
-  merchantType: z.string().min(1, "Silakan pilih tipe donor/merchant Anda."),
+  merchantType: z.string().min(1, "Please select your donor/merchant type."),
   phoneNumber: z
     .string()
-    .min(8, "Nomor kontak minimal terdiri dari 8 digit.")
-    .max(15, "Nomor kontak maksimal terdiri dari 15 digit.")
-    .regex(/^[0-9+]+$/, "Format nomor kontak hanya boleh angka dan +"),
+    .min(8, "Contact number must consist of at least 8 digits.")
+    .max(15, "Contact number must consist of at most 15 digits.")
+    .regex(/^[0-9+]+$/, "Contact number format can only contain numbers and +"),
   detailAddress: z
     .string()
     .min(
       10,
-      "Alamat detail minimal 10 karakter (masukkan nama jalan, RT/RW, no rumah)."
+      "Detailed address must be at least 10 characters (enter street name, RT/RW, house number)."
     ),
   locationNotes: z.string().optional(),
   pickupHours: z
     .string()
-    .min(1, "Silakan isi jam pengambilan makanan surplus."),
+    .min(1, "Please enter the pickup hours for surplus food."),
   description: z.string().optional(),
 });
 

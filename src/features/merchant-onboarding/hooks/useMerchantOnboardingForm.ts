@@ -80,8 +80,8 @@ export function useMerchantOnboardingForm() {
       .then((res) => res.json())
       .then((data) => setProvinces(data.data || []))
       .catch((err) => {
-        console.error("Gagal mengambil data provinsi:", err);
-        toast.error("Gagal memuat daftar wilayah. Silakan segarkan halaman.");
+        console.error("Failed to fetch province data:", err);
+        toast.error("Failed to load region list. Please refresh the page.");
       });
   }, []);
 
@@ -92,7 +92,7 @@ export function useMerchantOnboardingForm() {
       .then((res) => res.json())
       .then((data) => setRegencies(data.data || []))
       .catch((err) =>
-        console.error("Gagal mengambil data kabupaten/kota:", err)
+        console.error("Failed to fetch regency/city data:", err)
       );
   }, [selectedProvince]);
 
@@ -102,7 +102,7 @@ export function useMerchantOnboardingForm() {
     fetch(`${BACKEND_URL}/api/location/districts/${selectedRegency}`)
       .then((res) => res.json())
       .then((data) => setDistricts(data.data || []))
-      .catch((err) => console.error("Gagal mengambil data kecamatan:", err));
+      .catch((err) => console.error("Failed to fetch district data:", err));
   }, [selectedRegency]);
 
   // Fetch Kelurahan/Desa saat Kecamatan berubah
@@ -112,7 +112,7 @@ export function useMerchantOnboardingForm() {
       .then((res) => res.json())
       .then((data) => setVillages(data.data || []))
       .catch((err) =>
-        console.error("Gagal mengambil data desa/kelurahan:", err)
+        console.error("Failed to fetch village data:", err)
       );
   }, [selectedDistrict]);
 
@@ -153,18 +153,18 @@ export function useMerchantOnboardingForm() {
             latitude: latitude.toString(),
             longitude: longitude.toString(),
           });
-          toast.success("Berhasil mendeteksi lokasi GPS Anda!");
+          toast.success("Successfully detected your GPS location!");
           setIsDetectingLocation(false);
         },
         (error) => {
           console.error("Geolocation error:", error);
-          toast.error("Gagal mendapatkan lokasi. Pastikan izin lokasi aktif.");
+          toast.error("Failed to get location. Ensure location permissions are active.");
           setIsDetectingLocation(false);
         },
         { enableHighAccuracy: true }
       );
     } else {
-      toast.error("Browser Anda tidak mendukung fitur deteksi lokasi.");
+      toast.error("Your browser does not support location detection.");
     }
   };
 
@@ -206,15 +206,15 @@ export function useMerchantOnboardingForm() {
       !selectedVillage
     ) {
       setRegionError(
-        "Harap pilih lokasi provinsi, kabupaten/kota, kecamatan, dan kelurahan."
+        "Please select the province, regency/city, district, and village location."
       );
-      toast.error("Wilayah administratif belum lengkap.");
+      toast.error("Administrative region is incomplete.");
       return;
     }
     setRegionError("");
 
     if (!user) {
-      toast.error("Pengguna tidak terautentikasi.");
+      toast.error("User is not authenticated.");
       return;
     }
 
@@ -258,14 +258,14 @@ export function useMerchantOnboardingForm() {
         },
       });
 
-      toast.success("Profil merchant berhasil disimpan!");
+      toast.success("Merchant profile successfully saved!");
 
       // Update global state & redirect
       setUser(user, role, true);
       navigate("/dashboard", { replace: true });
     } catch (err: unknown) {
-      console.error("Gagal mengupdate profil:", err);
-      const errMsg = err instanceof Error ? err.message : "Gagal menyimpan data profil.";
+      console.error("Failed to update profile:", err);
+      const errMsg = err instanceof Error ? err.message : "Failed to save profile data.";
       toast.error(errMsg);
     } finally {
       setSubmitting(false);

@@ -84,7 +84,7 @@ export function MerchantOnboardingForm() {
     if (currentStep !== 3 || !isIntentionalSubmit.current) return;
     isIntentionalSubmit.current = false;
     handleSubmit(onSubmit, () => {
-      toast.error("Harap lengkapi semua data yang wajib diisi.");
+      toast.error("Please complete all required fields.");
     })(e);
   };
 
