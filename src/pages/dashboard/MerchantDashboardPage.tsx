@@ -1,5 +1,7 @@
 import { useAuthStore } from "@/features/auth";
 import { MerchantBentoGrid } from "@/features/dashboard";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 // Bento Grid Theme Styles (Modern Minimalist / Cobalt-inspired)
 const themeStyles = `
@@ -21,7 +23,21 @@ const themeStyles = `
 `;
 
 export function MerchantDashboardPage() {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
+  const isInitialCheck = useRef(true);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isInitialCheck.current) {
+      isInitialCheck.current = false;
+      return;
+    }
+
+    if (!isAuthenticated) {
+      toast.success('Berhasil logout!');
+    }
+  }, [isAuthenticated, isLoading]);
 
   return (
     <>

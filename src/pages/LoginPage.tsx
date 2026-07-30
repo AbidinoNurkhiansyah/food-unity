@@ -1,9 +1,25 @@
 import { LoginForm } from '@/features/auth';
 import { Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth';
+import { useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 
 export function LoginPage() {
   const { isAuthenticated, isLoading, role } = useAuthStore();
+  const isInitialCheck = useRef(true);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (isInitialCheck.current) {
+      isInitialCheck.current = false;
+      return;
+    }
+
+    if (isAuthenticated) {
+      toast.success('Berhasil login!');
+    }
+  }, [isAuthenticated, isLoading]);
 
   if (isLoading) {
     return (
