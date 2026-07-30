@@ -1,32 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { ArrowUp } from "lucide-react";
 import { useMerchantProducts } from "@/features/products/hooks/useProducts";
-import { TopBar } from "@/components/layout/TopBar";
-import { ExploreHeader, ProductGrid, ProductDetailModal } from "@/features/explore";
-import { useJsApiLoader } from "@react-google-maps/api";
-import { Loader2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ProductDetailModal, ExploreHeader } from "@/features/explore";
+import { AuthPromptDialog } from "@/features/auth/components";
 
 // Import components, custom hooks, and constants from merchant-profile feature
 import {
   MerchantHeroBanner,
   MerchantInfoCard,
-  MerchantMapCard,
+  MerchantProductSection,
+  MerchantProfileLoading,
   useMerchantProfileDetail,
 } from "@/features/merchant-profile";
 
 export const MerchantProfileDetailPage: React.FC = () => {
   const { merchantId } = useParams<{ merchantId: string }>();
   const navigate = useNavigate();
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   // Use Custom Hook for state and business logic
   const {
@@ -44,31 +51,14 @@ export const MerchantProfileDetailPage: React.FC = () => {
   } = useMerchantProfileDetail(merchantId, navigate);
 
   // Fetch Merchant Products
-  const { data: products, isLoading: isLoadingProducts } = useMerchantProducts(merchantId);
-
-  // Load Google Maps API (shared script loader)
-  const { isLoaded, loadError } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey:
-      import.meta.env.VITE_GOOGLE_MAPS_API_KEY ||
-      import.meta.env.VITE_FIREBASE_API_KEY ||
-      "",
-  });
+  const { data: products, isLoading: isLoadingProducts } =
+    useMerchantProducts(merchantId);
 
   // Filter only active products
   const activeProducts = products?.filter((p) => p.status === "active") || [];
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col">
-        <TopBar />
-        <ExploreHeader />
-        <div className="flex-1 flex flex-col items-center justify-center py-20">
-          <Loader2 className="w-12 h-12 text-primary-500 animate-spin mb-4" />
-          <p className="text-slate-600 font-medium">Memuat profil toko...</p>
-        </div>
-      </div>
-    );
+    return <MerchantProfileLoading />;
   }
 
   if (!merchant) {
@@ -79,7 +69,6 @@ export const MerchantProfileDetailPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-16">
-      <TopBar />
       <ExploreHeader />
 
       {/* Hero Banner Section */}
@@ -88,62 +77,33 @@ export const MerchantProfileDetailPage: React.FC = () => {
         name={merchant.name}
         merchantType={profile?.merchantType}
         description={profile?.description}
+        bannerImageUrl={profile?.bannerImageUrl}
+        logoImageUrl={profile?.logoImageUrl}
         onBackClick={() => navigate("/explore")}
         onShareClick={handleShare}
       />
 
       {/* Main Content Layout */}
-      <main className="max-w-[1200px] mx-auto px-4 md:px-6 mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column: Details Information & Products */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Store Information Card */}
-            <MerchantInfoCard
-              email={merchant.email}
-              phoneNumber={profile?.phoneNumber}
-              pickupHours={profile?.pickupHours}
-              locationNotes={profile?.locationNotes}
-              fullAddress={getFullAddress()}
-            />
+      <main className="px-4 sm:px-6 lg:px-[130px] mt-8 space-y-8">
+        {/* Top Section: Store Info & Location Map CTA */}
+        <MerchantInfoCard
+          email={merchant.email}
+          phoneNumber={profile?.phoneNumber}
+          pickupHours={profile?.pickupHours}
+          locationNotes={profile?.locationNotes}
+          fullAddress={getFullAddress()}
+          coordinates={profile?.coordinates}
+        />
 
-            {/* Products / Packages List Section */}
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                    Paket Makanan Tersedia
-                  </h2>
-                  <p className="text-slate-500 text-xs mt-0.5">
-                    Pilih paket makanan dari {profile?.businessName || merchant.name} untuk menyelamatkan makanan!
-                  </p>
-                </div>
-                <div className="px-3 py-1 bg-primary-50 border border-primary-100 rounded-full text-xs font-bold text-primary-700">
-                  {activeProducts.length} Paket
-                </div>
-              </div>
-
-              <ProductGrid
-                products={activeProducts}
-                isLoading={isLoadingProducts}
-                onSelectProduct={handleSelectProduct}
-                onRequireAuth={handleRequireAuth}
-              />
-            </div>
-
-          </div>
-
-          {/* Right Column: Google Map Visual */}
-          <div className="space-y-6">
-            <MerchantMapCard
-              isLoaded={isLoaded}
-              loadError={loadError}
-              coordinates={profile?.coordinates}
-            />
-          </div>
-
-        </div>
+        {/* Products / Packages List Section */}
+        <MerchantProductSection
+          businessName={profile?.businessName}
+          merchantName={merchant.name}
+          activeProducts={activeProducts}
+          isLoadingProducts={isLoadingProducts}
+          onSelectProduct={handleSelectProduct}
+          onRequireAuth={handleRequireAuth}
+        />
       </main>
 
       {/* Product Detail Modal */}
@@ -154,37 +114,21 @@ export const MerchantProfileDetailPage: React.FC = () => {
       />
 
       {/* Login Restricted Prompt */}
-      <AlertDialog open={isLoginPromptOpen} onOpenChange={setIsLoginPromptOpen}>
-        <AlertDialogContent className="bg-white border-none ring-0 sm:rounded-2xl">
-          <div className="flex justify-center pt-2 pb-1">
-            <img
-              src="/src/assets/logo.svg"
-              alt="Food Unity Logo"
-              className="h-8 w-auto object-contain"
-            />
-          </div>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-center">
-              Access Restricted
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-center">
-              Please sign in to your account first to view full details and add
-              products to your cart.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="border-none bg-transparent">
-            <AlertDialogCancel className="border-none shadow-none hover:bg-gray-100 cursor-pointer">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => navigate("/login")}
-              className="bg-primary-500 hover:bg-primary-600 cursor-pointer"
-            >
-              Sign In
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AuthPromptDialog
+        isOpen={isLoginPromptOpen}
+        onOpenChange={setIsLoginPromptOpen}
+      />
+
+      {/* Floating Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`fixed bottom-6 right-6 p-3 bg-emerald-600 text-white rounded-full shadow-lg hover:bg-emerald-700 hover:shadow-xl transition-all duration-300 z-50 flex items-center justify-center ${
+          showScrollTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
+        }`}
+        aria-label="Back to top"
+      >
+        <ArrowUp className="w-6 h-6" />
+      </button>
     </div>
   );
 };

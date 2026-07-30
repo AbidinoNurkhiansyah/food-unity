@@ -7,6 +7,7 @@ import { db } from "@/config/firebase";
 import { useAuthStore } from "@/features/auth";
 import { onboardingSchema, type OnboardingValues } from "@/features/merchant-onboarding/constants/schemas";
 import { type RegionItem, defaultCenter } from "@/features/merchant-onboarding/hooks/useMerchantOnboardingForm";
+import { uploadImageToCloudinary } from "@/features/products/services/cloudinaryApi";
 
 const BACKEND_URL = import.meta.env.VITE_API_URL;
 
@@ -15,6 +16,11 @@ export function useMerchantProfileForm() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"info" | "location" | "hours">("info");
+
+  // Image State
+  const [bannerImageUrl, setBannerImageUrl] = useState("");
+  const [logoImageUrl, setLogoImageUrl] = useState("");
+  const [isUploadingImages, setIsUploadingImages] = useState(false);
 
   // Region State
   const [provinces, setProvinces] = useState<RegionItem[]>([]);
@@ -78,6 +84,8 @@ export function useMerchantProfileForm() {
               pickupHours: profile.pickupHours || "",
               description: profile.description || "",
             });
+            setBannerImageUrl(profile.bannerImageUrl || "");
+            setLogoImageUrl(profile.logoImageUrl || "");
 
             if (profile.coordinates) {
               setCoordinates({
@@ -221,6 +229,24 @@ export function useMerchantProfileForm() {
     }
   };
 
+  const handleImageUpload = async (file: File, type: "banner" | "logo") => {
+    setIsUploadingImages(true);
+    try {
+      const url = await uploadImageToCloudinary(file);
+      if (type === "banner") {
+        setBannerImageUrl(url);
+      } else {
+        setLogoImageUrl(url);
+      }
+      toast.success(type === "banner" ? "Banner uploaded successfully!" : "Logo uploaded successfully!");
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploadingImages(false);
+    }
+  };
+
   const onSubmit = async (data: OnboardingValues) => {
     if (!selectedProvince || !selectedRegency || !selectedDistrict || !selectedVillage) {
       setRegionError("Administrative region must be complete.");
@@ -262,6 +288,8 @@ export function useMerchantProfileForm() {
         },
         "profile.pickupHours": data.pickupHours,
         "profile.description": data.description || "",
+        "profile.bannerImageUrl": bannerImageUrl,
+        "profile.logoImageUrl": logoImageUrl,
         "profile.updatedAt": new Date().toISOString(),
       });
 
@@ -303,6 +331,10 @@ export function useMerchantProfileForm() {
     handleGetCurrentLocation,
     onMapClick,
     handleCoordChange,
+    handleImageUpload,
+    bannerImageUrl,
+    logoImageUrl,
+    isUploadingImages,
     onSubmit
   };
 }

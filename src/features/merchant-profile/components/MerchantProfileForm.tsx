@@ -1,5 +1,5 @@
 import { useJsApiLoader } from "@react-google-maps/api";
-import { Store, MapPin, Clock, Loader2, Save, ArrowLeft } from "lucide-react";
+import { Store, MapPin, Clock, Loader2, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BusinessDetailsSection } from "@/features/merchant-onboarding/components/BusinessDetailsSection";
 import { AdminRegionSection } from "@/features/merchant-onboarding/components/AdminRegionSection";
@@ -46,31 +46,15 @@ export function MerchantProfileForm() {
     handleGetCurrentLocation,
     onMapClick,
     handleCoordChange,
+    handleImageUpload,
+    bannerImageUrl,
+    logoImageUrl,
+    isUploadingImages,
     onSubmit,
   } = useMerchantProfileForm();
 
   return (
     <div className="w-full font-sans">
-      {/* Header */}
-      <header className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <button
-            type="button"
-            onClick={() => navigate("/dashboard")}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900 transition-colors mb-3 cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Overview
-          </button>
-          <h1 className="text-3xl font-black tracking-tight text-slate-900">
-            Merchant Profile
-          </h1>
-          <p className="mt-1.5 text-sm text-slate-500 font-medium">
-            Manage store identity details, delivery coverage area, and GPS
-            coordinates.
-          </p>
-        </div>
-      </header>
-
       {loading ? (
         <div className="py-20 flex flex-col items-center justify-center min-h-[300px]">
           <Loader2 className="w-8 h-8 text-primary-500 animate-spin mb-2" />
@@ -79,7 +63,7 @@ export function MerchantProfileForm() {
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 mt-4">
           {/* Custom Tab Navigation Buttons */}
           <div className="flex overflow-x-auto hide-scrollbar gap-1 pb-1 border-b border-slate-100">
             <button
@@ -132,11 +116,15 @@ export function MerchantProfileForm() {
           {/* Tab Contents */}
           <div className="min-h-[350px]">
             {activeTab === "info" && (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <BusinessDetailsSection
                   register={register}
                   errors={errors}
                   showTitle={false}
+                  bannerImageUrl={bannerImageUrl}
+                  logoImageUrl={logoImageUrl}
+                  isUploadingImages={isUploadingImages}
+                  handleImageUpload={handleImageUpload}
                 />
               </div>
             )}
