@@ -38,6 +38,7 @@ export const MerchantProductSection: React.FC<MerchantProductSectionProps> = ({
         isLoading={isLoadingProducts}
         onSelectProduct={onSelectProduct}
         onRequireAuth={onRequireAuth}
+        variant="compact"
       />
     </div>
   );

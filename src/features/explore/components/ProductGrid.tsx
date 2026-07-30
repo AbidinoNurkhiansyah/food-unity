@@ -10,6 +10,7 @@ interface ProductGridProps {
   isLoading: boolean;
   onSelectProduct: (product: Product) => void;
   onRequireAuth: () => void;
+  variant?: "default" | "compact";
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({
@@ -17,12 +18,15 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   isLoading,
   onSelectProduct,
   onRequireAuth,
+  variant = "default",
 }) => {
   const { addItem } = useCartStore();
   const { isAuthenticated } = useAuthStore();
 
+  const isCompact = variant === "compact";
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 xl:gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 xl:gap-6">
       {isLoading ? (
         Array.from({ length: 8 }).map((_, index) => (
           <div
@@ -30,7 +34,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             className="flex flex-col h-full bg-white rounded-2xl border border-slate-100 shadow-sm"
           >
             <Skeleton className="aspect-[4/3] w-full rounded-b-none rounded-t-2xl shrink-0" />
-            <div className="flex flex-col flex-grow p-3 sm:p-4">
+            <div className={`flex flex-col flex-grow ${isCompact ? "p-3 sm:p-4" : "p-4"}`}>
               <div className="flex items-center justify-between mb-1">
                 <Skeleton className="h-3 w-1/3" />
                 <Skeleton className="h-3 w-10 sm:w-12 rounded" />
@@ -76,16 +80,16 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                 />
 
                 {/* Badges */}
-                <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-10">
+                <div className={`absolute z-10 ${isCompact ? "top-2 sm:top-3 left-2 sm:left-3" : "top-3 left-3"}`}>
                   {product.isDonation ? (
-                    <div className="bg-primary-600 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md">
-                      <span className="text-[9px] sm:text-[10px] font-bold text-white tracking-wide uppercase">
+                    <div className={`bg-primary-600 rounded-md ${isCompact ? "px-2 sm:px-2.5 py-0.5 sm:py-1" : "px-2.5 py-1"}`}>
+                      <span className={`font-bold text-white tracking-wide uppercase ${isCompact ? "text-[9px] sm:text-[10px]" : "text-[10px]"}`}>
                         FREE
                       </span>
                     </div>
                   ) : discountPercentage > 0 ? (
-                    <div className="bg-primary-600 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md">
-                      <span className="text-[9px] sm:text-[10px] font-bold text-white tracking-wide">
+                    <div className={`bg-primary-600 rounded-md ${isCompact ? "px-2 sm:px-2.5 py-0.5 sm:py-1" : "px-2.5 py-1"}`}>
+                      <span className={`font-bold text-white tracking-wide ${isCompact ? "text-[9px] sm:text-[10px]" : "text-[10px]"}`}>
                         {discountPercentage}% off
                       </span>
                     </div>
@@ -94,12 +98,12 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
               </div>
 
               {/* Content Area */}
-              <div className="flex flex-col flex-grow p-2.5 sm:p-4">
+              <div className={`flex flex-col flex-grow ${isCompact ? "p-2.5 sm:p-4" : "p-4"}`}>
                 <div className="flex items-center justify-between mb-1 gap-1">
-                  <span className="text-[10px] sm:text-xs font-semibold text-primary-500 truncate">
+                  <span className={`font-semibold text-primary-500 truncate ${isCompact ? "text-[10px] sm:text-xs" : "text-xs"}`}>
                     {product.category || product.merchantName}
                   </span>
-                  <span className="text-[9px] sm:text-xs font-medium text-slate-500 whitespace-nowrap bg-slate-100 px-1 sm:px-1.5 py-0.5 rounded">
+                  <span className={`font-medium text-slate-500 whitespace-nowrap bg-slate-100 rounded ${isCompact ? "text-[9px] sm:text-xs px-1 sm:px-1.5 py-0.5" : "text-xs px-1.5 py-0.5"}`}>
                     {product.stock}{" "}
                     {product.unit === "pcs"
                       ? "Pcs"
@@ -115,27 +119,27 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                   </span>
                 </div>
 
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 leading-snug mb-1 line-clamp-2">
+                <h3 className={`font-bold text-slate-800 leading-snug mb-1 line-clamp-2 ${isCompact ? "text-xs sm:text-sm" : "text-sm"}`}>
                   {product.title}
                 </h3>
 
-                <p className="hidden sm:-webkit-box text-xs text-slate-500 mb-4 line-clamp-2">
+                <p className={`${isCompact ? "hidden sm:-webkit-box" : "-webkit-box"} text-xs text-slate-500 mb-4 line-clamp-2`}>
                   {product.description}
                 </p>
 
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-auto gap-2 sm:gap-0 pt-2 sm:pt-0">
-                  <div className="flex flex-row sm:flex-col lg:flex-row items-center sm:items-start lg:items-center gap-1 sm:gap-0 lg:gap-1.5">
-                    <span className="text-xs sm:text-sm font-bold text-slate-800">
+                <div className={`flex justify-between mt-auto ${isCompact ? "flex-col sm:flex-row sm:items-end gap-2 sm:gap-0 pt-2 sm:pt-0" : "flex-row items-end gap-0 pt-0"}`}>
+                  <div className="flex flex-col items-start justify-center">
+                    {!product.isDonation &&
+                      product.originalPrice > product.discountPrice && (
+                        <span className={`text-slate-400 line-through leading-tight ${isCompact ? "text-[10px]" : "text-[11px]"}`}>
+                          Rp {product.originalPrice.toLocaleString("id-ID")}
+                        </span>
+                      )}
+                    <span className={`font-bold text-slate-800 leading-tight ${isCompact ? "text-xs sm:text-sm" : "text-sm"}`}>
                       {product.isDonation
                         ? "Rp 0"
                         : `Rp ${product.discountPrice.toLocaleString("id-ID")}`}
                     </span>
-                    {!product.isDonation &&
-                      product.originalPrice > product.discountPrice && (
-                        <span className="text-[10px] sm:text-xs text-slate-400 line-through">
-                          Rp {product.originalPrice.toLocaleString("id-ID")}
-                        </span>
-                      )}
                   </div>
 
                   <button
@@ -148,13 +152,17 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
                       if (product.stock > 0) addItem(product, 1);
                     }}
                     disabled={product.stock <= 0}
-                     className={`flex items-center justify-center gap-1 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-bold transition-[background-color,color,transform] duration-200 ease-out active:scale-95 shrink-0 cursor-pointer w-full sm:w-auto ${
+                     className={`flex items-center transition-[background-color,color,transform] duration-200 ease-out active:scale-95 shrink-0 cursor-pointer ${
+                      isCompact 
+                        ? "justify-center gap-1 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-bold w-full sm:w-auto"
+                        : "gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold w-auto"
+                     } ${
                       product.stock <= 0
                         ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                         : "bg-primary-50 text-primary-600 hover:bg-primary-100"
                     }`}
                   >
-                    <ShoppingBag size={12} className="sm:w-3.5 sm:h-3.5" />
+                    <ShoppingBag size={isCompact ? 12 : 14} className={isCompact ? "sm:w-3.5 sm:h-3.5" : ""} />
                     <span>{product.stock <= 0 ? "Habis" : "Tambah"}</span>
                   </button>
                 </div>
@@ -176,3 +184,4 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     </div>
   );
 };
+
