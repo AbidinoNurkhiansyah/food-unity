@@ -17,12 +17,12 @@ export function ClaimsPage() {
   } = useClaims();
 
   return (
-    <div className="max-w-full mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-full mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Tabs */}
       <ClaimsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Content */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500"></div>

@@ -9,8 +9,8 @@ export function useClaimCard(claim: Claim, merchantId: string, onComplete: (orde
   const merchantTotal = merchantItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   const formattedDate = claim.createdAt?.toDate 
-    ? claim.createdAt.toDate().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-    : 'Waktu tidak diketahui';
+    ? claim.createdAt.toDate().toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    : 'Unknown time';
 
   const handleConfirm = () => {
     setShowConfirm(false);

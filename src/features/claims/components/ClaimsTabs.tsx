@@ -23,7 +23,7 @@ export const ClaimsTabs: React.FC<ClaimsTabsProps> = ({
         <button
           key={tab.value}
           onClick={() => setActiveTab(tab.value)}
-          className={`whitespace-nowrap py-3 font-medium text-sm transition-colors relative ${
+          className={`whitespace-nowrap py-3 font-medium cursor-pointer text-sm transition-colors relative ${
             activeTab === tab.value
               ? "text-primary-600"
               : "text-gray-500 hover:text-gray-900"

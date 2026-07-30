@@ -80,10 +80,10 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({
 
   return (
     <>
-      <Accordion type="single" collapsible className="w-full mb-4 sm:mb-5">
+      <Accordion type="single" collapsible className="w-full">
         <AccordionItem value={`claim-${claim.orderId}`} className="border-none">
           <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md hover:border-gray-300/80 group">
-            <AccordionTrigger className="hover:no-underline p-4 sm:p-5 w-full data-[state=closed]:border-b-0 data-[state=open]:border-b border-gray-100">
+            <AccordionTrigger className="hover:no-underline p-4 sm:p-5 w-full data-[state=closed]:border-b-0 data-[state=open]:border-b border-gray-100 cursor-pointer">
               <div className="flex flex-col w-full pr-2 sm:pr-4 text-left gap-1.5 sm:gap-2">
                 <div className="flex justify-between items-start w-full gap-2">
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1">
@@ -97,9 +97,7 @@ export const ClaimCard: React.FC<ClaimCardProps> = ({
                       {formattedDate}
                     </p>
                   </div>
-                  <div className="shrink-0">
-                    {getStatusBadge(claim.status)}
-                  </div>
+                  <div className="shrink-0">{getStatusBadge(claim.status)}</div>
                 </div>
                 <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
                   <span className="font-semibold text-gray-900 text-sm sm:text-base">

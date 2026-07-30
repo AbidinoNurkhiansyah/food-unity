@@ -2,8 +2,10 @@ import React from "react";
 import { CheckCircle, HeartHandshake, Wind, Sprout } from "lucide-react";
 import { useMerchantStats } from "../hooks/useMerchantStats";
 import { KpiCard } from "./KpiCard";
-import { ClaimsPanel } from "./ClaimsPanel";
 import { EcoImpactPanel } from "./EcoImpactPanel";
+import { CompactWalletCard } from "./CompactWalletCard";
+import { useWallet } from "@/features/wallet";
+import { useNavigate } from "react-router-dom";
 
 interface MerchantBentoGridProps {
   user: any;
@@ -12,7 +14,9 @@ interface MerchantBentoGridProps {
 export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
   user,
 }) => {
-  const { stats, isLoading } = useMerchantStats();
+  const { stats, isLoading: isStatsLoading } = useMerchantStats();
+  const { balance, isLoading: isWalletLoading } = useWallet();
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-4">
@@ -36,7 +40,7 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
           icon={<Sprout className="w-4 h-4 text-palette-600" />}
           iconBg="bg-palette-50"
           subtext="Total all time"
-          isLoading={isLoading}
+          isLoading={isStatsLoading}
         />
         <KpiCard
           label="CO₂ Reduced"
@@ -46,7 +50,7 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
           icon={<Wind className="w-4 h-4 text-emerald-600" />}
           iconBg="bg-emerald-50"
           subtext={`≈ ${(stats.co2ReducedKg / 0.21).toFixed(0)} km car travel`}
-          isLoading={isLoading}
+          isLoading={isStatsLoading}
         />
         <KpiCard
           label="Donation Portions"
@@ -55,7 +59,7 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
           icon={<HeartHandshake className="w-4 h-4 text-rose-500" />}
           iconBg="bg-rose-50"
           subtext="Free meals distributed"
-          isLoading={isLoading}
+          isLoading={isStatsLoading}
         />
         <KpiCard
           label="Completed Orders"
@@ -63,20 +67,26 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
           suffix="claims"
           icon={<CheckCircle className="w-4 h-4 text-blue-500" />}
           iconBg="bg-blue-50"
-          subtext="Pickups successfully confirmed"
-          isLoading={isLoading}
+          subtext="Pickups successfully"
+          isLoading={isStatsLoading}
         />
       </div>
 
       {/* Middle panel */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <ClaimsPanel />
-        <EcoImpactPanel
-          foodSavedKg={stats.foodSavedKg}
-          co2ReducedKg={stats.co2ReducedKg}
-          donationPortions={stats.donationPortions}
-          isLoading={isLoading}
+        <CompactWalletCard
+          balance={balance}
+          isLoading={isWalletLoading}
+          onClick={() => navigate("/dashboard/wallet")}
         />
+        <div className="md:col-span-2 h-full">
+          <EcoImpactPanel
+            foodSavedKg={stats.foodSavedKg}
+            co2ReducedKg={stats.co2ReducedKg}
+            donationPortions={stats.donationPortions}
+            isLoading={isStatsLoading}
+          />
+        </div>
       </div>
     </div>
   );
