@@ -8,6 +8,7 @@ interface MerchantHeaderProps {
   initials: string;
   address: string;
   onClose: () => void;
+  dragHandleRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const MerchantHeader: React.FC<MerchantHeaderProps> = ({
@@ -16,25 +17,42 @@ export const MerchantHeader: React.FC<MerchantHeaderProps> = ({
   initials,
   address,
   onClose,
+  dragHandleRef,
 }) => {
   return (
-    <div className="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-700 px-5 py-4 shrink-0">
+    <div className="relative bg-palette-700 px-5 pt-3 pb-8 shrink-0 rounded-t-2xl">
+      {/* Drag Handle Container (Passed Ref) */}
+      <div
+        ref={dragHandleRef}
+        className="absolute top-0 left-0 right-0 h-8 flex justify-center items-start pt-2.5 cursor-grab active:cursor-grabbing z-20"
+      >
+        <div className="w-12 h-1.5 rounded-full bg-white/40 shadow-sm" />
+      </div>
+
       <button
         onClick={onClose}
-        className="absolute top-3.5 right-4 w-7 h-7 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors z-10 cursor-pointer"
+        className="absolute top-4 right-4 w-7 h-7 rounded-full bg-black/10 hover:bg-black/20 backdrop-blur-md flex items-center justify-center transition-colors z-20 cursor-pointer"
       >
         <X size={14} className="text-white" />
       </button>
 
       {/* Dekoratif */}
-      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/5 pointer-events-none" />
-      <div className="absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
+      <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 pointer-events-none blur-2xl" />
+      <div className="absolute -bottom-6 -left-6 w-32 h-32 rounded-full bg-emerald-300/20 pointer-events-none blur-xl" />
 
-      <div className="flex items-center gap-4 relative">
-        <div className="w-16 h-16 rounded-2xl bg-white/25 border-2 border-white/40 flex items-center justify-center shrink-0 shadow-lg">
-          <span className="text-white font-extrabold text-xl tracking-tight">
-            {initials}
-          </span>
+      <div className="flex items-center gap-4 relative z-10 mt-5">
+        <div className="w-[68px] h-[68px] rounded-2xl bg-white/20 border-[3px] border-white/60 flex items-center justify-center shrink-0 shadow-[0_4px_12px_rgba(0,0,0,0.1)] backdrop-blur-sm overflow-hidden">
+          {merchant.profile?.logoImageUrl ? (
+            <img
+              src={merchant.profile.logoImageUrl}
+              alt={businessName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-white font-black text-2xl tracking-tighter drop-shadow-sm">
+              {initials}
+            </span>
+          )}
         </div>
 
         <div className="min-w-0 flex-1">

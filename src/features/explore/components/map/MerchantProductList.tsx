@@ -36,7 +36,7 @@ export const MerchantProductList: React.FC<MerchantProductListProps> = ({
         </div>
       ) : (
         <div
-          className="flex gap-3 px-5 pb-6 shrink-0 snap-x snap-mandatory"
+          className="flex gap-3 px-5 pb-6 shrink-0 snap-x snap-mandatory scroll-pl-5 after:content-[''] after:w-1 after:shrink-0"
           style={{
             overflowX: "auto",
             overflowY: "hidden",
@@ -51,56 +51,56 @@ export const MerchantProductList: React.FC<MerchantProductListProps> = ({
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
-                className="flex-none w-[140px] snap-start bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-green-200 transition-all cursor-pointer group overflow-hidden"
+                className="flex-none w-[150px] snap-start bg-white rounded-[20px] border-[0.5px] border-slate-200/60 shadow-[0_4px_16px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-emerald-200 transition-all duration-300 cursor-pointer group overflow-hidden"
               >
                 {/* Gambar produk */}
-                <div className="relative w-full h-[100px] bg-slate-100 overflow-hidden">
+                <div className="relative w-full h-[110px] bg-slate-100 overflow-hidden">
                   <img
                     src={
                       product.imageUrl ||
                       "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=300&auto=format&fit=crop"
                     }
                     alt={product.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   {!product.isDonation && disc > 0 && (
-                    <div className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                      <Tag size={7} />
+                    <div className="absolute top-2 left-2 bg-red-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                      <Tag size={8} />
                       {disc}%
                     </div>
                   )}
                   {product.isDonation && (
-                    <div className="absolute top-2 left-2 bg-primary-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                      <Gift size={7} />
+                    <div className="absolute top-2 left-2 bg-emerald-500/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
+                      <Gift size={8} />
                       FREE
                     </div>
                   )}
-                  <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full backdrop-blur-sm">
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md shadow-sm">
                     ×{product.stock}
                   </div>
                 </div>
 
                 {/* Info produk */}
-                <div className="p-2.5">
-                  <p className="text-[11px] font-semibold text-slate-800 leading-tight line-clamp-2 group-hover:text-green-800 transition-colors">
+                <div className="p-3">
+                  <p className="text-[12px] font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-emerald-700 transition-colors">
                     {product.title}
                   </p>
-                  <div className="mt-1.5">
+                  <div className="mt-2">
                     {product.isDonation ? (
-                      <span className="text-[12px] font-bold text-primary-600">
+                      <span className="text-[13px] font-black text-emerald-600">
                         FREE
                       </span>
                     ) : (
-                      <>
-                        <span className="text-[12px] font-bold text-slate-900">
+                      <div className="flex flex-col">
+                        <span className="text-[13px] font-black text-slate-900">
                           Rp {product.discountPrice.toLocaleString("id-ID")}
                         </span>
                         {product.originalPrice > product.discountPrice && (
-                          <span className="block text-[9px] text-slate-400 line-through mt-0.5">
+                          <span className="text-[10px] font-semibold text-slate-400 line-through mt-0.5">
                             Rp {product.originalPrice.toLocaleString("id-ID")}
                           </span>
                         )}
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>

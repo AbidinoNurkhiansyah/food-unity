@@ -37,7 +37,7 @@ export const ExploreSearch: React.FC<ExploreSearchProps> = ({
   return (
     <div className="space-y-4 mb-6">
       {/* Title */}
-      <div className={viewMode === "map" ? "hidden md:block" : "block"}>
+      <div className={viewMode === "map" ? "hidden" : "block"}>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-1.5">
           What do you want to eat today? 🍔
         </h1>
@@ -63,7 +63,7 @@ export const ExploreSearch: React.FC<ExploreSearchProps> = ({
         </div>
 
         {/* Action Controls */}
-        <div className="grid grid-cols-2 gap-2.5 items-stretch sm:items-center w-full lg:w-auto">
+        <div className="grid grid-cols-2 lg:flex lg:flex-row gap-2.5 items-stretch sm:items-center w-full lg:w-auto">
           {/* View Mode Segmented Controller */}
           <div className="flex bg-slate-200/65 p-1 rounded-2xl border border-slate-200/30 shadow-inner justify-center">
             {[

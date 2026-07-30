@@ -5,5 +5,6 @@ export * from './components/ProductDetailModal';
 export * from './components/ExploreMap';
 export * from './components/MobileProductBottomSheet';
 export * from './hooks/useExploreMerchants';
+export * from './hooks/useExploreMap';
 
 
