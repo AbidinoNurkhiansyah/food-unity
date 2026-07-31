@@ -5,9 +5,9 @@ import authIlustration from "@/assets/auth-ilustration.webp";
 
 export function HeroSection() {
   return (
-    <main className="px-4 lg:px-[130px] py-10 lg:py-16 mx-auto grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+    <main className="px-6 md:px-12 lg:px-20 xl:px-[130px] py-10 lg:py-16 mx-auto grid lg:grid-cols-2 gap-8 lg:gap-10 items-center overflow-hidden max-w-[1920px]">
       {/* Left Content */}
-      <div className="space-y-5 z-10 relative">
+      <div className="space-y-5 z-10 relative order-2 lg:order-1">
         <div className="absolute -top-10 -left-10 w-48 h-48 bg-gray-100 rounded-full opacity-50 blur-3xl -z-10"></div>
 
         <div className="flex items-center gap-2">
@@ -33,24 +33,24 @@ export function HeroSection() {
           those in need.
         </p>
 
-        <div className="flex flex-wrap items-center gap-4 lg:gap-6 pt-4">
-          <Link to="/explore">
-            <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-6 lg:px-8 h-12 flex items-center gap-2 text-sm lg:text-base font-bold transition-all group shadow-lg shadow-primary-500/20 cursor-pointer">
-              Explore More{" "}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 lg:gap-6 pt-4">
+          <Link to="/explore" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-primary-500 hover:bg-primary-600 text-white rounded-full px-6 lg:px-8 h-12 flex justify-center items-center gap-2 text-sm lg:text-base font-bold transition-all group shadow-lg shadow-primary-500/20 cursor-pointer">
+              Find Surplus Food{" "}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <a
-            href="#"
-            className="font-bold text-sm lg:text-base text-primary-900 hover:text-primary-500 transition-colors underline underline-offset-4 decoration-2 decoration-gray-300 hover:decoration-primary-500"
+          <Link
+            to="/register/merchant"
+            className="font-bold text-sm lg:text-base text-primary-900 hover:text-primary-500 transition-colors underline underline-offset-4 decoration-2 decoration-gray-300 hover:decoration-primary-500 text-center w-full sm:w-auto py-2 sm:py-0"
           >
-            View All Services
-          </a>
+            Share Food
+          </Link>
         </div>
       </div>
 
       {/* Right Images (Collage) */}
-      <div className="relative h-[280px] lg:h-[380px] xl:h-[420px] w-full mt-8 lg:-mt-4 flex gap-4">
+      <div className="relative h-[280px] sm:h-[340px] md:h-[380px] lg:h-[380px] xl:h-[420px] w-full order-1 lg:order-2 lg:-mt-4 flex gap-3 md:gap-4 lg:gap-4">
         {/* Decorative elements */}
         <div className="absolute -top-4 right-10 flex gap-2 opacity-20 z-0">
           {[...Array(9)].map((_, i) => (
@@ -71,7 +71,7 @@ export function HeroSection() {
         </div>
 
         {/* Right Column */}
-        <div className="flex-1 h-full flex flex-col gap-4 z-10">
+        <div className="flex-1 h-full flex flex-col gap-3 lg:gap-4 z-10">
           <div className="flex-[1] rounded-tr-[2rem] lg:rounded-tr-[3rem] rounded-tl-xl lg:rounded-tl-2xl rounded-b-xl lg:rounded-b-2xl overflow-hidden relative shadow-sm">
             <img
               src={authIlustration}
@@ -96,7 +96,7 @@ export function HeroSection() {
         </div>
 
         {/* Badges/Stickers */}
-        <div className="absolute bottom-[10%] left-[-15%] lg:left-[-10%] z-40 bg-primary-900 text-primary-500 rounded-full flex items-center justify-center w-[90px] h-[90px] lg:w-[110px] lg:h-[110px] shadow-xl border-[4px] border-[#F5F5F5]">
+        <div className="absolute bottom-[5%] lg:bottom-[10%] -left-2 sm:-left-6 lg:left-[-10%] z-40 bg-primary-900 text-primary-500 rounded-full flex items-center justify-center w-[85px] h-[85px] lg:w-[110px] lg:h-[110px] shadow-xl border-[4px] border-[#F5F5F5]">
           {/* Circular text simulation (rotating) */}
           <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary-500 opacity-30 animate-[spin_10s_linear_infinite] m-1.5 lg:m-2"></div>
           <svg
@@ -112,24 +112,22 @@ export function HeroSection() {
               <textPath
                 href="#circlePath"
                 startOffset="0%"
-                className="text-[9px] lg:text-[10px] font-bold fill-primary-500 tracking-[0.2em] uppercase"
+                className="text-[8.5px] lg:text-[10px] font-bold fill-primary-500 tracking-[0.2em] uppercase"
               >
                 • ZERO WASTE • ZERO HUNGER •
               </textPath>
             </text>
           </svg>
           {/* Center icon */}
-          <div className="absolute inset-0 flex items-center justify-center text-primary-900 bg-primary-500 rounded-full m-6 lg:m-7">
+          <div className="absolute inset-0 flex items-center justify-center text-primary-900 bg-primary-500 rounded-full m-5 lg:m-7">
             <ArrowRight className="w-4 h-4 lg:w-5 lg:h-5 -rotate-45" />
           </div>
         </div>
 
         {/* Star/Sparkle decorative */}
-        <div className="absolute bottom-10 right-[-10px] lg:bottom-16 lg:right-[-20px] z-40 text-primary-500 animate-pulse drop-shadow-md">
+        <div className="absolute bottom-8 right-2 lg:bottom-16 lg:right-[-20px] z-40 text-primary-500 animate-pulse drop-shadow-md">
           <svg
-            width="50"
-            height="50"
-            className="lg:w-[70px] lg:h-[70px]"
+            className="w-[40px] h-[40px] lg:w-[70px] lg:h-[70px]"
             viewBox="0 0 24 24"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
@@ -137,11 +135,9 @@ export function HeroSection() {
             <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
           </svg>
         </div>
-        <div className="absolute bottom-16 right-5 lg:bottom-24 lg:right-10 z-40 text-primary-500 animate-pulse opacity-60">
+        <div className="absolute bottom-16 right-8 lg:bottom-24 lg:right-10 z-40 text-primary-500 animate-pulse opacity-60">
           <svg
-            width="30"
-            height="30"
-            className="lg:w-[40px] lg:h-[40px]"
+            className="w-[24px] h-[24px] lg:w-[40px] lg:h-[40px]"
             viewBox="0 0 24 24"
             fill="currentColor"
             xmlns="http://www.w3.org/2000/svg"
