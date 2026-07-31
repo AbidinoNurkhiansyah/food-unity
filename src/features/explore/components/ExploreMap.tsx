@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { GoogleMap } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow } from "@react-google-maps/api";
+import { useNavigate } from "react-router-dom";
 import type { Product } from "@/features/products/types";
 import type { MerchantUser } from "@/features/merchant-profile/types";
 import { mapContainerStyle } from "./map/mapConfig";
-import { useExploreMap } from "./map/useExploreMap";
+import { useExploreMap } from "../hooks/useExploreMap";
 import { UserLocationMarker } from "./map/UserLocationMarker";
 import { MerchantMarkers } from "./map/MerchantMarkers";
 import { MerchantInfoWindow } from "./map/MerchantInfoWindow";
 import { MapLoadingState, MapErrorState } from "./map/MapStates";
+import { MerchantProductList } from "./map/MerchantProductList";
+import { ExternalLink } from "lucide-react";
 
 interface ExploreMapProps {
   products: Product[];
@@ -35,6 +38,15 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
   setSelectedMerchant,
   onCloseStart,
 }) => {
+  const navigate = useNavigate();
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const {
     isLoaded,
     loadError,
@@ -60,7 +72,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
 
   return (
     /* Wrapper relatif agar bottom sheet bisa stacking di atasnya */
-    <div className="relative border border-slate-100 overflow-hidden shadow-md w-full h-[calc(100vh-4rem)] md:h-[550px] rounded-none border-x-0 md:border-x border-t-0 md:border-t">
+    <div className="relative overflow-hidden w-full h-[calc(100vh-4rem)]">
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={mapCenter}
@@ -86,10 +98,57 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
             setSelectedMerchant(merchant);
           }}
         />
+        {/* Desktop Info Window */}
+        {isDesktop && selectedMerchant && (
+          <InfoWindow
+            position={{
+              lat: Number(selectedMerchant.profile?.coordinates?.latitude) || 0,
+              lng: Number(selectedMerchant.profile?.coordinates?.longitude) || 0,
+            }}
+            onCloseClick={() => setSelectedMerchant(null)}
+            options={{
+              pixelOffset: new google.maps.Size(0, -30),
+              maxWidth: 340,
+            }}
+          >
+            <div className="w-[280px] sm:w-[320px] max-w-full pb-1 pt-1 overflow-hidden">
+              <div className="flex items-center justify-between mb-1.5 px-3">
+                <div className="flex items-center gap-2 overflow-hidden flex-1 mr-2">
+                  {selectedMerchant.profile?.logoImageUrl ? (
+                    <img src={selectedMerchant.profile.logoImageUrl} alt="" className="w-7 h-7 rounded bg-slate-100 object-cover shrink-0 shadow-sm border border-slate-200/50" />
+                  ) : (
+                    <div className="w-7 h-7 rounded bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-[10px] shadow-sm border border-emerald-200/50">
+                      {selectedMerchant.profile?.businessName ? selectedMerchant.profile.businessName.substring(0, 2).toUpperCase() : "NA"}
+                    </div>
+                  )}
+                  <h3 className="font-bold text-slate-800 text-sm truncate">
+                    {selectedMerchant.profile?.businessName || selectedMerchant.name}
+                  </h3>
+                </div>
+                <button 
+                  onClick={() => navigate(`/merchant/${selectedMerchant.uid}`)}
+                  className="flex items-center gap-1 bg-primary-50 text-primary-600 hover:bg-primary-100 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-colors shrink-0 cursor-pointer"
+                >
+                  <span>Show More</span>
+                  <ExternalLink size={10} />
+                </button>
+              </div>
+              <div className="-mx-2">
+                <MerchantProductList 
+                  products={selectedMerchantProducts} 
+                  onSelectProduct={(product) => {
+                    setSelectedMerchant(null);
+                    onSelectProduct(product);
+                  }}
+                />
+              </div>
+            </div>
+          </InfoWindow>
+        )}
       </GoogleMap>
 
-      {/* Bottom Sheet — di-render menggunakan createPortal ke document.body agar tidak terpotong oleh parent overflow-hidden */}
-      {selectedMerchant && createPortal(
+      {/* Bottom Sheet — (Mobile Only) */}
+      {!isDesktop && selectedMerchant && createPortal(
         <MerchantInfoWindow
           merchant={selectedMerchant}
           products={selectedMerchantProducts}

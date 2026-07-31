@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 import type { Product } from "@/features/products/types";
 import type { MerchantUser } from "@/features/merchant-profile/types";
-import { mapOptions } from "./mapConfig";
+import { mapOptions } from "../components/map/mapConfig";
 
 interface UseExploreMapOptions {
   products: Product[];

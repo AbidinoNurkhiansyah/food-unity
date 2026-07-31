@@ -5,7 +5,7 @@ import authIlustration from "@/assets/auth-ilustration.webp";
 
 export function HeroSection() {
   return (
-    <main className="bg-[#F5F5F5] px-4 lg:px-[130px] py-10 lg:py-16 mx-auto grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+    <main className="px-4 lg:px-[130px] py-10 lg:py-16 mx-auto grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
       {/* Left Content */}
       <div className="space-y-5 z-10 relative">
         <div className="absolute -top-10 -left-10 w-48 h-48 bg-gray-100 rounded-full opacity-50 blur-3xl -z-10"></div>

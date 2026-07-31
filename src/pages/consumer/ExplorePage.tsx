@@ -29,7 +29,7 @@ import { toast } from "sonner";
 
 export const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, } = useAuthStore();
   const { data: products, isLoading } = useAllProducts();
   const { data: merchants = [] } = useExploreMerchants();
 
@@ -38,6 +38,8 @@ export const ExplorePage: React.FC = () => {
   const [isSheetHidden, setIsSheetHidden] = useState(false);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+  
+
 
   // Search and Filter States
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,7 +47,9 @@ export const ExplorePage: React.FC = () => {
   const [priceFilter, setPriceFilter] = useState<"all" | "paid" | "donation">("all");
 
   // Map and Geolocation States
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "map">(() => {
+    return (sessionStorage.getItem("exploreViewMode") as "grid" | "map") || "grid";
+  });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: -6.2088, lng: 106.8456 });
   const [isLocating, setIsLocating] = useState(false);
@@ -92,10 +96,20 @@ export const ExplorePage: React.FC = () => {
 
   const handleViewModeChange = (mode: "grid" | "map") => {
     setViewMode(mode);
+    sessionStorage.setItem("exploreViewMode", mode);
     if (mode === "map") {
       handleGetCurrentLocation();
     }
   };
+
+  // Trigger geolocation on mount if we restored "map" mode from sessionStorage
+  React.useEffect(() => {
+    if (viewMode === "map" && !userLocation) {
+      handleGetCurrentLocation();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const filteredProducts = products?.filter((product) => {
     // 1. Text Search Query
     if (searchQuery.trim()) {
@@ -133,10 +147,10 @@ export const ExplorePage: React.FC = () => {
 
       <main className={
         viewMode === "map"
-          ? "relative w-full flex-1 md:h-auto px-0 md:px-6 lg:px-[130px] py-0 md:py-6 overflow-hidden md:overflow-visible"
+          ? "relative w-full flex-1 px-0 py-0 overflow-hidden"
           : "px-4 sm:px-6 lg:px-[130px] py-6"
       }>
-        <div className={viewMode === "map" ? "absolute md:relative top-3 md:top-auto left-3 md:left-auto right-3 md:right-auto z-20 md:z-auto" : ""}>
+        <div className={viewMode === "map" ? "absolute top-4 md:top-6 left-4 sm:left-6 lg:left-[130px] right-4 sm:right-6 lg:right-[130px] z-20 pointer-events-none [&>*]:pointer-events-auto" : ""}>
           <ExploreSearch
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
@@ -164,7 +178,7 @@ export const ExplorePage: React.FC = () => {
             onRequireAuth={() => setIsLoginPromptOpen(true)}
           />
         ) : isLocating ? (
-          <div className="flex flex-col items-center justify-center bg-white border border-slate-100 md:rounded-3xl h-[calc(100vh-4rem)] md:h-[550px] rounded-none border-x-0 md:border-x shadow-md text-center p-6 mx-4 md:mx-0">
+          <div className="flex flex-col items-center justify-center bg-white h-[calc(100vh-4rem)] w-full text-center p-6">
             <Loader2 className="w-10 h-10 text-primary-500 animate-spin mb-3.5" />
             <h3 className="font-bold text-slate-800 text-base mb-1">
               Mendeteksi Lokasi Anda...
@@ -174,7 +188,7 @@ export const ExplorePage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="relative w-full overflow-hidden md:rounded-3xl rounded-none">
+          <div className="relative w-full overflow-hidden h-[calc(100vh-4rem)]">
             <ExploreMap
               products={filteredProducts || []}
               merchants={merchants}
