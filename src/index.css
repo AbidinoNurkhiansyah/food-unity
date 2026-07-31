@@ -58,3 +58,9 @@
     display: none; /* Chrome, Safari and Opera */
   }
 }
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
