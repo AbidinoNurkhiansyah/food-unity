@@ -9,9 +9,9 @@ export function EcoImpact() {
   return (
     <section
       id="eco-impact"
-      className="py-20 lg:py-32 bg-[#F5F5F5] px-4 lg:px-[130px]"
+      className="py-10 lg:py-20 bg-[#F5F5F5] px-4 lg:px-[130px]"
     >
-      <div className="max-w-3xl mb-16">
+      <div className="max-w-3xl mb-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
