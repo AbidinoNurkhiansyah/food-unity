@@ -29,7 +29,7 @@ import { toast } from "sonner";
 
 export const ExplorePage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading: isAuthLoading } = useAuthStore();
+  const { isAuthenticated, } = useAuthStore();
   const { data: products, isLoading } = useAllProducts();
   const { data: merchants = [] } = useExploreMerchants();
 
@@ -39,20 +39,7 @@ export const ExplorePage: React.FC = () => {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
   
-  const isInitialCheck = React.useRef(true);
-  
-  React.useEffect(() => {
-    if (isAuthLoading) return;
 
-    if (isInitialCheck.current) {
-      isInitialCheck.current = false;
-      return;
-    }
-
-    if (!isAuthenticated) {
-      toast.success('Berhasil logout!');
-    }
-  }, [isAuthenticated, isAuthLoading]);
 
   // Search and Filter States
   const [searchQuery, setSearchQuery] = useState("");

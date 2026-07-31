@@ -77,15 +77,15 @@ export function TopBar() {
       <div className="flex gap-6 py-2.5 px-4 lg:pl-[130px] flex-wrap items-center">
         <div className="flex items-center gap-2">
           <Phone className="w-4 h-4 text-primary-500" />
-          <span>(000) 000-0000</span>
+          <span>083870631247</span>
         </div>
         <div className="flex items-center gap-2">
           <Mail className="w-4 h-4 text-primary-500" />
-          <span>example@gmail.com</span>
+          <span>foodunity@gmail.com</span>
         </div>
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-primary-500" />
-          <span>2464 Royal Ln. Mesa, New Jersey 45463</span>
+          <span>Klari, Karawang, Jawa barat,Indonesia</span>
         </div>
       </div>
 
