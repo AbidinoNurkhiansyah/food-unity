@@ -25,6 +25,29 @@ export const walletApi = {
   },
 
   /**
+   * Fetch wallet history
+   */
+  getHistory: async (merchantId: string, token?: string) => {
+    try {
+      const headers: Record<string, string> = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      const response = await fetch(`${API_URL}/api/wallet/history?merchantId=${merchantId}`, {
+        headers
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch history');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('walletApi.getHistory Error:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Request withdrawal
    */
   withdrawBalance: async (merchantId: string, amount: number, token?: string) => {

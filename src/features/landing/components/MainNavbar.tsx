@@ -16,7 +16,7 @@ export function MainNavbar() {
     const handleScroll = () => {
       const howItWorks = document.getElementById("how-it-works");
       const ecoImpact = document.getElementById("eco-impact");
-      
+
       // Trigger point is 1/3 from the top of the screen
       const scrollPosition = window.scrollY + window.innerHeight / 3;
 
@@ -47,7 +47,7 @@ export function MainNavbar() {
   };
 
   return (
-    <nav className="flex justify-between items-center py-3 px-4 lg:px-[130px] bg-white sticky top-0 z-50">
+    <nav className="flex justify-between items-center py-3 px-4 lg:px-[130px] bg-white sticky top-0 z-50 border-t border-gray-200">
       <div className="flex items-center gap-2">
         <Link to="/" onClick={handleHomeClick}>
           <img src={logo} alt="FoodUnity Logo" className="h-6 w-auto" />

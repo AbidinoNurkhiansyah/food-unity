@@ -17,7 +17,7 @@ export function ClaimsPage() {
   } = useClaims();
 
   return (
-    <div className="max-w-full mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-full space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Tabs */}
       <ClaimsTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 

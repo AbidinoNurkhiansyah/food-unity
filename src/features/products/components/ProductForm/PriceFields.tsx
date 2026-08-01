@@ -63,7 +63,7 @@ interface PriceFieldsProps {
 
 export function PriceFields({ control, errors, isDonation }: PriceFieldsProps) {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {/* Original Price */}
       <div className="space-y-1.5">
         <Label htmlFor="originalPrice" className="text-xs font-semibold text-slate-500">

@@ -23,6 +23,8 @@ export function WalletPage() {
     amountToWithdraw,
     isLoading,
     isWithdrawing,
+    history,
+    isHistoryLoading,
     showConfirm,
     setShowConfirm,
     handleWithdrawClick,
@@ -42,8 +44,8 @@ export function WalletPage() {
   };
 
   return (
-    <div className="max-w-full mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
-      <div className="flex flex-col gap-8">
+    <div className="max-w-full animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12 md:pb-0 mt-4">
+      <div className="flex flex-col gap-4">
         {/* Hero Section */}
         <WalletBalanceCard
           balance={balance}
@@ -52,7 +54,7 @@ export function WalletPage() {
         />
 
         {/* History Section */}
-        <WalletHistoryCard />
+        <WalletHistoryCard history={history} isLoading={isHistoryLoading} />
       </div>
 
       <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>

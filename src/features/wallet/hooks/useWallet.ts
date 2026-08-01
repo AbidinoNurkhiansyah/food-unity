@@ -11,23 +11,34 @@ export function useWallet() {
   const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
 
+  const [history, setHistory] = useState<any[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState<boolean>(true);
+
   useEffect(() => {
     if (user?.uid) {
-      fetchBalance();
+      fetchData();
     }
   }, [user]);
 
-  const fetchBalance = async () => {
+  const fetchData = async () => {
     try {
       setIsLoading(true);
+      setIsHistoryLoading(true);
       if (!user?.uid) return;
       const token = await user.getIdToken();
-      const data = await walletApi.getBalance(user.uid, token);
-      setBalance(data.balance || 0);
+      
+      const [balanceData, historyData] = await Promise.all([
+        walletApi.getBalance(user.uid, token),
+        walletApi.getHistory(user.uid, token)
+      ]);
+      
+      setBalance(balanceData.balance || 0);
+      setHistory(historyData || []);
     } catch (error) {
-      toast.error("Gagal memuat informasi saldo");
+      toast.error("Gagal memuat informasi dompet");
     } finally {
       setIsLoading(false);
+      setIsHistoryLoading(false);
     }
   };
 
@@ -63,6 +74,7 @@ export function useWallet() {
       );
       setBalance(response.remainingBalance);
       setAmountToWithdraw("");
+      fetchData(); // Refresh history
     } catch (error: any) {
       toast.error(error.message || "Gagal melakukan penarikan dana");
     } finally {
@@ -88,6 +100,8 @@ export function useWallet() {
     amountToWithdraw,
     isLoading,
     isWithdrawing,
+    history,
+    isHistoryLoading,
     showConfirm,
     setShowConfirm,
     handleWithdrawClick,

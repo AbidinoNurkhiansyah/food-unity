@@ -81,7 +81,7 @@ export function DashboardLayout() {
         />
 
         {/* Content Area */}
-        <main className="min-w-0 relative">
+        <main className="min-w-0 relative flex-1 flex flex-col h-full">
           <Outlet />
         </main>
       </div>

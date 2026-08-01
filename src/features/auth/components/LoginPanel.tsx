@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent } from "@/components/ui/card";
 import { useLoginForm } from "../hooks/useLoginForm";
+import { useAuthStore } from "../hooks/useAuthStore";
 
 export function LoginPanel() {
+  const { lastRole } = useAuthStore();
   const {
     form: {
       register,
@@ -183,7 +185,7 @@ export function LoginPanel() {
           <div className="text-center mt-8 text-sm text-gray-600 font-medium">
             Don't have an account?{" "}
             <Link
-              to="/register/consumer"
+              to={`/register/${lastRole === 'merchant' ? 'merchant' : 'consumer'}`}
               className="text-primary-500 hover:text-primary-600 font-bold transition-colors"
             >
               Register

@@ -1,7 +1,13 @@
 import { Navigate } from "react-router-dom";
 import { useAuthStore } from "@/features/auth";
 import { TopBar } from "@/components/layout/TopBar";
-import { MainNavbar, HeroSection, HowItWorks, EcoImpact } from "@/features/landing";
+import {
+  MainNavbar,
+  HeroSection,
+  HowItWorks,
+  EcoImpact,
+  Footer,
+} from "@/features/landing";
 
 export function HomePage() {
   const { isAuthenticated, isLoading, role } = useAuthStore();
@@ -21,12 +27,13 @@ export function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans overflow-clip">
+    <div className="min-h-screen bg-[#f5f5f5] text-gray-900 font-sans overflow-clip">
       <TopBar />
       <MainNavbar />
       <HeroSection />
       <HowItWorks />
       <EcoImpact />
+      <Footer />
     </div>
   );
 }

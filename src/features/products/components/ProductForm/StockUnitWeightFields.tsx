@@ -29,7 +29,7 @@ export function StockUnitWeightFields({
   now,
 }: StockUnitWeightFieldsProps) {
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* Stock */}
       <div className="space-y-1.5">
         <Label htmlFor="stock" className="text-xs font-semibold text-slate-500">

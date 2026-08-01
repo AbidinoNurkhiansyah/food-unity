@@ -22,6 +22,25 @@ export class WalletController {
   }
 
   /**
+   * Get wallet history
+   * Example query: /api/wallet/history?merchantId=USER_UID
+   */
+  static async getHistory(req, res) {
+    try {
+      const { merchantId } = req.query;
+      if (!merchantId) {
+        return res.status(400).json({ error: "merchantId query parameter is required" });
+      }
+      
+      const historyData = await WalletService.getHistory(merchantId);
+      res.json(historyData);
+    } catch (error) {
+      console.error("Get History Error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  /**
    * Request withdrawal
    * Body: { merchantId: "USER_UID", amount: 50000 }
    */
