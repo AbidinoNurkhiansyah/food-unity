@@ -19,6 +19,31 @@ export class WalletService {
   }
 
   /**
+   * Fetch withdrawal history for a merchant
+   */
+  static async getHistory(merchantId) {
+    if (!db) throw new Error("Firebase DB not initialized");
+
+    const withdrawalsRef = db.collection('withdrawals');
+    const snapshot = await withdrawalsRef
+      .where('merchantId', '==', merchantId)
+      .get();
+      
+    if (snapshot.empty) {
+      return [];
+    }
+    
+    const history = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+      createdAt: doc.data().createdAt?.toDate()?.toISOString() || new Date().toISOString()
+    }));
+
+    // Sort descending in memory to avoid needing a composite index
+    return history.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  /**
    * Simulate withdrawal of funds
    */
   static async withdrawBalance(merchantId, amount) {

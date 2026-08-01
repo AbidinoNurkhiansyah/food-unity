@@ -23,6 +23,8 @@ export function WalletPage() {
     amountToWithdraw,
     isLoading,
     isWithdrawing,
+    history,
+    isHistoryLoading,
     showConfirm,
     setShowConfirm,
     handleWithdrawClick,
@@ -52,7 +54,7 @@ export function WalletPage() {
         />
 
         {/* History Section */}
-        <WalletHistoryCard />
+        <WalletHistoryCard history={history} isLoading={isHistoryLoading} />
       </div>
 
       <Dialog open={showWithdrawModal} onOpenChange={setShowWithdrawModal}>
