@@ -20,7 +20,7 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
   onSubmit,
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden">
+    <div className="bg-white rounded-2xl mx-4 p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-[100px] -z-0 opacity-50 pointer-events-none"></div>
 
       <div className="relative z-10">
