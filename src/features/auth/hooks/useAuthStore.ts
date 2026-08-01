@@ -6,6 +6,7 @@ export type UserRole = 'consumer' | 'merchant' | null;
 interface AuthState {
   user: User | null;
   role: UserRole;
+  lastRole: UserRole;
   isProfileCompleted: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -17,17 +18,19 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   role: null,
+  lastRole: 'consumer',
   isProfileCompleted: false,
   isAuthenticated: false,
   isLoading: true,
   setUser: (user, role, isProfileCompleted = false) => 
-    set({ 
+    set((state) => ({ 
       user, 
       role, 
+      lastRole: role || state.lastRole || 'consumer',
       isProfileCompleted, 
       isAuthenticated: !!user, 
       isLoading: false 
-    }),
+    })),
   setLoading: (isLoading) => set({ isLoading }),
   clearAuth: () => set({ user: null, role: null, isProfileCompleted: false, isAuthenticated: false, isLoading: false }),
 }));
