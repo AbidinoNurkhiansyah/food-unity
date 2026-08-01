@@ -14,7 +14,7 @@ export const WalletBalanceCard: React.FC<WalletBalanceCardProps> = ({
   onWithdrawClick,
 }) => {
   return (
-    <div className="bg-slate-900 rounded-3xl p-8 md:p-10 text-white relative overflow-hidden shadow-2xl border border-slate-800">
+    <div className="bg-slate-900 rounded-2xl p-8 md:p-10 text-white relative overflow-hidden shadow-2xl border border-slate-800">
       {/* Decorative Gradients */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-primary-500/30 to-primary-700/0 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-gradient-to-tr from-primary-500/20 to-transparent rounded-full blur-3xl -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
@@ -37,7 +37,8 @@ export const WalletBalanceCard: React.FC<WalletBalanceCardProps> = ({
               </span>
             </div>
             <p className="text-sm md:text-base text-slate-400 font-medium max-w-sm mt-2">
-              Your balance is available to withdraw at any time to your registered bank account.
+              Your balance is available to withdraw at any time to your
+              registered bank account.
             </p>
           </div>
 

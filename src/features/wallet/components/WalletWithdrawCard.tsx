@@ -17,12 +17,12 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
   isLoading,
   onAmountChange,
   onSetMaxAmount,
-  onSubmit
+  onSubmit,
 }) => {
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden">
+    <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm flex flex-col justify-center relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-primary-50 rounded-bl-[100px] -z-0 opacity-50 pointer-events-none"></div>
-      
+
       <div className="relative z-10">
         <div className="p-3.5 bg-primary-50 text-primary-600 rounded-2xl w-fit mb-5 shadow-sm border border-primary-100/50">
           <CreditCard className="w-6 h-6" />
@@ -31,7 +31,9 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
           Withdraw to Bank Account
         </h3>
         <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-          The withdrawal process takes <span className="font-medium text-slate-700">1x24 working hours</span>.
+          The withdrawal process takes{" "}
+          <span className="font-medium text-slate-700">1x24 working hours</span>
+          .
         </p>
 
         <form onSubmit={onSubmit} className="space-y-6">
@@ -79,4 +81,3 @@ export const WalletWithdrawCard: React.FC<WalletWithdrawCardProps> = ({
     </div>
   );
 };
-
