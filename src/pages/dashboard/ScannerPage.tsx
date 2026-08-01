@@ -54,7 +54,7 @@ export function ScannerPage() {
   } = useScanner(true, handleGlobalScan);
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-2xl shadow-sm max-w-full mx-auto overflow-hidden gap-6">
+    <div className="flex flex-col flex-1 h-full min-h-[calc(100vh-160px)] w-full bg-white rounded-2xl shadow-sm max-w-full mx-auto overflow-hidden gap-6">
       <div className="w-full">
         <div className="flex bg-gray-100 p-1.5 w-full">
           <button
@@ -90,6 +90,7 @@ export function ScannerPage() {
             }}
             styles={{
               container: { width: "100%", height: "100%" },
+              video: { width: "100%", height: "100%", objectFit: "cover" },
             }}
           />
           {error && (

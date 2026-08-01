@@ -42,15 +42,17 @@ export function ProductForm({ onSuccess, initialData }: ProductFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      <div className="grid grid-cols-[180px_1fr_1fr] gap-5 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-[180px_1fr_1fr] gap-4 md:gap-5 items-start">
         {/* Col 1: Image Upload */}
-        <ImageUploader
-          imagePreview={imagePreview}
-          onImageChange={handleImageChange}
-        />
+        <div className="w-[120px] mx-auto sm:w-[140px] md:w-full md:mx-0">
+          <ImageUploader
+            imagePreview={imagePreview}
+            onImageChange={handleImageChange}
+          />
+        </div>
 
         {/* Col 2 + 3: Form Fields */}
-        <div className="col-span-2 space-y-3">
+        <div className="md:col-span-2 space-y-3">
           <NameCategoryFields
             register={register}
             setValue={setValue}

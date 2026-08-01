@@ -21,7 +21,7 @@ export function SaleTypeStatusFields({
   currentStatus,
 }: SaleTypeStatusFieldsProps) {
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {/* Sale Type */}
       <div className="space-y-1.5">
         <Label className="text-xs font-semibold text-slate-500">Sale Type</Label>
