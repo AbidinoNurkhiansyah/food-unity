@@ -69,14 +69,14 @@ export function MerchantProfileForm() {
             <button
               type="button"
               onClick={() => setActiveTab("info")}
-              className={`cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-t-xl font-semibold text-xs uppercase tracking-wider transition-all relative ${
+              className={`cursor-pointer flex items-center justify-center sm:justify-start flex-1 sm:flex-none gap-2 px-3 sm:px-4 py-2.5 rounded-t-xl font-semibold text-xs uppercase tracking-wider transition-all relative ${
                 activeTab === "info"
                   ? "text-primary-600 bg-primary-50/50"
                   : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
-              <Store className="w-4 h-4" />
-              Store Information
+              <Store className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
+              <span className="hidden sm:inline">Store Information</span>
               {activeTab === "info" && (
                 <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 rounded-t-full" />
               )}
@@ -84,14 +84,14 @@ export function MerchantProfileForm() {
             <button
               type="button"
               onClick={() => setActiveTab("location")}
-              className={`cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-t-xl font-semibold text-xs uppercase tracking-wider transition-all relative ${
+              className={`cursor-pointer flex items-center justify-center sm:justify-start flex-1 sm:flex-none gap-2 px-3 sm:px-4 py-2.5 rounded-t-xl font-semibold text-xs uppercase tracking-wider transition-all relative ${
                 activeTab === "location"
                   ? "text-primary-600 bg-primary-50/50"
                   : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
-              <MapPin className="w-4 h-4" />
-              Address & Location
+              <MapPin className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
+              <span className="hidden sm:inline">Address & Location</span>
               {activeTab === "location" && (
                 <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 rounded-t-full" />
               )}
@@ -99,14 +99,14 @@ export function MerchantProfileForm() {
             <button
               type="button"
               onClick={() => setActiveTab("hours")}
-              className={`cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-t-xl font-semibold text-xs uppercase tracking-wider transition-all relative ${
+              className={`cursor-pointer flex items-center justify-center sm:justify-start flex-1 sm:flex-none gap-2 px-3 sm:px-4 py-2.5 rounded-t-xl font-semibold text-xs uppercase tracking-wider transition-all relative ${
                 activeTab === "hours"
                   ? "text-primary-600 bg-primary-50/50"
                   : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
-              <Clock className="w-4 h-4" />
-              Pickup Hours
+              <Clock className="w-5 h-5 sm:w-4 sm:h-4 shrink-0" />
+              <span className="hidden sm:inline">Pickup Hours</span>
               {activeTab === "hours" && (
                 <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary-500 rounded-t-full" />
               )}
