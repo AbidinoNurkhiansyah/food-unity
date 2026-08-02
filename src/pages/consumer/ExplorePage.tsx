@@ -14,6 +14,7 @@ import {
   MobileProductBottomSheet,
   useExploreMerchants,
 } from "@/features/explore";
+import { Footer } from "@/features/landing";
 import { ConsumerFloatingChat } from "@/features/chat";
 import {
   AlertDialog,
@@ -236,6 +237,8 @@ export const ExplorePage: React.FC = () => {
           </div>
         )}
       </main>
+
+      {viewMode === "grid" && <Footer />}
 
       <ProductDetailModal
         isOpen={isProductModalOpen}
