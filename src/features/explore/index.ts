@@ -4,7 +4,9 @@ export * from './components/ProductGrid';
 export * from './components/ProductDetailModal';
 export * from './components/ExploreMap';
 export * from './components/MobileProductBottomSheet';
+export * from './components/ExploreLocatingView';
+export * from './components/ExploreLoginPrompt';
 export * from './hooks/useExploreMerchants';
 export * from './hooks/useExploreMap';
-
-
+export * from './hooks/useExploreFilters';
+export * from './hooks/useExploreMapState';
