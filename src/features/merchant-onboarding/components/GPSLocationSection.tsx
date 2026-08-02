@@ -1,5 +1,5 @@
 import { GoogleMap, Marker } from "@react-google-maps/api";
-import { MapPin, Compass, AlertCircle, Loader2 } from "lucide-react";
+import { Compass, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,16 +31,9 @@ export function GPSLocationSection({
   handleGetCurrentLocation,
   isDetectingLocation,
   handleCoordChange,
-  showTitle = true,
 }: GPSLocationSectionProps) {
   return (
     <div className="space-y-4">
-      {showTitle && (
-        <h3 className="font-bold text-lg text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-primary-500" /> GPS Location & Navigation
-        </h3>
-      )}
-
       <div className="flex flex-col sm:flex-row gap-3">
         <Button
           type="button"
@@ -83,13 +76,14 @@ export function GPSLocationSection({
               Interactive Map Loaded Statically
             </p>
             <p className="text-xs text-gray-400 mt-1 max-w-sm">
-              Map services use device GPS coordinates. You can
-              manually verify Latitude & Longitude coordinates below.
+              Map services use device GPS coordinates. You can manually verify
+              Latitude & Longitude coordinates below.
             </p>
           </div>
         )}
         <p className="text-[10px] text-gray-400 text-center mt-1">
-          * Click/touch the map above to move the pickup location marker precisely.
+          * Click/touch the map above to move the pickup location marker
+          precisely.
         </p>
       </div>
 
@@ -108,7 +102,10 @@ export function GPSLocationSection({
           />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="longitude" className="text-xs font-bold text-gray-700">
+          <Label
+            htmlFor="longitude"
+            className="text-xs font-bold text-gray-700"
+          >
             Longitude
           </Label>
           <Input

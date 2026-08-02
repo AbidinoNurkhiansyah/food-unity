@@ -6,18 +6,29 @@ import { BusinessDetailsSection } from "./BusinessDetailsSection";
 interface MerchantStepOneProps {
   register: UseFormRegister<OnboardingValues>;
   errors: FieldErrors<OnboardingValues>;
+  bannerImageUrl?: string;
+  logoImageUrl?: string;
+  isUploadingLogo?: boolean;
+  isUploadingBanner?: boolean;
+  handleImageUpload?: (file: File, type: "banner" | "logo") => Promise<void>;
 }
 
-export function MerchantStepOne({ register, errors }: MerchantStepOneProps) {
+export function MerchantStepOne({
+  register,
+  errors,
+  bannerImageUrl,
+  logoImageUrl,
+  isUploadingLogo,
+  isUploadingBanner,
+  handleImageUpload,
+}: MerchantStepOneProps) {
   return (
     <>
       <div className="space-y-1.5">
-        <div className="flex items-center gap-2 text-primary-600 font-extrabold text-xs uppercase tracking-wider">
-          <Store className="w-3.5 h-3.5" /> Welcome New Merchant
+        <div className="flex items-center gap-2 text-primary-600 font-extrabold text-md uppercase tracking-wider">
+          <Store className="h-5" /> Welcome New Merchant
         </div>
-        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-          Business Details & Contact
-        </h2>
+
         <p className="text-sm text-slate-500 font-medium max-w-xl">
           Enter your business name and WhatsApp contact to facilitate the
           coordination of food pickup.
@@ -29,6 +40,11 @@ export function MerchantStepOne({ register, errors }: MerchantStepOneProps) {
           register={register}
           errors={errors}
           showTitle={false}
+          bannerImageUrl={bannerImageUrl}
+          logoImageUrl={logoImageUrl}
+          isUploadingLogo={isUploadingLogo}
+          isUploadingBanner={isUploadingBanner}
+          handleImageUpload={handleImageUpload}
         />
       </div>
     </>

@@ -42,13 +42,9 @@ export function MerchantStepTwo({
   return (
     <>
       <div className="space-y-1.5">
-        <div className="flex items-center gap-2 text-primary-600 font-extrabold text-xs uppercase tracking-wider">
-          <Compass className="w-3.5 h-3.5 animate-pulse" /> Location
-          Configuration
+        <div className="flex items-center gap-2 text-primary-600 font-extrabold text-md uppercase tracking-wider">
+          <Compass className="h-5 animate-pulse" /> Location Configuration
         </div>
-        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-          Administrative Region
-        </h2>
         <p className="text-sm text-slate-500 font-medium max-w-xl">
           Determine your merchant's operational area. This selection will filter
           search results for nearby consumers.
