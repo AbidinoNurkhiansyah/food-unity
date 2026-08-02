@@ -46,7 +46,7 @@ export const loginWithEmail = async (email: string, password: string) => {
   if (!user.emailVerified) {
     // Optional: sendEmailVerification(user) here if you want to resend automatically
     await signOut(auth);
-    const error = new Error('Email belum diverifikasi. Silakan cek inbox Anda.');
+    const error = new Error('Email not verified. Please check your inbox.');
     (error as any).code = 'auth/email-not-verified';
     throw error;
   }
@@ -61,9 +61,9 @@ export const loginWithEmail = async (email: string, password: string) => {
 };
 
 // Login/Register with Google
-export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
+export const loginWithGoogle = async (defaultRole: UserRole = 'consumer', isLoginOnly = false) => {
   const provider = new GoogleAuthProvider();
-  // Paksa Google untuk selalu memunculkan jendela "Pilih Akun" meskipun user sudah pernah login sebelumnya
+  // Force Google to always show the "Select Account" prompt even if the user has logged in before
   provider.setCustomParameters({ prompt: 'select_account' });
   const userCredential = await signInWithPopup(auth, provider);
   const user = userCredential.user;
@@ -76,7 +76,18 @@ export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
   let isCompleted = false;
 
   if (!userDoc.exists()) {
-    // New Google user, register them
+    if (isLoginOnly) {
+      // If they are trying to log in but don't have an account, block it.
+      await user.delete().catch(async () => {
+        // Fallback to sign out if delete fails (e.g., due to reauthentication required, though rare for just created users)
+        await signOut(auth);
+      });
+      const error = new Error('Account not found. Please register first.');
+      (error as any).code = 'auth/user-not-found';
+      throw error;
+    }
+
+    // New Google user (from registration flow), register them
     await setDoc(userDocRef, {
       uid: user.uid,
       name: user.displayName || 'User',

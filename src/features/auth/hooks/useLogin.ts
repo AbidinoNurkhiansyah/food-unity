@@ -22,9 +22,9 @@ export function useLogin() {
         err.code === 'auth/user-not-found' || 
         err.code === 'auth/wrong-password'
       ) {
-        setError('Email atau password salah.');
+        setError('Incorrect email or password.');
       } else {
-        setError(err.message || 'Gagal login, periksa kembali email & password Anda.');
+        setError(err.message || 'Login failed, please check your email and password.');
       }
     } finally {
       setIsLoading(false);
@@ -35,14 +35,18 @@ export function useLogin() {
     setIsLoading(true);
     setError('');
     try {
-      const { user, role, isCompleted } = await loginWithGoogle('consumer');
+      const { user, role, isCompleted } = await loginWithGoogle('consumer', true);
       setUser(user, role, isCompleted);
       navigate(role === 'merchant' ? '/dashboard' : '/explore', { replace: true });
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {
         return;
       }
-      setError(err.message || 'Gagal login dengan Google.');
+      if (err.code === 'auth/user-not-found') {
+        setError('Account not registered. Please register first.');
+      } else {
+        setError(err.message || 'Failed to login with Google.');
+      }
     } finally {
       setIsLoading(false);
     }
