@@ -22,6 +22,12 @@ function App() {
       }
 
       if (firebaseUser) {
+        // Prevent setting unverified email/password users to global state
+        if (!firebaseUser.emailVerified && firebaseUser.providerData?.some(p => p.providerId === 'password')) {
+          setUser(null, null);
+          return;
+        }
+
         try {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           const userData = userDoc.exists() ? userDoc.data() : null;

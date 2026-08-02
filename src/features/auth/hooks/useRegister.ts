@@ -13,9 +13,14 @@ export function useRegister(role: UserRole) {
     setIsLoading(true);
     setError('');
     try {
-      const result = await registerWithEmail(data.email, data.password, data.name, role);
-      setUser(result.user, result.role, result.isCompleted);
-      navigate(role === 'merchant' ? '/dashboard' : '/explore');
+      // Register dan kirim email verifikasi (via authService)
+      await registerWithEmail(data.email, data.password, data.name, role);
+      // Kita tidak langsung set user ke Zustand (supaya di App.tsx terdeteksi belum diverifikasi)
+      // atau set user bisa saja, tapi biarkan mereka ke Verify Email page
+      
+      // Logout secara eksplisit supaya tidak masuk state "logged in" belum terverifikasi
+      // atau kita bisa redirect ke halaman verifikasi tanpa masalah
+      navigate('/verify-email', { state: { email: data.email } });
     } catch (err: any) {
       if (err.code === 'auth/email-already-in-use') {
         setError('Email ini sudah terdaftar. Silakan masuk (login) atau gunakan email lain.');

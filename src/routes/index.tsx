@@ -4,6 +4,8 @@ import { LoginPage } from '@/pages/LoginPage';
 import { ConsumerRegisterPage } from '@/pages/auth/ConsumerRegisterPage';
 import { MerchantRegisterPage } from '@/pages/auth/MerchantRegisterPage';
 import { MerchantOnboardingPage } from '@/pages/auth/MerchantOnboardingPage';
+import { VerifyEmailPage } from '@/pages/auth/VerifyEmailPage';
+import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
 import { ProtectedRoute } from '@/features/auth';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { MerchantDashboardPage } from '@/pages/dashboard/MerchantDashboardPage';
@@ -57,6 +59,14 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: '/verify-email',
+    element: <VerifyEmailPage />,
   },
   {
     path: '/register/consumer',

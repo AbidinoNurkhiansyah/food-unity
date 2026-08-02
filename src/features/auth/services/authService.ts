@@ -4,7 +4,9 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   GoogleAuthProvider, 
-  signInWithPopup 
+  signInWithPopup,
+  sendEmailVerification,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import type { UserRole } from '@/features/auth';
@@ -27,6 +29,12 @@ export const registerWithEmail = async (email: string, password: string, name: s
     }
   });
 
+  // Send Email Verification
+  await sendEmailVerification(user);
+
+  // Logout immediately to prevent auto-login before verification
+  await signOut(auth);
+
   return { user, role, isCompleted: false };
 };
 
@@ -34,6 +42,14 @@ export const registerWithEmail = async (email: string, password: string, name: s
 export const loginWithEmail = async (email: string, password: string) => {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
+
+  if (!user.emailVerified) {
+    // Optional: sendEmailVerification(user) here if you want to resend automatically
+    await signOut(auth);
+    const error = new Error('Email belum diverifikasi. Silakan cek inbox Anda.');
+    (error as any).code = 'auth/email-not-verified';
+    throw error;
+  }
 
   // Fetch role & profile completion status from Firestore
   const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -79,6 +95,11 @@ export const loginWithGoogle = async (defaultRole: UserRole = 'consumer') => {
   }
 
   return { user, role, isCompleted };
+};
+
+// Reset Password
+export const resetPassword = async (email: string) => {
+  await sendPasswordResetEmail(auth, email);
 };
 
 // Logout
