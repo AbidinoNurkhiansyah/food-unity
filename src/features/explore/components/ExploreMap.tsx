@@ -76,7 +76,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={mapCenter}
-        zoom={20}
+        zoom={19}
         options={dynamicMapOptions}
         onLoad={onLoad}
         onUnmount={onUnmount}
@@ -84,10 +84,7 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       >
         {/* User Location Marker */}
         {userLocation && userIcon && (
-          <UserLocationMarker
-            userLocation={userLocation}
-            userIcon={userIcon}
-          />
+          <UserLocationMarker userLocation={userLocation} userIcon={userIcon} />
         )}
 
         {/* Merchant Markers */}
@@ -103,7 +100,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
           <InfoWindow
             position={{
               lat: Number(selectedMerchant.profile?.coordinates?.latitude) || 0,
-              lng: Number(selectedMerchant.profile?.coordinates?.longitude) || 0,
+              lng:
+                Number(selectedMerchant.profile?.coordinates?.longitude) || 0,
             }}
             onCloseClick={() => setSelectedMerchant(null)}
             options={{
@@ -115,17 +113,26 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
               <div className="flex items-center justify-between mb-1.5 px-3">
                 <div className="flex items-center gap-2 overflow-hidden flex-1 mr-2">
                   {selectedMerchant.profile?.logoImageUrl ? (
-                    <img src={selectedMerchant.profile.logoImageUrl} alt="" className="w-7 h-7 rounded bg-slate-100 object-cover shrink-0 shadow-sm border border-slate-200/50" />
+                    <img
+                      src={selectedMerchant.profile.logoImageUrl}
+                      alt=""
+                      className="w-7 h-7 rounded bg-slate-100 object-cover shrink-0 shadow-sm border border-slate-200/50"
+                    />
                   ) : (
                     <div className="w-7 h-7 rounded bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center shrink-0 text-[10px] shadow-sm border border-emerald-200/50">
-                      {selectedMerchant.profile?.businessName ? selectedMerchant.profile.businessName.substring(0, 2).toUpperCase() : "NA"}
+                      {selectedMerchant.profile?.businessName
+                        ? selectedMerchant.profile.businessName
+                            .substring(0, 2)
+                            .toUpperCase()
+                        : "NA"}
                     </div>
                   )}
                   <h3 className="font-bold text-slate-800 text-sm truncate">
-                    {selectedMerchant.profile?.businessName || selectedMerchant.name}
+                    {selectedMerchant.profile?.businessName ||
+                      selectedMerchant.name}
                   </h3>
                 </div>
-                <button 
+                <button
                   onClick={() => navigate(`/merchant/${selectedMerchant.uid}`)}
                   className="flex items-center gap-1 bg-primary-50 text-primary-600 hover:bg-primary-100 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition-colors shrink-0 cursor-pointer"
                 >
@@ -134,8 +141,8 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
                 </button>
               </div>
               <div className="-mx-2">
-                <MerchantProductList 
-                  products={selectedMerchantProducts} 
+                <MerchantProductList
+                  products={selectedMerchantProducts}
                   onSelectProduct={(product) => {
                     setSelectedMerchant(null);
                     onSelectProduct(product);
@@ -148,19 +155,21 @@ export const ExploreMap: React.FC<ExploreMapProps> = ({
       </GoogleMap>
 
       {/* Bottom Sheet — (Mobile Only) */}
-      {!isDesktop && selectedMerchant && createPortal(
-        <MerchantInfoWindow
-          merchant={selectedMerchant}
-          products={selectedMerchantProducts}
-          onCloseStart={onCloseStart}
-          onClose={() => setSelectedMerchant(null)}
-          onSelectProduct={(product) => {
-            setSelectedMerchant(null);
-            onSelectProduct(product);
-          }}
-        />,
-        document.body
-      )}
+      {!isDesktop &&
+        selectedMerchant &&
+        createPortal(
+          <MerchantInfoWindow
+            merchant={selectedMerchant}
+            products={selectedMerchantProducts}
+            onCloseStart={onCloseStart}
+            onClose={() => setSelectedMerchant(null)}
+            onSelectProduct={(product) => {
+              setSelectedMerchant(null);
+              onSelectProduct(product);
+            }}
+          />,
+          document.body
+        )}
     </div>
   );
 };
