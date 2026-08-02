@@ -69,7 +69,7 @@ export function MainNavbar() {
         </a>
       </div>
 
-      <Link to="/login">
+      <Link to="/login" state={{ intent: 'merchant' }}>
         <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-5 h-10 font-semibold shadow-md cursor-pointer transition-transform hover:scale-105">
           Join as Merchant
         </Button>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, Loader2 } from "lucide-react";
 import appLogo from "@/assets/logo.svg";
@@ -11,6 +11,10 @@ import { useAuthStore } from "../hooks/useAuthStore";
 
 export function LoginPanel() {
   const { lastRole } = useAuthStore();
+  const location = useLocation();
+  const intent = location.state?.intent;
+  const registerRole = intent === 'merchant' ? 'merchant' : (lastRole === 'merchant' ? 'merchant' : 'consumer');
+
   const {
     form: {
       register,
@@ -185,7 +189,7 @@ export function LoginPanel() {
           <div className="text-center mt-8 text-sm text-gray-600 font-medium">
             Don't have an account?{" "}
             <Link
-              to={`/register/${lastRole === 'merchant' ? 'merchant' : 'consumer'}`}
+              to={`/register/${registerRole}`}
               className="text-primary-500 hover:text-primary-600 font-bold transition-colors"
             >
               Register

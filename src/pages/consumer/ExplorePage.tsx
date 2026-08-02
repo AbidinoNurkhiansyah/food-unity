@@ -58,7 +58,7 @@ export const ExplorePage: React.FC = () => {
       <main
         className={
           viewMode === "map"
-            ? "relative w-full flex-1 px-0 py-0 overflow-hidden"
+            ? "relative w-full flex-1 flex flex-col px-0 py-0 overflow-hidden"
             : "px-4 sm:px-6 lg:px-[130px] py-6"
         }
       >
@@ -98,7 +98,7 @@ export const ExplorePage: React.FC = () => {
         ) : isLocating ? (
           <ExploreLocatingView />
         ) : (
-          <div className="relative w-full overflow-hidden h-[calc(100vh-4rem)]">
+          <div className="relative w-full overflow-hidden flex-1">
             <ExploreMap
               products={filteredProducts || []}
               merchants={merchants}
