@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { type OnboardingValues } from "../constants/schemas";
+import { useBusinessImageHandlers } from "../hooks/useBusinessImageHandlers";
 
 interface BusinessDetailsSectionProps {
   register: UseFormRegister<OnboardingValues>;
@@ -18,7 +19,8 @@ interface BusinessDetailsSectionProps {
   showTitle?: boolean;
   bannerImageUrl?: string;
   logoImageUrl?: string;
-  isUploadingImages?: boolean;
+  isUploadingLogo?: boolean;
+  isUploadingBanner?: boolean;
   handleImageUpload?: (file: File, type: "banner" | "logo") => Promise<void>;
 }
 
@@ -28,11 +30,33 @@ export function BusinessDetailsSection({
   showTitle = true,
   bannerImageUrl,
   logoImageUrl,
-  isUploadingImages,
+  isUploadingLogo,
+  isUploadingBanner,
   handleImageUpload,
 }: BusinessDetailsSectionProps) {
+  
+  const { logoUploader, bannerUploader } = useBusinessImageHandlers(handleImageUpload);
+
+  const {
+    isDragging: isDraggingLogo,
+    error: logoError,
+    handleDragOver: handleDragOverLogo,
+    handleDragLeave: handleDragLeaveLogo,
+    handleDrop: handleDropLogo,
+    handleChange: onLogoChange
+  } = logoUploader;
+
+  const {
+    isDragging: isDraggingBanner,
+    error: bannerError,
+    handleDragOver: handleDragOverBanner,
+    handleDragLeave: handleDragLeaveBanner,
+    handleDrop: handleDropBanner,
+    handleChange: onBannerChange
+  } = bannerUploader;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 md:space-y-6">
       {handleImageUpload && (
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -42,8 +66,20 @@ export function BusinessDetailsSection({
                 Bussiness Logo
               </label>
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center bg-slate-50 overflow-hidden shrink-0 relative group">
-                  {isUploadingImages && (
+                <label
+                  htmlFor="logo-upload"
+                  className={`w-16 h-16 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden shrink-0 relative group transition-colors ${
+                    isDraggingLogo
+                      ? "border-primary-500 bg-primary-50"
+                      : logoError
+                      ? "border-red-400 bg-red-50"
+                      : "border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer"
+                  }`}
+                  onDragOver={handleDragOverLogo}
+                  onDragLeave={handleDragLeaveLogo}
+                  onDrop={handleDropLogo}
+                >
+                  {isUploadingLogo && (
                     <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
                       <Loader2 className="w-4 h-4 animate-spin text-primary-500" />
                     </div>
@@ -55,27 +91,22 @@ export function BusinessDetailsSection({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <Store className="w-6 h-6 text-slate-400" />
+                    <Store className={`w-6 h-6 ${logoError ? "text-red-400" : "text-slate-400"}`} />
                   )}
-                </div>
+                </label>
                 <div className="flex-1">
                   <input
                     type="file"
                     accept="image/*"
                     className="hidden"
                     id="logo-upload"
-                    onChange={(e) => {
-                      if (e.target.files?.[0] && handleImageUpload) {
-                        handleImageUpload(e.target.files[0], "logo");
-                      }
-                      e.target.value = "";
-                    }}
-                    disabled={isUploadingImages}
+                    onChange={onLogoChange}
+                    disabled={isUploadingLogo}
                   />
                   <label
                     htmlFor="logo-upload"
                     className={`flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-50 w-max transition-colors ${
-                      isUploadingImages
+                      isUploadingLogo
                         ? "opacity-50 cursor-not-allowed"
                         : "cursor-pointer"
                     }`}
@@ -83,8 +114,11 @@ export function BusinessDetailsSection({
                     <Upload className="w-3.5 h-3.5" /> Upload Logo
                   </label>
                   <p className="text-[10px] text-slate-400 mt-1">
-                    Format: JPG, PNG. Rekomendasi 1:1.
+                    Format: JPG, PNG. Rekomendasi 1:1. Maksimal 1MB.
                   </p>
+                  {logoError && (
+                    <p className="text-[10px] font-semibold text-red-500 mt-0.5">{logoError}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -95,8 +129,20 @@ export function BusinessDetailsSection({
                 Foto Lokasi / Banner
               </label>
               <div className="flex items-start gap-4">
-                <div className="w-32 h-16 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center bg-slate-50 overflow-hidden shrink-0 relative group">
-                  {isUploadingImages && (
+                <label
+                  htmlFor="banner-upload"
+                  className={`w-32 h-16 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden shrink-0 relative group transition-colors ${
+                    isDraggingBanner
+                      ? "border-primary-500 bg-primary-50"
+                      : bannerError
+                      ? "border-red-400 bg-red-50"
+                      : "border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer"
+                  }`}
+                  onDragOver={handleDragOverBanner}
+                  onDragLeave={handleDragLeaveBanner}
+                  onDrop={handleDropBanner}
+                >
+                  {isUploadingBanner && (
                     <div className="absolute inset-0 bg-white/70 flex items-center justify-center z-10">
                       <Loader2 className="w-4 h-4 animate-spin text-primary-500" />
                     </div>
@@ -108,27 +154,22 @@ export function BusinessDetailsSection({
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <ImageIcon className="w-6 h-6 text-slate-400" />
+                    <ImageIcon className={`w-6 h-6 ${bannerError ? "text-red-400" : "text-slate-400"}`} />
                   )}
-                </div>
+                </label>
                 <div className="flex-1">
                   <input
                     type="file"
                     accept="image/*"
                     className="hidden"
                     id="banner-upload"
-                    onChange={(e) => {
-                      if (e.target.files?.[0] && handleImageUpload) {
-                        handleImageUpload(e.target.files[0], "banner");
-                      }
-                      e.target.value = "";
-                    }}
-                    disabled={isUploadingImages}
+                    onChange={onBannerChange}
+                    disabled={isUploadingBanner}
                   />
                   <label
                     htmlFor="banner-upload"
                     className={`flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg text-xs font-semibold hover:bg-slate-50 w-max transition-colors ${
-                      isUploadingImages
+                      isUploadingBanner
                         ? "opacity-50 cursor-not-allowed"
                         : "cursor-pointer"
                     }`}
@@ -136,8 +177,11 @@ export function BusinessDetailsSection({
                     <Upload className="w-3.5 h-3.5" /> Upload Banner
                   </label>
                   <p className="text-[10px] text-slate-400 mt-1">
-                    Format: JPG, PNG. Rekomendasi 16:9.
+                    Format: JPG, PNG. Rekomendasi 16:9. Maksimal 1MB.
                   </p>
+                  {bannerError && (
+                    <p className="text-[10px] font-semibold text-red-500 mt-0.5">{bannerError}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -219,8 +263,12 @@ export function BusinessDetailsSection({
               </div>
               <Input
                 id="phoneNumber"
+                type="tel"
                 placeholder="Example: 08123456789"
                 className="pl-9 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white text-sm"
+                onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                  e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, "");
+                }}
                 {...register("phoneNumber")}
               />
             </div>

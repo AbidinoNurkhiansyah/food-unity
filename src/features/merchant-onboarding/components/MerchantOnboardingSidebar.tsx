@@ -7,30 +7,33 @@ interface MerchantOnboardingSidebarProps {
 
 export function MerchantOnboardingSidebar({ currentStep }: MerchantOnboardingSidebarProps) {
   return (
-    <div className="hidden md:flex flex-col justify-between p-8 bg-primary-600 text-white relative select-none">
+    <div className="hidden md:flex flex-col justify-between p-8 bg-primary-950 text-white relative select-none overflow-hidden">
+      {/* Decorative gradient blob */}
+      <div className="absolute top-0 left-0 w-full h-64 bg-primary/10 blur-[100px] rounded-full pointer-events-none transform -translate-y-1/2"></div>
+      
       {/* Brand Logo */}
-      <div className="relative">
+      <div className="relative z-10">
         <img
           src={appLogo}
           alt="FoodUnity Logo"
-          className="h-6 w-auto object-contain brightness-0 invert"
+          className="h-7 w-auto object-contain brightness-0 invert opacity-90"
         />
       </div>
 
       {/* Stepper Progress */}
-      <div className="relative flex flex-col space-y-8 my-auto py-10">
+      <div className="relative flex flex-col space-y-8 my-auto py-10 z-10">
         {/* Vertical line behind step buttons */}
-        <div className="absolute left-[23px] top-6 bottom-6 w-[2px] bg-primary-700 z-0"></div>
+        <div className="absolute left-[23px] top-6 bottom-6 w-[2px] bg-primary-900 z-0"></div>
 
         {/* STEP 1 */}
-        <div className="flex items-center gap-4 relative z-10">
+        <div className="flex items-center gap-4 relative z-10 group">
           <div
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm transition-all duration-500 ${
               currentStep === 1
-                ? "bg-white text-primary-600 border-2 border-white scale-105"
+                ? "bg-primary text-primary-950 border-2 border-primary scale-110 shadow-[0_0_20px_var(--color-primary)]"
                 : currentStep > 1
-                ? "bg-palette-500 text-white border-2 border-palette-500"
-                : "bg-primary-700 text-primary-400/80 border-2 border-primary-700"
+                ? "bg-palette-500 text-white border-2 border-palette-500 shadow-[0_0_15px_var(--color-palette-500)]"
+                : "bg-primary-900 text-primary-500/50 border-2 border-primary-900"
             }`}
           >
             {currentStep > 1 ? (
@@ -39,14 +42,14 @@ export function MerchantOnboardingSidebar({ currentStep }: MerchantOnboardingSid
               <Store className="w-5 h-5" />
             )}
           </div>
-          <div>
+          <div className="transition-transform duration-300 group-hover:translate-x-1">
             <p
-              className={`text-[11px] font-bold uppercase tracking-wider transition-colors duration-300 ${
+              className={`text-[11px] font-bold uppercase tracking-widest transition-colors duration-300 ${
                 currentStep === 1
-                  ? "text-white"
+                  ? "text-primary"
                   : currentStep > 1
-                  ? "text-palette-200"
-                  : "text-primary-400"
+                  ? "text-palette-400"
+                  : "text-primary-600/50"
               }`}
             >
               Step 01
@@ -66,14 +69,14 @@ export function MerchantOnboardingSidebar({ currentStep }: MerchantOnboardingSid
         </div>
 
         {/* STEP 2 */}
-        <div className="flex items-center gap-4 relative z-10">
+        <div className="flex items-center gap-4 relative z-10 group">
           <div
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm transition-all duration-500 ${
               currentStep === 2
-                ? "bg-white text-primary-600 border-2 border-white scale-105"
+                ? "bg-primary text-primary-950 border-2 border-primary scale-110 shadow-[0_0_20px_var(--color-primary)]"
                 : currentStep > 2
-                ? "bg-palette-500 text-white border-2 border-palette-500"
-                : "bg-primary-700 text-primary-400/80 border-2 border-primary-700"
+                ? "bg-palette-500 text-white border-2 border-palette-500 shadow-[0_0_15px_var(--color-palette-500)]"
+                : "bg-primary-900 text-primary-500/50 border-2 border-primary-900"
             }`}
           >
             {currentStep > 2 ? (
@@ -82,14 +85,14 @@ export function MerchantOnboardingSidebar({ currentStep }: MerchantOnboardingSid
               <Compass className="w-5 h-5" />
             )}
           </div>
-          <div>
+          <div className="transition-transform duration-300 group-hover:translate-x-1">
             <p
-              className={`text-[11px] font-bold uppercase tracking-wider transition-colors duration-300 ${
+              className={`text-[11px] font-bold uppercase tracking-widest transition-colors duration-300 ${
                 currentStep === 2
-                  ? "text-white"
+                  ? "text-primary"
                   : currentStep > 2
-                  ? "text-palette-200"
-                  : "text-primary-400"
+                  ? "text-palette-400"
+                  : "text-primary-600/50"
               }`}
             >
               Step 02
@@ -109,20 +112,20 @@ export function MerchantOnboardingSidebar({ currentStep }: MerchantOnboardingSid
         </div>
 
         {/* STEP 3 */}
-        <div className="flex items-center gap-4 relative z-10">
+        <div className="flex items-center gap-4 relative z-10 group">
           <div
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-sm transition-all duration-500 ${
               currentStep === 3
-                ? "bg-white text-primary-600 border-2 border-white scale-105"
-                : "bg-primary-700 text-primary-400/80 border-2 border-primary-700"
+                ? "bg-primary text-primary-950 border-2 border-primary scale-110 shadow-[0_0_20px_var(--color-primary)]"
+                : "bg-primary-900 text-primary-500/50 border-2 border-primary-900"
             }`}
           >
             <MapPin className="w-5 h-5" />
           </div>
-          <div>
+          <div className="transition-transform duration-300 group-hover:translate-x-1">
             <p
-              className={`text-[11px] font-bold uppercase tracking-wider transition-colors duration-300 ${
-                currentStep === 3 ? "text-white" : "text-primary-400"
+              className={`text-[11px] font-bold uppercase tracking-widest transition-colors duration-300 ${
+                currentStep === 3 ? "text-primary" : "text-primary-600/50"
               }`}
             >
               Step 03
@@ -141,10 +144,10 @@ export function MerchantOnboardingSidebar({ currentStep }: MerchantOnboardingSid
       </div>
 
       {/* Left Panel Footer */}
-      <div className="relative pt-4 border-t border-primary-700 text-[11px] text-primary-300 flex items-center justify-between font-medium">
+      <div className="relative z-10 pt-4 border-t border-primary-900 text-[11px] text-primary-400/60 flex items-center justify-between font-medium">
         <span>© FoodUnity 2026</span>
-        <span className="flex items-center gap-1">
-          <ShieldCheck className="w-3.5 h-3.5 text-palette-300" />
+        <span className="flex items-center gap-1.5 text-primary-200">
+          <ShieldCheck className="w-3.5 h-3.5 text-palette-400" />
           Merchant Portal
         </span>
       </div>

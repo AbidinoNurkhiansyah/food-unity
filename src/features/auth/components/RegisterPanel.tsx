@@ -196,6 +196,7 @@ export function RegisterPanel({ role }: { role: UserRole }) {
             Already have an account?{" "}
             <Link
               to="/login"
+              state={{ intent: role }}
               className="text-primary-500 hover:text-primary-600 font-bold transition-colors"
             >
               Login

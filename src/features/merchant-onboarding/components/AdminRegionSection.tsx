@@ -1,5 +1,5 @@
 import { type UseFormRegister, type FieldErrors } from "react-hook-form";
-import { Compass } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -42,20 +42,16 @@ export function AdminRegionSection({
   selectedVillage,
   setSelectedVillage,
   regionError,
-  showTitle = true,
 }: AdminRegionSectionProps) {
   return (
-    <div className="space-y-4">
-      {showTitle && (
-        <h3 className="font-bold text-lg text-gray-900 border-b border-gray-100 pt-2 pb-2 flex items-center gap-2">
-          <Compass className="w-5 h-5 text-primary-500" /> Administrative Region
-        </h3>
-      )}
-
+    <div className="space-y-8 md:space-y-6">
       <div className="grid grid-cols-2 gap-4">
         {/* Provinsi */}
         <div className="space-y-1">
-          <Label htmlFor="province-combobox" className="text-xs font-bold text-gray-700">
+          <Label
+            htmlFor="province-combobox"
+            className="text-xs font-bold text-gray-700"
+          >
             Province <span className="text-red-500">*</span>
           </Label>
           <RegionCombobox
@@ -70,7 +66,10 @@ export function AdminRegionSection({
 
         {/* Kabupaten / Kota */}
         <div className="space-y-1">
-          <Label htmlFor="regency-combobox" className="text-xs font-bold text-gray-700">
+          <Label
+            htmlFor="regency-combobox"
+            className="text-xs font-bold text-gray-700"
+          >
             City / Regency <span className="text-red-500">*</span>
           </Label>
           <RegionCombobox
@@ -88,7 +87,10 @@ export function AdminRegionSection({
       <div className="grid grid-cols-2 gap-4">
         {/* Kecamatan */}
         <div className="space-y-1">
-          <Label htmlFor="district-combobox" className="text-xs font-bold text-gray-700">
+          <Label
+            htmlFor="district-combobox"
+            className="text-xs font-bold text-gray-700"
+          >
             District <span className="text-red-500">*</span>
           </Label>
           <RegionCombobox
@@ -104,7 +106,10 @@ export function AdminRegionSection({
 
         {/* Desa / Kelurahan */}
         <div className="space-y-1">
-          <Label htmlFor="village-combobox" className="text-xs font-bold text-gray-700">
+          <Label
+            htmlFor="village-combobox"
+            className="text-xs font-bold text-gray-700"
+          >
             Village <span className="text-red-500">*</span>
           </Label>
           <RegionCombobox
@@ -125,7 +130,10 @@ export function AdminRegionSection({
 
       {/* Alamat Detail */}
       <div className="space-y-1">
-        <Label htmlFor="detailAddress" className="text-xs font-bold text-gray-700">
+        <Label
+          htmlFor="detailAddress"
+          className="text-xs font-bold text-gray-700"
+        >
           Full Address <span className="text-red-500">*</span>
         </Label>
         <Textarea
@@ -143,7 +151,10 @@ export function AdminRegionSection({
 
       {/* Catatan Patokan */}
       <div className="space-y-1">
-        <Label htmlFor="locationNotes" className="text-xs font-bold text-gray-700">
+        <Label
+          htmlFor="locationNotes"
+          className="text-xs font-bold text-gray-700"
+        >
           Location Notes{" "}
           <span className="text-gray-400 font-normal">(Optional)</span>
         </Label>

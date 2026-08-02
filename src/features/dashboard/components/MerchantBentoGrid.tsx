@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CheckCircle, HeartHandshake, Wind, Sprout } from "lucide-react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/config/firebase";
 import { useMerchantStats } from "../hooks/useMerchantStats";
 import { KpiCard } from "./KpiCard";
 import { EcoImpactPanel } from "./EcoImpactPanel";
@@ -17,13 +19,31 @@ export const MerchantBentoGrid: React.FC<MerchantBentoGridProps> = ({
   const { stats, isLoading: isStatsLoading } = useMerchantStats();
   const { balance, isLoading: isWalletLoading } = useWallet();
   const navigate = useNavigate();
+  const [businessName, setBusinessName] = useState<string>("");
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (user?.uid) {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setBusinessName(docSnap.data()?.profile?.businessName || "");
+          }
+        } catch (error) {
+          console.error("Failed to fetch business name:", error);
+        }
+      }
+    };
+    fetchProfile();
+  }, [user?.uid]);
 
   return (
     <div className="space-y-4">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Hi, {user?.displayName || "Partner"} 👋
+          Hi, {businessName || user?.displayName || "Partner"} 👋
         </h1>
         <p className="text-sm text-slate-500 mt-0.5">
           Monitor your food rescue impact and operations in real-time.
