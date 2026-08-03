@@ -17,7 +17,7 @@ app.use(helmet());
 // 2. CORS Configuration
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',') 
-  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+  : ['http://localhost:5173', 'http://127.0.0.1:5173', 'https://foodunity.web.app'];
 
 app.use(cors({
   origin: function (origin, callback) {
