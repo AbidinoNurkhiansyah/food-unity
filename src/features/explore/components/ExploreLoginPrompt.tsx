@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "@/assets/logo.svg";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +28,7 @@ export const ExploreLoginPrompt: React.FC<ExploreLoginPromptProps> = ({
       <AlertDialogContent className="bg-white border-none ring-0 sm:rounded-2xl">
         <div className="flex justify-center pt-2 pb-1">
           <img
-            src="/src/assets/logo.svg"
+            src={logo}
             alt="Food Unity Logo"
             className="h-8 w-auto object-contain"
           />
