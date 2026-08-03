@@ -30,13 +30,21 @@ function App() {
 
         try {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          const userData = userDoc.exists() ? userDoc.data() : null;
+          if (!userDoc.exists()) {
+            // Document hasn't been created yet (e.g. midway through Google registration)
+            // or the user was deleted/invalid. Ignore for now.
+            // The registration/login flow will manually call setUser once the doc is ready.
+            setUser(null, null);
+            return;
+          }
+          
+          const userData = userDoc.data();
           const role = userData ? (userData.role as UserRole) : 'consumer';
           const isProfileCompleted = userData?.profile?.isCompleted ?? false;
           setUser(firebaseUser, role, isProfileCompleted);
         } catch (error) {
           console.error("Error fetching user role:", error);
-          setUser(firebaseUser, 'consumer', false);
+          setUser(null, null);
         }
 
         // Setup Realtime Database Presence (Online/Offline)
