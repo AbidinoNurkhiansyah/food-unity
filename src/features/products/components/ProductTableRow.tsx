@@ -70,7 +70,7 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
       <TableCell className="text-center font-medium text-slate-400 text-xs tabular-nums py-4">
         {index + 1}
       </TableCell>
-      <TableCell className="py-4">
+      <TableCell className="py-4 max-w-[200px] lg:max-w-[300px]">
         <div className="flex items-center gap-3">
           {product.imageUrl ? (
             <div className="h-11 w-11 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200/40 shadow-sm transition-all group-hover:border-slate-350">
@@ -86,10 +86,10 @@ export const ProductTableRow: React.FC<ProductTableRowProps> = ({
             </div>
           )}
           <div className="flex flex-col min-w-0">
-            <span className="font-semibold text-slate-800 line-clamp-1 text-sm tracking-tight group-hover:text-slate-900 transition-colors">
+            <span className="font-semibold text-slate-800 line-clamp-1 text-sm tracking-tight group-hover:text-slate-900 transition-colors" title={product.title}>
               {product.title}
             </span>
-            <span className="text-[11px] text-slate-400 font-medium line-clamp-1 leading-normal">
+            <span className="text-[11px] text-slate-400 font-medium line-clamp-1 leading-normal" title={product.description}>
               {product.description}
             </span>
           </div>

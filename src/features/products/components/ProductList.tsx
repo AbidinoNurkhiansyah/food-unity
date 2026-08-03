@@ -1,10 +1,5 @@
-import { useState } from "react";
+import { Plus, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useProductList } from "../hooks/useProductList";
-import {
-  Plus,
-  Search,
-  X,
-} from "lucide-react";
 import { ProductListSkeleton } from "./ProductListSkeleton";
 import { ProductListStats } from "./ProductListStats";
 import { ProductListToolbar } from "./ProductListToolbar";
@@ -31,15 +26,18 @@ export function ProductList({
   onEditClick,
   onDeleteClick,
 }: ProductListProps) {
-  const { products, isLoading, isError } = useProductList();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<
-    "all" | "active" | "sold_out" | "expired"
-  >("all");
-  const [typeFilter, setTypeFilter] = useState<"all" | "discount" | "donation">(
-    "all"
-  );
-  const [now] = useState(() => Date.now());
+  const {
+    products,
+    isLoading,
+    isError,
+    searchQuery, setSearchQuery,
+    statusFilter, setStatusFilter,
+    typeFilter, setTypeFilter,
+    currentPage, setCurrentPage,
+    totalPages, ITEMS_PER_PAGE,
+    paginatedProducts, filteredProducts,
+    stats
+  } = useProductList();
 
   if (isLoading) {
     return <ProductListSkeleton />;
@@ -66,60 +64,14 @@ export function ProductList({
     return <ProductEmptyState onCreateClick={onCreateClick} />;
   }
 
-  // Calculate dynamic stats from all products
-  const totalProducts = products.length;
-  const activeProducts = products.filter((p) => {
-    const isExpired = p.pickupDeadline
-      ? new Date(p.pickupDeadline).getTime() <= now
-      : false;
-    return p.status === "active" && p.stock > 0 && !isExpired;
-  }).length;
-  const soldOutProducts = products.filter(
-    (p) => p.status === "sold_out" || p.stock <= 0
-  ).length;
-  const donationProducts = products.filter((p) => p.isDonation).length;
-
-  // Filter listings based on toolbar filters
-  const filteredProducts = products.filter((product) => {
-    // 1. Search Query Filter
-    const matchesSearch =
-      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
-
-    // 2. Status Filter
-    const isExpired = product.pickupDeadline
-      ? new Date(product.pickupDeadline).getTime() <= now
-      : false;
-
-    let matchesStatus = true;
-    if (statusFilter === "active") {
-      matchesStatus =
-        product.status === "active" && product.stock > 0 && !isExpired;
-    } else if (statusFilter === "sold_out") {
-      matchesStatus = product.status === "sold_out" || product.stock <= 0;
-    } else if (statusFilter === "expired") {
-      matchesStatus = product.status === "expired" || isExpired;
-    }
-
-    // 3. Type Filter
-    let matchesType = true;
-    if (typeFilter === "discount") {
-      matchesType = !product.isDonation;
-    } else if (typeFilter === "donation") {
-      matchesType = product.isDonation;
-    }
-
-    return matchesSearch && matchesStatus && matchesType;
-  });
-
   return (
     <div className="mt-6 space-y-6">
       {/* 1. KPI Stats Summary Cards */}
       <ProductListStats
-        totalProducts={totalProducts}
-        activeProducts={activeProducts}
-        soldOutProducts={soldOutProducts}
-        donationProducts={donationProducts}
+        totalProducts={stats.totalProducts}
+        activeProducts={stats.activeProducts}
+        soldOutProducts={stats.soldOutProducts}
+        donationProducts={stats.donationProducts}
       />
 
       {/* 2. Title & Action Row */}
@@ -132,12 +84,15 @@ export function ProductList({
             Manage your discounts, donations, stock, and product expiration.
           </p>
         </div>
-        <Button
-          onClick={onCreateClick}
-          className="gap-2 px-4 cursor-pointer shadow-sm bg-palette-600 hover:bg-palette-700 text-white font-semibold rounded-xl text-sm transition-all duration-200 active:scale-98"
-        >
-          <Plus className="w-4 h-4" /> Add Product
-        </Button>
+        <div className="flex items-center gap-2">
+
+          <Button
+            onClick={onCreateClick}
+            className="gap-2 px-4 cursor-pointer shadow-sm bg-palette-600 hover:bg-palette-700 text-white font-semibold rounded-xl text-sm transition-all duration-200 active:scale-98"
+          >
+            <Plus className="w-4 h-4" /> Add Product
+          </Button>
+        </div>
       </div>
 
       {/* 3. Search & Filters Toolbar */}
@@ -207,11 +162,11 @@ export function ProductList({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product, index) => (
+                {paginatedProducts.map((product, index) => (
                   <ProductTableRow
                     key={product.id}
                     product={product}
-                    index={index}
+                    index={index + (currentPage - 1) * ITEMS_PER_PAGE}
                     onEditClick={onEditClick}
                     onDeleteClick={onDeleteClick}
                   />
@@ -219,13 +174,41 @@ export function ProductList({
               </TableBody>
             </Table>
           </div>
-          {/* Table Footer Count indicator */}
-          <div className="px-4 py-3.5 bg-slate-50/50 border-t border-slate-200/50 flex justify-between items-center text-xs font-medium text-slate-500">
-            <span>
-              Showing {filteredProducts.length} of {products.length} products
-            </span>
-            {filteredProducts.length < products.length && (
-              <span className="text-slate-400 italic">(filtered)</span>
+          {/* Table Footer with Pagination */}
+          <div className="px-4 py-3.5 bg-slate-50/50 border-t border-slate-200/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
+            <div>
+              Showing <span className="font-semibold text-slate-700">{paginatedProducts.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0}</span> to <span className="font-semibold text-slate-700">{Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}</span> of <span className="font-semibold text-slate-700">{filteredProducts.length}</span> products
+              {filteredProducts.length < products.length && (
+                <span className="text-slate-400 italic ml-1">(filtered from {products.length} total)</span>
+              )}
+            </div>
+            
+            {totalPages > 1 && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="h-8 px-2 text-slate-600 disabled:opacity-50"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Prev
+                </Button>
+                <span className="text-slate-600 px-2 font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-8 px-2 text-slate-600 disabled:opacity-50"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
             )}
           </div>
         </div>

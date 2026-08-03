@@ -32,3 +32,7 @@ backend/serviceAccountKey.json
 .hallmark/
 commit.txt
 tambahan.md
+
+# Firebase
+.firebase/
+firebase-debug.log*

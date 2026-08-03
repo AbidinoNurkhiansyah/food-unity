@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '@/features/auth';
 import { useMerchantProducts } from './useProducts';
-import { dummyProducts } from '../data/dummyProducts';
-import { productApi } from '../services/productApi';
-import { toast } from 'sonner';
-import { db } from '@/config/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+
 
 export function useProductList() {
   const { user } = useAuthStore();
@@ -28,41 +24,6 @@ export function useProductList() {
     setCurrentPage(1);
   }, [searchQuery, statusFilter, typeFilter]);
 
-  // Dummy Seeding State
-  const [isSeeding, setIsSeeding] = useState(false);
-
-  const handleSeedData = async () => {
-    if (!user) {
-      toast.error("You must be logged in to seed data");
-      return;
-    }
-    
-    setIsSeeding(true);
-    try {
-      let merchantName = user.displayName || 'Partner';
-      try {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const profile = userDoc.data()?.profile;
-          if (profile?.businessName) {
-            merchantName = profile.businessName;
-          }
-        }
-      } catch (profileError) {
-        console.error('Error fetching merchant profile for seeding:', profileError);
-      }
-      for (const product of dummyProducts) {
-        await productApi.createProduct(product, user.uid, merchantName, product.imageUrl);
-      }
-      toast.success("Dummy data successfully seeded!");
-      window.location.reload();
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to seed dummy data");
-    } finally {
-      setIsSeeding(false);
-    }
-  };
 
   // Safe products array
   const safeProducts = products || [];
@@ -80,10 +41,9 @@ export function useProductList() {
 
   // Filter Products
   const filteredProducts = safeProducts.filter((product) => {
-    // Search Query
     const matchesSearch =
       product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (product.description && product.description.toLowerCase().includes(searchQuery.toLowerCase()));
+      (product.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
 
     // Status Filter
     const isExpired = product.pickupDeadline ? new Date(product.pickupDeadline).getTime() <= now : false;
@@ -127,8 +87,6 @@ export function useProductList() {
     totalPages, ITEMS_PER_PAGE,
     paginatedProducts, filteredProducts,
     // Extras
-    stats,
-    handleSeedData,
-    isSeeding
+    stats
   };
 }
