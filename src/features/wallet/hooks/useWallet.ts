@@ -1,85 +1,80 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuthStore } from "@/features/auth";
 import { walletApi } from "../services/walletApi";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useWallet() {
   const { user } = useAuthStore();
-  const [balance, setBalance] = useState<number>(0);
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isWithdrawing, setIsWithdrawing] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
-  const [history, setHistory] = useState<any[]>([]);
-  const [isHistoryLoading, setIsHistoryLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (user?.uid) {
-      fetchData();
-    }
-  }, [user]);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      setIsHistoryLoading(true);
-      if (!user?.uid) return;
+  const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
+    queryKey: ['walletBalance', user?.uid],
+    queryFn: async () => {
+      if (!user?.uid) return { balance: 0 };
       const token = await user.getIdToken();
-      
-      const [balanceData, historyData] = await Promise.all([
-        walletApi.getBalance(user.uid, token),
-        walletApi.getHistory(user.uid, token)
-      ]);
-      
-      setBalance(balanceData.balance || 0);
-      setHistory(historyData || []);
-    } catch (error) {
-      toast.error("Gagal memuat informasi dompet");
-    } finally {
-      setIsLoading(false);
-      setIsHistoryLoading(false);
-    }
-  };
+      return walletApi.getBalance(user.uid, token);
+    },
+    enabled: !!user?.uid,
+  });
+
+  const { data: historyData, isLoading: isHistoryLoading } = useQuery({
+    queryKey: ['walletHistory', user?.uid],
+    queryFn: async () => {
+      if (!user?.uid) return [];
+      const token = await user.getIdToken();
+      return walletApi.getHistory(user.uid, token);
+    },
+    enabled: !!user?.uid,
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: async (amount: number) => {
+      if (!user?.uid) throw new Error("User not authenticated");
+      const token = await user.getIdToken();
+      return walletApi.withdrawBalance(user.uid, amount, token);
+    },
+    onSuccess: (_, variables) => {
+      toast.success(
+        `Successfully withdrew Rp ${variables.toLocaleString("id-ID")}`
+      );
+      setAmountToWithdraw("");
+      queryClient.invalidateQueries({ queryKey: ['walletBalance', user?.uid] });
+      queryClient.invalidateQueries({ queryKey: ['walletHistory', user?.uid] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to withdraw funds");
+    },
+  });
+
+  const balance = balanceData?.balance || 0;
+  const history = historyData || [];
+  const isLoading = isLoadingBalance;
+  const isWithdrawing = withdrawMutation.isPending;
 
   const handleWithdrawClick = (e: React.FormEvent) => {
     e.preventDefault();
     const amount = Number(amountToWithdraw.replace(/\D/g, "")); 
 
     if (amount <= 0) {
-      toast.error("Nominal penarikan tidak valid");
+      toast.error("Invalid withdrawal amount");
       return;
     }
 
     if (amount > balance) {
-      toast.error("Saldo tidak mencukupi");
+      toast.error("Insufficient balance");
       return;
     }
 
     setShowConfirm(true);
   };
 
-  const processWithdrawal = async () => {
+  const processWithdrawal = () => {
     setShowConfirm(false);
     const amount = Number(amountToWithdraw.replace(/\D/g, "")); 
-    
-    try {
-      setIsWithdrawing(true);
-      if (!user?.uid) return;
-
-      const token = await user.getIdToken();
-      const response = await walletApi.withdrawBalance(user.uid, amount, token);
-      toast.success(
-        `Berhasil menarik dana sebesar Rp ${amount.toLocaleString("id-ID")}`
-      );
-      setBalance(response.remainingBalance);
-      setAmountToWithdraw("");
-      fetchData(); // Refresh history
-    } catch (error: any) {
-      toast.error(error.message || "Gagal melakukan penarikan dana");
-    } finally {
-      setIsWithdrawing(false);
-    }
+    withdrawMutation.mutate(amount);
   };
 
   const handleSetMaxAmount = () => {

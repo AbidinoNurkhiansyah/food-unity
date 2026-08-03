@@ -4,6 +4,8 @@ import { collection, query, where, onSnapshot, doc, updateDoc, serverTimestamp }
 import { useAuthStore } from "@/features/auth";
 import { toast } from "sonner";
 import type { Order } from "../components/OrderCard";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 interface SnapResult {
   order_id?: string;
@@ -69,6 +71,41 @@ export const useOrders = () => {
     return () => unsubscribe();
   }, [user]);
 
+  const cancelMutation = useMutation({
+    mutationFn: async (orderId: string) => {
+      if (!user) throw new Error("Please log in first.");
+      const token = await user.getIdToken();
+      const { data } = await axios.post(
+        `${BACKEND_URL}/api/orders/${orderId}/cancel`,
+        {},
+        {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        }
+      );
+      return data;
+    },
+    onError: (error) => {
+      console.warn("Backend cancel error:", error);
+    },
+  });
+
+  const confirmPaymentMutation = useMutation({
+    mutationFn: async ({ orderId, result, token }: { orderId: string; result: SnapResult; token: string }) => {
+      const { data } = await axios.post(`${BACKEND_URL}/api/orders/${orderId}/confirm-payment`, result, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+      return data;
+    },
+    onError: (err) => {
+      console.error("Confirm Payment Error:", err);
+    },
+  });
+
   const handleCancelOrder = async () => {
     if (!orderToCancel) return;
     try {
@@ -85,13 +122,7 @@ export const useOrders = () => {
       });
 
       // Panggil backend untuk membatalkan di Midtrans (asinkron)
-      const token = await user.getIdToken();
-      fetch(`${BACKEND_URL}/api/orders/${orderToCancel}/cancel`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      }).catch(err => console.warn("Backend cancel error:", err));
+      cancelMutation.mutate(orderToCancel);
 
       toast.success("Order successfully cancelled.");
     } catch (error) {
@@ -116,17 +147,10 @@ export const useOrders = () => {
             const orderId = result?.order_id;
             if (orderId && user) {
               const userToken = await user.getIdToken();
-              await fetch(`${BACKEND_URL}/api/orders/${orderId}/confirm-payment`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${userToken}`,
-                },
-                body: JSON.stringify(result),
-              });
+              confirmPaymentMutation.mutate({ orderId, result, token: userToken });
             }
           } catch (err) {
-            console.error("Confirm Payment Error:", err);
+            console.error("Confirm Payment Trigger Error:", err);
           }
           toast.success("Payment Successful!");
         },

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const walletApi = {
@@ -10,17 +12,13 @@ export const walletApi = {
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const response = await fetch(`${API_URL}/api/wallet/balance?merchantId=${merchantId}`, {
+      const response = await axios.get(`${API_URL}/api/wallet/balance?merchantId=${merchantId}`, {
         headers
       });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch balance');
-      }
-      return await response.json();
-    } catch (error) {
+      return response.data;
+    } catch (error: any) {
       console.error('walletApi.getBalance Error:', error);
-      throw error;
+      throw new Error(error.response?.data?.error || 'Failed to fetch balance');
     }
   },
 
@@ -33,17 +31,13 @@ export const walletApi = {
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const response = await fetch(`${API_URL}/api/wallet/history?merchantId=${merchantId}`, {
+      const response = await axios.get(`${API_URL}/api/wallet/history?merchantId=${merchantId}`, {
         headers
       });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch history');
-      }
-      return await response.json();
-    } catch (error) {
+      return response.data;
+    } catch (error: any) {
       console.error('walletApi.getHistory Error:', error);
-      throw error;
+      throw new Error(error.response?.data?.error || 'Failed to fetch history');
     }
   },
 
@@ -58,20 +52,15 @@ export const walletApi = {
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const response = await fetch(`${API_URL}/api/wallet/withdraw`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({ merchantId, amount }),
-      });
+      const response = await axios.post(`${API_URL}/api/wallet/withdraw`, 
+        { merchantId, amount },
+        { headers }
+      );
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to withdraw balance');
-      }
-      return await response.json();
-    } catch (error) {
+      return response.data;
+    } catch (error: any) {
       console.error('walletApi.withdrawBalance Error:', error);
-      throw error;
+      throw new Error(error.response?.data?.error || 'Failed to withdraw balance');
     }
   }
 };

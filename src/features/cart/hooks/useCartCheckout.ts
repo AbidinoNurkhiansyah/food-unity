@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useCartStore } from "./useCartStore";
 import { useAuthStore } from "@/features/auth";
+import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
 
 interface SnapResult {
   order_id?: string;
@@ -29,128 +30,130 @@ export const useCartCheckout = () => {
   const { getSelectedItems, getTotalPrice, removeSelectedItems } = useCartStore();
   const { user } = useAuthStore();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCheckout = async () => {
-    try {
-      setIsLoading(true);
-
-      if (!user) {
-        toast.error("Silakan login terlebih dahulu untuk melakukan checkout.");
-        setIsLoading(false);
-        return;
-      }
-
-      const selectedItems = getSelectedItems();
-      if (selectedItems.length === 0) {
-        toast.error("Pilih setidaknya 1 produk aktif untuk di-checkout.");
-        setIsLoading(false);
-        return;
-      }
-
-      const token = await user.getIdToken();
-
-      const response = await fetch(`${BACKEND_URL}/api/checkout`, {
-        method: "POST",
+  const confirmPaymentMutation = useMutation({
+    mutationFn: async ({ orderId, result, token }: { orderId: string; result: SnapResult; token: string }) => {
+      const { data } = await axios.post(`${BACKEND_URL}/api/orders/${orderId}/confirm-payment`, result, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          userId: user.uid,
-          items: [
-            ...selectedItems.map((item) => ({
-              id: item.product.id,
-              name: item.product.title,
-              price: item.product.isDonation ? 0 : item.product.discountPrice,
-              quantity: item.quantity,
-              merchantId: item.product.merchantId,
-              pickupDeadline: item.product.pickupDeadline,
-            })),
-            {
-              id: "FEE-01",
-              name: "Biaya Layanan",
-              price: 500,
-              quantity: 1,
-              merchantId: null
-            }
-          ],
-          total: getTotalPrice() + 500,
-          customerDetails: {
-            first_name: user?.displayName || "Customer",
-            email: user?.email || "customer@foodunity.com",
-            phone: "08123456789", 
-          },
-        }),
+      });
+      return data;
+    },
+    onError: (err) => {
+      console.error("Confirm Payment Error:", err);
+    },
+  });
+
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      if (!user) {
+        throw new Error("Please login first to checkout.");
+      }
+
+      const selectedItems = getSelectedItems();
+      if (selectedItems.length === 0) {
+        throw new Error("Please select at least 1 active product to checkout.");
+      }
+
+      const token = await user.getIdToken();
+
+      const payload = {
+        userId: user.uid,
+        items: [
+          ...selectedItems.map((item) => ({
+            id: item.product.id,
+            name: item.product.title,
+            price: item.product.isDonation ? 0 : item.product.discountPrice,
+            quantity: item.quantity,
+            merchantId: item.product.merchantId,
+            pickupDeadline: item.product.pickupDeadline,
+          })),
+          {
+            id: "FEE-01",
+            name: "Service Fee",
+            price: 500,
+            quantity: 1,
+            merchantId: null
+          }
+        ],
+        total: getTotalPrice() + 500,
+        customerDetails: {
+          first_name: user?.displayName || "Customer",
+          email: user?.email || "customer@foodunity.com",
+          phone: "08123456789", 
+        },
+      };
+
+      const { data } = await axios.post(`${BACKEND_URL}/api/checkout`, payload, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
       });
 
-      const data = await response.json();
+      return { data, token };
+    },
+    onSuccess: (result) => {
+      const { data, token } = result;
 
       if (data.token) {
-        setIsLoading(false);
-
         // Run Midtrans Snap
         window.snap.pay(data.token, {
-          onSuccess: async function (result) {
-            console.log("Success:", result);
+          onSuccess: async function (snapResult) {
+            console.log("Success:", snapResult);
             try {
-              const orderId = result?.order_id || data.orderId;
+              const orderId = snapResult?.order_id || data.orderId;
               if (orderId && user) {
-                const userToken = await user.getIdToken();
-                await fetch(`${BACKEND_URL}/api/orders/${orderId}/confirm-payment`, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${userToken}`,
-                  },
-                  body: JSON.stringify(result),
-                });
+                confirmPaymentMutation.mutate({ orderId, result: snapResult, token });
               }
             } catch (err) {
-              console.error("Confirm Payment Error:", err);
+              console.error("Confirm Payment Trigger Error:", err);
             }
-            toast.success("Pembayaran Berhasil!");
+            toast.success("Payment Successful!");
             removeSelectedItems();
             navigate("/orders");
           },
-          onPending: function (result) {
-            console.log("Pending:", result);
-            toast.success("Menunggu pembayaran...");
+          onPending: function (snapResult) {
+            console.log("Pending:", snapResult);
+            toast.success("Waiting for payment...");
             removeSelectedItems();
             navigate("/orders");
           },
-          onError: function (result) {
-            console.log("Error:", result);
-            toast.error("Pembayaran gagal!");
-            setIsLoading(false);
+          onError: function (snapResult) {
+            console.log("Error:", snapResult);
+            toast.error("Payment failed!");
           },
           onClose: function () {
             console.log("Customer closed the popup without finishing the payment");
-            toast.info("Pesanan disimpan di Belum Dibayar. Silakan selesaikan pembayaran.");
+            toast.info("Order saved in Unpaid. Please complete the payment.");
             removeSelectedItems();
             navigate("/orders");
-            setIsLoading(false);
           },
         });
       } else {
         console.error("Backend Error:", data);
-        toast.error(data.error || "Gagal mendapatkan token transaksi.");
-        setIsLoading(false);
+        toast.error(data.error || "Failed to get transaction token.");
       }
-    } catch (error: unknown) {
+    },
+    onError: (error: any) => {
       console.error("Checkout Error:", error);
-      const errMsg = error instanceof Error ? error.message : "";
-      const isConnectionError = errMsg === "Failed to fetch" || (error && typeof error === "object" && "name" in error && error.name === "TypeError");
+      const errMsg = error?.response?.data?.message || error.message || "";
+      const isConnectionError = errMsg === "Network Error" || error.code === 'ERR_NETWORK';
       toast.error(
         isConnectionError
-          ? "Gagal terhubung ke server backend. Pastikan Docker / Server Backend sudah berjalan."
-          : (errMsg || "Terjadi kesalahan pada sistem.")
+          ? "Failed to connect to backend server. Make sure Docker / Backend Server is running."
+          : (errMsg || "A system error occurred.")
       );
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const handleCheckout = () => {
+    checkoutMutation.mutate();
   };
 
-  return { handleCheckout, isLoading };
+  return { handleCheckout, isLoading: checkoutMutation.isPending };
 };
 
 
