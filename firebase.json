@@ -16,5 +16,20 @@
         "supportEmail": "abidinonurkhiansyah@gmail.com"
       }
     }
+  },
+  "hosting": {
+    "site": "foodunity",
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

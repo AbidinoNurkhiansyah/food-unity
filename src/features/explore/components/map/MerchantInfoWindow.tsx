@@ -38,9 +38,9 @@ export const MerchantInfoWindow: React.FC<MerchantInfoWindowProps> = ({
   onSelectProduct,
   onCloseStart,
 }) => {
-  const sheetRef = useRef<HTMLDivElement>(null);
-  const dragHandleRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null!);
+  const dragHandleRef = useRef<HTMLDivElement>(null!);
+  const backdropRef = useRef<HTMLDivElement>(null!);
 
   const businessName = merchant.profile?.businessName || merchant.name;
   const initials = getInitials(businessName);

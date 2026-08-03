@@ -97,9 +97,9 @@ export const CartPage: React.FC = () => {
                   </Link>
                 </div>
               ) : (
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6">
-                  {/* Header Pilih Semua & Action Hapus */}
-                  <div className="flex items-center justify-between pb-4 border-b border-gray-100 text-sm">
+                <div className="space-y-3">
+                  {/* Select All Bar */}
+                  <div className="bg-white rounded-2xl px-5 py-3.5 shadow-sm border border-gray-100 flex items-center justify-between text-sm">
                     <label className="flex items-center gap-3 cursor-pointer select-none font-semibold text-gray-800">
                       <input
                         type="checkbox"
@@ -149,6 +149,7 @@ export const CartPage: React.FC = () => {
                     )}
                   </div>
 
+                  {/* Individual Item Cards */}
                   {activeItems.map((item) => (
                     <CartItemCard key={item.product.id} item={item} />
                   ))}
@@ -178,7 +179,7 @@ export const CartPage: React.FC = () => {
                     Remove All
                   </button>
                 </div>
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6">
+                <div className="space-y-3">
                   {expiredItems.map((item) => (
                     <CartItemCard key={item.product.id} item={item} />
                   ))}

@@ -51,18 +51,6 @@ export const ExploreHeader: React.FC = () => {
 
           <div className="flex items-center gap-4">
             <>
-              <div className="hidden sm:flex flex-col items-end mr-4">
-                <span className="text-sm font-medium text-gray-900">
-                  {user?.displayName || "Consumer"}
-                </span>
-                <span className="text-xs text-gray-500">{user?.email}</span>
-              </div>
-              <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold shadow-md">
-                {user?.displayName
-                  ? user.displayName.charAt(0).toUpperCase()
-                  : "C"}
-              </div>
-
               <button
                 onClick={() => (window.location.href = "/orders")}
                 className="p-2 text-gray-400 hover:text-primary-500 transition-colors cursor-pointer"

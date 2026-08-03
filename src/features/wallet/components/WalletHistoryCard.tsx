@@ -1,5 +1,5 @@
 import React from "react";
-import { History, ArrowUpRight, ArrowDownLeft, Clock } from "lucide-react";
+import { History, ArrowUpRight, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface WalletHistoryCardProps {

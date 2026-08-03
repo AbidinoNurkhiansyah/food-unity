@@ -123,7 +123,8 @@ export function MerchantProfileForm() {
                   showTitle={false}
                   bannerImageUrl={bannerImageUrl}
                   logoImageUrl={logoImageUrl}
-                  isUploadingImages={isUploadingImages}
+                  isUploadingLogo={isUploadingImages}
+                  isUploadingBanner={isUploadingImages}
                   handleImageUpload={handleImageUpload}
                 />
               </div>
