@@ -107,10 +107,10 @@ export function useMerchantProfileForm() {
 
     setSubmitting(true);
     try {
-      const pName = regionData.provinces.find((p) => p.code === regionData.selectedProvince)?.name || "";
-      const rName = regionData.regencies.find((r) => r.code === regionData.selectedRegency)?.name || "";
-      const dName = regionData.districts.find((d) => d.code === regionData.selectedDistrict)?.name || "";
-      const vName = regionData.villages.find((v) => v.code === regionData.selectedVillage)?.name || "";
+      const pName = regionData.provinces.find((p: any) => p.code === regionData.selectedProvince)?.name || "";
+      const rName = regionData.regencies.find((r: any) => r.code === regionData.selectedRegency)?.name || "";
+      const dName = regionData.districts.find((d: any) => d.code === regionData.selectedDistrict)?.name || "";
+      const vName = regionData.villages.find((v: any) => v.code === regionData.selectedVillage)?.name || "";
 
       const userDocRef = doc(db, "users", user.uid);
       await updateDoc(userDocRef, {

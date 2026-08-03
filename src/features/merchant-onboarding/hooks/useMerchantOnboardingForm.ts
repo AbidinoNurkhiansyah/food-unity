@@ -72,13 +72,13 @@ export function useMerchantOnboardingForm() {
     setSubmitting(true);
     try {
       const pName =
-        regionSelect.provinces.find((p) => p.code === regionSelect.selectedProvince)?.name || "";
+        regionSelect.provinces.find((p: any) => p.code === regionSelect.selectedProvince)?.name || "";
       const rName =
-        regionSelect.regencies.find((r) => r.code === regionSelect.selectedRegency)?.name || "";
+        regionSelect.regencies.find((r: any) => r.code === regionSelect.selectedRegency)?.name || "";
       const dName =
-        regionSelect.districts.find((d) => d.code === regionSelect.selectedDistrict)?.name || "";
+        regionSelect.districts.find((d: any) => d.code === regionSelect.selectedDistrict)?.name || "";
       const vName =
-        regionSelect.villages.find((v) => v.code === regionSelect.selectedVillage)?.name || "";
+        regionSelect.villages.find((v: any) => v.code === regionSelect.selectedVillage)?.name || "";
 
       const userDocRef = doc(db, "users", user.uid);
       await updateDoc(userDocRef, {
