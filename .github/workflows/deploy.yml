@@ -62,7 +62,8 @@ jobs:
           VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
           VITE_CLOUDINARY_CLOUD_NAME: ${{ secrets.VITE_CLOUDINARY_CLOUD_NAME }}
           VITE_CLOUDINARY_UPLOAD_PRESET: ${{ secrets.VITE_CLOUDINARY_UPLOAD_PRESET }}
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          # Override API URL khusus untuk Preview agar menembak Backend Staging Permanen
+          VITE_API_URL: https://food-unity-preview.up.railway.app/api
 
       - name: Deploy ke Firebase Hosting (Preview)
         uses: FirebaseExtended/action-hosting-deploy@v0
