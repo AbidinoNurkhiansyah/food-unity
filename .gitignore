@@ -32,6 +32,7 @@ backend/serviceAccountKey.json
 .hallmark/
 commit.txt
 tambahan.md
+release-notes.md
 
 # Firebase
 .firebase/

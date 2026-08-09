@@ -1,0 +1,62 @@
+name: Multi-Environment CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # 1. BUILD & TEST (Selalu berjalan di semua event)
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install & Run Tests
+        run: |
+          npm ci
+          # Uncomment if you have tests:
+          # npm test
+
+  # 2A. DEPLOYMENT DEVELOPMENT
+  deploy-dev:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    environment: 
+      name: development
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy ke Server Development
+        run: echo "Deploying to Development Environment..."
+
+  # 2B. DEPLOYMENT PREVIEW (Hanya saat Pull Request)
+  deploy-preview:
+    needs: build-and-test
+    if: github.event_name == 'pull_request'
+    environment: 
+      name: preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy ke Server Preview
+        run: echo "Deploying Preview build for PR #${{ github.event.number }}..."
+
+  # 2C. DEPLOYMENT PRODUCTION (Saat merge ke main)
+  deploy-prod:
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: 
+      name: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy ke Server Production
+        run: echo "Deploying to Live Production..."
