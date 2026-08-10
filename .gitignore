@@ -37,3 +37,6 @@ release-notes.md
 # Firebase
 .firebase/
 firebase-debug.log*
+
+# gh-cli
+.github/gh/
