@@ -94,7 +94,6 @@ export function useWallet() {
   const handleBankModalSubmit = async (data: any) => {
     setBankData(data);
     setShowBankModal(false);
-    setShowConfirm(true);
   };
 
   const handleSetMaxAmount = () => {
