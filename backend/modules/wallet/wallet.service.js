@@ -46,7 +46,7 @@ export class WalletService {
   /**
    * Simulate withdrawal of funds
    */
-  static async withdrawBalance(merchantId, amount) {
+  static async withdrawBalance(merchantId, amount, bankCode) {
     if (!db) throw new Error("Firebase DB not initialized");
     if (amount <= 0) throw new Error("Invalid withdrawal amount");
 
@@ -77,6 +77,7 @@ export class WalletService {
       transaction.set(withdrawalRef, {
         merchantId,
         amount,
+        bankCode,
         status: 'SUCCESS', // Simulated instant success
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
