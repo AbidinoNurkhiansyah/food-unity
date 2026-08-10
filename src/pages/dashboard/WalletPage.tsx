@@ -3,6 +3,7 @@ import {
   WalletBalanceCard,
   WalletWithdrawCard,
   WalletHistoryCard,
+  WalletBankAccountModal,
   useWallet,
 } from "@/features/wallet";
 import {
@@ -27,6 +28,10 @@ export function WalletPage() {
     isHistoryLoading,
     showConfirm,
     setShowConfirm,
+    showBankModal,
+    setShowBankModal,
+    bankData,
+    handleBankModalSubmit,
     handleWithdrawClick,
     processWithdrawal,
     handleSetMaxAmount,
@@ -66,6 +71,17 @@ export function WalletPage() {
             onAmountChange={handleAmountChange}
             onSetMaxAmount={handleSetMaxAmount}
             onSubmit={handleWithdrawSubmit}
+          />
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={showBankModal} onOpenChange={setShowBankModal}>
+        <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-md">
+          <WalletBankAccountModal
+            initialData={bankData}
+            isLoading={false}
+            onSubmit={handleBankModalSubmit}
+            onClose={() => setShowBankModal(false)}
           />
         </DialogContent>
       </Dialog>

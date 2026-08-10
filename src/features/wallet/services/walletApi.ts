@@ -44,7 +44,7 @@ export const walletApi = {
   /**
    * Request withdrawal
    */
-  withdrawBalance: async (merchantId: string, amount: number, token?: string) => {
+  withdrawBalance: async (merchantId: string, amount: number, bankCode: string, token?: string) => {
     try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export const walletApi = {
         headers['Authorization'] = `Bearer ${token}`;
       }
       const response = await axios.post(`${API_URL}/api/wallet/withdraw`, 
-        { merchantId, amount },
+        { merchantId, amount, bankCode },
         { headers }
       );
       

@@ -8,6 +8,13 @@ export function useWallet() {
   const { user } = useAuthStore();
   const [amountToWithdraw, setAmountToWithdraw] = useState<string>("");
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
+  const [showBankModal, setShowBankModal] = useState<boolean>(false);
+  const [bankData, setBankData] = useState<{
+    bankCode: string;
+    bankName: string;
+    accountNumber: string;
+    accountHolderName: string;
+  } | null>(null);
   const queryClient = useQueryClient();
 
   const { data: balanceData, isLoading: isLoadingBalance } = useQuery({
@@ -31,16 +38,17 @@ export function useWallet() {
   });
 
   const withdrawMutation = useMutation({
-    mutationFn: async (amount: number) => {
+    mutationFn: async ({ amount, bankCode }: { amount: number, bankCode: string }) => {
       if (!user?.uid) throw new Error("User not authenticated");
       const token = await user.getIdToken();
-      return walletApi.withdrawBalance(user.uid, amount, token);
+      return walletApi.withdrawBalance(user.uid, amount, bankCode, token);
     },
     onSuccess: (_, variables) => {
       toast.success(
-        `Successfully withdrew Rp ${variables.toLocaleString("id-ID")}`
+        `Successfully withdrew Rp ${variables.amount.toLocaleString("id-ID")}`
       );
       setAmountToWithdraw("");
+      setBankData(null);
       queryClient.invalidateQueries({ queryKey: ['walletBalance', user?.uid] });
       queryClient.invalidateQueries({ queryKey: ['walletHistory', user?.uid] });
     },
@@ -68,13 +76,25 @@ export function useWallet() {
       return;
     }
 
+    if (!bankData) {
+      setShowBankModal(true);
+      return;
+    }
+
     setShowConfirm(true);
   };
 
   const processWithdrawal = () => {
     setShowConfirm(false);
     const amount = Number(amountToWithdraw.replace(/\D/g, "")); 
-    withdrawMutation.mutate(amount);
+    if (!bankData) return;
+    withdrawMutation.mutate({ amount, bankCode: bankData.bankCode });
+  };
+
+  const handleBankModalSubmit = async (data: any) => {
+    setBankData(data);
+    setShowBankModal(false);
+    setShowConfirm(true);
   };
 
   const handleSetMaxAmount = () => {
@@ -99,6 +119,10 @@ export function useWallet() {
     isHistoryLoading,
     showConfirm,
     setShowConfirm,
+    showBankModal,
+    setShowBankModal,
+    bankData,
+    handleBankModalSubmit,
     handleWithdrawClick,
     processWithdrawal,
     handleSetMaxAmount,
