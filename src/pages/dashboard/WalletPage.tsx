@@ -71,10 +71,12 @@ export function WalletPage() {
             onAmountChange={handleAmountChange}
             onSetMaxAmount={handleSetMaxAmount}
             onSubmit={handleWithdrawSubmit}
+            bankData={bankData}
+            onChangeBank={() => setShowBankModal(true)}
           />
         </DialogContent>
       </Dialog>
-      
+
       <Dialog open={showBankModal} onOpenChange={setShowBankModal}>
         <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-md">
           <WalletBankAccountModal
@@ -89,26 +91,28 @@ export function WalletPage() {
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Konfirmasi Penarikan</AlertDialogTitle>
+            <AlertDialogTitle>Confirm Withdrawal</AlertDialogTitle>
             <AlertDialogDescription>
-              Anda akan menarik dana sebesar{" "}
+              You are about to withdraw{" "}
               <b>
                 Rp{" "}
                 {amountToWithdraw
                   ? Number(amountToWithdraw).toLocaleString("id-ID")
                   : "0"}
               </b>{" "}
-              ke rekening yang terdaftar. Proses pencairan akan memakan waktu
-              1x24 jam kerja. Apakah Anda yakin ingin melanjutkan?
+              to your registered bank account. The withdrawal process will take
+              1x24 working hours. Are you sure you want to proceed?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Batal</AlertDialogCancel>
+            <AlertDialogCancel className="cursor-pointer">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={processWithdrawal}
-              className="bg-primary-600 hover:bg-primary-700 text-white cursor-pointer"
+              className="bg-primary-600 cursor-pointer hover:bg-primary-700 text-white cursor-pointer"
             >
-              Ya, Tarik Dana
+              Yes, Withdraw Funds
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
