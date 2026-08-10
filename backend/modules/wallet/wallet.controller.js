@@ -46,9 +46,9 @@ export class WalletController {
    */
   static async withdraw(req, res) {
     try {
-      const { merchantId, amount } = req.body;
-      if (!merchantId || !amount) {
-        return res.status(400).json({ error: "merchantId and amount are required" });
+      const { merchantId, amount, bankCode } = req.body;
+      if (!merchantId || !amount || !bankCode) {
+        return res.status(400).json({ error: "merchantId, amount, and bankCode are required" });
       }
       
       const parsedAmount = Number(amount);
@@ -56,7 +56,7 @@ export class WalletController {
          return res.status(400).json({ error: "amount must be a positive number" });
       }
 
-      const result = await WalletService.withdrawBalance(merchantId, parsedAmount);
+      const result = await WalletService.withdrawBalance(merchantId, parsedAmount, bankCode);
       res.json(result);
     } catch (error) {
       console.error("Withdrawal Error:", error);
