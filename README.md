@@ -2,6 +2,14 @@
 
 FoodUnity is a two-sided web-based surplus food marketplace and aggregator platform specifically designed to bridge the gap between food businesses (supply) and the local community (demand). Powered by a cloud-native ecosystem, the platform enables local food merchants such as restaurants, bakeries, caterers, and street food vendors to effortlessly list and upload surplus meals, excess stock, or items nearing their expiration date in real time. Every meal saved through the platform directly contributes to a healthier planet. 
 
+## Problem
+
+Food waste represents a dual crisis with adverse impacts on the economy, environmental sustainability, and social food security.
+ 
+On a global scale, approximately 1.3 billion tons of food - representing 30% of total global production - is discarded annually as both food loss and food waste. This massive accumulation is a major environmental threat, accounting for 8–10% of total global greenhouse gas emissions. In fact, if food waste were a country, it would rank as the world's third-largest emitter behind the US and China. This creates a tragic food paradox: while millions of tons of food are thrown away every single day, over 730 million people worldwide continue to suffer from hunger and chronic nutritional crises.
+ 
+The situation is equally severe on a local level in Indonesia. According to Bappenas data, Indonesia is the world's second-largest food waste producer after Saudi Arabia, generating roughly 23 -48 million tons annually. This inefficiency leads to a staggering economic loss of IDR 213 - 551 trillion per year, which is equivalent to 4 - 5% of Indonesia's total GDP. Furthermore, the environmental and social impacts are devastating, with domestic food waste emissions reaching 1,705 Mt CO₂e. Ironically, amidst this massive surplus of wasted food, 1 in 10 Indonesians still struggles to adequately meet their basic daily nutritional needs.
+
 This document provides a technical deep dive into the technologies, libraries, and architecture used to build the project.
 
 ## 🧰 Technical Deep Dive (Tech Stack)
